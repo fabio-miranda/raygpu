@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="GPURayTracer" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="Debug\$(PROJECT_NAME)" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="Debug" />
+				<Option object_output="Debug\obj\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add directory="." />
+					<Add directory="Debug\lib\glew\include" />
+					<Add directory="Debug\lib\SDL\include" />
+				</Compiler>
+				<Linker>
+					<Add library="glut32" />
+					<Add library="opengl32" />
+					<Add library="glu32" />
+					<Add library="winmm" />
+					<Add library="gdi32" />
+					<Add library="debug\lib\glew\lib\glew32.lib" />
+					<Add library="debug\lib\glew\lib\glew32s.lib" />
+					<Add library="debug\lib\glew\lib\libglew32.a" />
+					<Add library="Debug\lib\SDL\lib\libSDL.dll.a" />
+					<Add library="Debug\lib\SDL\lib\SDL_image.lib" />
+					<Add library="Debug\lib\SDL\lib\SDL_mixer.lib" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="Release\bin\FreeToolSelecter" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="$(#glut)\bin" />
+				<Option object_output="Release\obj\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="$(#glut.include)" />
+			<Add directory="D:\users\favera\FreeToolSelecter\" />
+		</Compiler>
+		<Linker>
+			<Add library="glut32" />
+			<Add library="opengl32" />
+			<Add library="glu32" />
+			<Add library="winmm" />
+			<Add library="gdi32" />
+			<Add directory="$(#glut.lib)" />
+		</Linker>
+		<Unit filename="Debug\Shaders\avgLuminanceCalc.frag">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="Debug\Shaders\avgLuminanceCalc.vert">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="Debug\Shaders\simpleContrast.frag">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="Debug\Shaders\simpleContrast.vert">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="GeometricShape\GeometricShape.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="GeometricShape\GeometricShape.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="GeometricShape\Sphere.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="GeometricShape\Sphere.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="GeometricShape\Torus.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="GeometricShape\Torus.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="GraphBasis\Color.cpp" />
+		<Unit filename="GraphBasis\Color.h" />
+		<Unit filename="GraphBasis\FrameBufferObject.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="GraphBasis\FrameBufferObject.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="GraphBasis\Frames.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="GraphBasis\Frames.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="GraphBasis\GLFont.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="GraphBasis\GLFont.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="GraphBasis\GraphBasisDefines.h" />
+		<Unit filename="GraphBasis\RenderBufferObject.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="GraphBasis\RenderBufferObject.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="GraphBasis\Shader.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="GraphBasis\Shader.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="GraphBasis\ShaderVars.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="GraphBasis\ShaderVars.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="GraphBasis\Vector3.cpp" />
+		<Unit filename="GraphBasis\Vector3.h" />
+		<Unit filename="GraphBasis\VertexBufferObject.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="GraphBasis\VertexBufferObject.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="Light\DirectionalLight.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="Light\DirectionalLight.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="Light\Light.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="Light\Light.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="Light\PointLight.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="Light\PointLight.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="Light\SpotLight.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="Light\SpotLight.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="Manager\Manager.cpp" />
+		<Unit filename="Manager\Manager.h" />
+		<Unit filename="Manager\ShaderManager.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="Manager\ShaderManager.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="Manager\TextureManager.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="Manager\TextureManager.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="RayTracerObjects\RTCamera.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="RayTracerObjects\RTCamera.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="RayTracerObjects\RTLight.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="RayTracerObjects\RTLight.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="RayTracerObjects\RTMaterial.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="RayTracerObjects\RTMaterial.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="RayTracerObjects\RTMesh.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="RayTracerObjects\RTMesh.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="RayTracerObjects\RTScene.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="RayTracerObjects\RTScene.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="RayTracerObjects\RTTriangle.cpp">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="RayTracerObjects\RTTriangle.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_active.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_audio.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_byteorder.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_cdrom.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_config.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_cpuinfo.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_endian.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_error.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_events.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_getenv.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_image.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_joystick.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_keyboard.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_keysym.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_loadso.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_main.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_mixer.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_mouse.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_mutex.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_name.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_opengl.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_platform.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_quit.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_rwops.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_stdinc.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_syswm.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_thread.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_timer.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_types.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_version.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\SDL_video.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\begin_code.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="SDL\close_code.h">
+			<Option target="Debug" />
+		</Unit>
+		<Unit filename="application.h" />
+		<Unit filename="main.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
