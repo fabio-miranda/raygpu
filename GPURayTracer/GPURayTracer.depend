@@ -2196,3 +2196,481 @@
 	<iostream>
 	"RayTracerObjects/RTScene.h"
 
+1272654344 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\geometricshape\geometricshape.cpp
+	<iostream>
+	"GraphBasis\Shader.h"
+	"GeometricShape/GeometricShape.h"
+
+1268221311 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\graphbasis\shader.h
+	<GL/glut.h>
+	<stdio.h>
+	<stdlib.h>
+	<string>
+
+1272654446 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\geometricshape\geometricshape.h
+	<string>
+	"GraphBasis/Color.h"
+
+1274880888 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\graphbasis\color.h
+	<iostream>
+	"GraphBasisDefines.h"
+
+1268740170 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\graphbasis\graphbasisdefines.h
+	<vector>
+
+1272654391 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\geometricshape\sphere.cpp
+	<iostream>
+	<cmath>
+	<GL/glew.h>
+	"GeometricShape/Sphere.h"
+	"GraphBasis\Vector3.h"
+	"GraphBasis\Shader.h"
+
+1198800610 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\glew\include\gl\glew.h
+	<stddef.h>
+	<OpenGL/glu.h>
+	<GL/glu.h>
+
+1272654360 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\geometricshape\sphere.h
+	<string>
+	<GL/gl.h>
+	"GeometricShape\GeometricShape.h"
+	"GraphBasis/Color.h"
+
+1268740107 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\graphbasis\vector3.h
+	<iostream>
+	"GraphBasis\GraphBasisDefines.h"
+
+1272654418 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\geometricshape\torus.cpp
+	<iostream>
+	<cmath>
+	<GL/glew.h>
+	"GeometricShape/Torus.h"
+	"GraphBasis\Vector3.h"
+	"GraphBasis\Shader.h"
+
+1272654426 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\geometricshape\torus.h
+	<string>
+	<GL/gl.h>
+	"GeometricShape\GeometricShape.h"
+	"GraphBasis/Color.h"
+
+1274880862 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\graphbasis\color.cpp
+	"Color.h"
+	"GL/glut.h"
+
+1274214150 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\graphbasis\framebufferobject.cpp
+	<GL/glew.h>
+	<iostream>
+	"GraphBasis/FrameBufferObject.h"
+	"GraphBasis/RenderBufferObject.h"
+
+1273959890 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\graphbasis\framebufferobject.h
+	<GL/glut.h>
+	<stdio.h>
+	<stdlib.h>
+	<string>
+	<vector>
+	"GraphBasis\RenderBufferObject.h"
+
+1273957738 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\graphbasis\renderbufferobject.h
+	<GL/glut.h>
+	<stdio.h>
+	<stdlib.h>
+	<string>
+
+1270416921 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\graphbasis\frames.cpp
+	<iostream>
+	<string.h>
+	"Manager\Manager.h"
+	"GraphBasis/Frames.h"
+	"GraphBasis\GLFont.h"
+
+1271077572 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\manager\manager.h
+	<vector>
+	<string>
+	"GraphBasis/Color.h"
+	"GraphBasis/Frames.h"
+
+1268221311 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\graphbasis\frames.h
+	<stdio.h>
+	<time.h>
+
+1268221311 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\graphbasis\glfont.h
+	<GL/gl.h>
+	<GL/glut.h>
+	<string>
+	"GraphBasis\Color.h"
+
+1273868966 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\graphbasis\glfont.cpp
+	<stdio.h>
+	<stdarg.h>
+	"GraphBasis\GLFont.h"
+	"Manager\Manager.h"
+
+1273957778 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\graphbasis\renderbufferobject.cpp
+	<GL/glew.h>
+	<iostream>
+	"GraphBasis/RenderBufferObject.h"
+
+1270820853 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\graphbasis\shader.cpp
+	<GL/glew.h>
+	<iostream>
+	"GraphBasis/Shader.h"
+	"Manager/ShaderManager.h"
+
+1268221470 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\manager\shadermanager.h
+	<vector>
+	<string>
+	<GL/gl.h>
+	"GraphBasis/Shader.h"
+
+1270820865 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\graphbasis\shadervars.cpp
+	"GraphBasis/ShaderVars.h"
+	"GraphBasis/Shader.h"
+	"Manager/ShaderManager.h"
+
+1268221311 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\graphbasis\shadervars.h
+	<GL/gl.h>
+
+1268739969 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\graphbasis\vector3.cpp
+	<cmath>
+	"GraphBasis\Vector3.h"
+	"application.h"
+
+1268739867 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\application.h
+	<assert.h>
+
+1272575308 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\light\directionallight.cpp
+	<iostream>
+	<GL/glut.h>
+	"Light/DirectionalLight.h"
+
+1272575312 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\light\directionallight.h
+	<string>
+	<GL/gl.h>
+	"Light/Light.h"
+	"GraphBasis/Vector3.h"
+
+1272575288 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\light\light.h
+	<string>
+	<GL/gl.h>
+	"GraphBasis/Vector3.h"
+	"GraphBasis/Color.h"
+
+1272575282 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\light\light.cpp
+	<iostream>
+	<GL/glew.h>
+	<GL/glut.h>
+	"Light/Light.h"
+
+1272575295 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\light\pointlight.cpp
+	<iostream>
+	<GL/glu.h>
+	"Light/PointLight.h"
+
+1272575317 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\light\pointlight.h
+	<string>
+	<GL/gl.h>
+	"Light/Light.h"
+	"GraphBasis/Vector3.h"
+
+1272575304 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\light\spotlight.cpp
+	<iostream>
+	<GL/glu.h>
+	"Light/SpotLight.h"
+	"application.h"
+
+1272575323 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\light\spotlight.h
+	<string>
+	<GL/gl.h>
+	"Light/Light.h"
+	"GraphBasis/Vector3.h"
+
+1274878530 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\manager\manager.cpp
+	<GL/glew.h>
+	<GL/glut.h>
+	<stdlib.h>
+	<iostream>
+	<assert.h>
+	<signal.h>
+	<cmath>
+	<SDL/SDL_image.h>
+	"Manager\Manager.h"
+	"Manager\TextureManager.h"
+	"GraphBasis\Vector3.h"
+	"GraphBasis\GLFont.h"
+	"GraphBasis\Shader.h"
+	"GraphBasis\FrameBufferObject.h"
+	"RayTracerObjects\RTTriangle.h"
+	"RayTracerObjects\RTScene.h"
+	"application.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_image.h
+	"SDL.h"
+	"SDL_version.h"
+	"begin_code.h"
+	"close_code.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl.h
+	"SDL_main.h"
+	"SDL_stdinc.h"
+	"SDL_audio.h"
+	"SDL_cdrom.h"
+	"SDL_cpuinfo.h"
+	"SDL_endian.h"
+	"SDL_error.h"
+	"SDL_events.h"
+	"SDL_loadso.h"
+	"SDL_mutex.h"
+	"SDL_rwops.h"
+	"SDL_thread.h"
+	"SDL_timer.h"
+	"SDL_video.h"
+	"SDL_version.h"
+	"begin_code.h"
+	"close_code.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_main.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+	"begin_code.h"
+	"close_code.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_stdinc.h
+	"SDL_config.h"
+	<sys/types.h>
+	<stdio.h>
+	<stdlib.h>
+	<stddef.h>
+	<stdarg.h>
+	<stdlib.h>
+	<malloc.h>
+	<stddef.h>
+	<stdarg.h>
+	<memory.h>
+	<string.h>
+	<strings.h>
+	<inttypes.h>
+	<stdint.h>
+	<ctype.h>
+	<iconv.h>
+	"begin_code.h"
+	<alloca.h>
+	<malloc.h>
+	<malloc.h>
+	<malloc.h>
+	<stdlib.h>
+	"close_code.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_config.h
+	"SDL_platform.h"
+	<stdarg.h>
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_platform.h
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\begin_code.h
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\close_code.h
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_audio.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_endian.h"
+	"SDL_mutex.h"
+	"SDL_thread.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_error.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_endian.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_mutex.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_thread.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_mutex.h"
+	"begin_code.h"
+	<process.h>
+	"close_code.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_rwops.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_cdrom.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_cpuinfo.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_events.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_active.h"
+	"SDL_keyboard.h"
+	"SDL_mouse.h"
+	"SDL_joystick.h"
+	"SDL_quit.h"
+	"begin_code.h"
+	"close_code.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_active.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_keyboard.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_keysym.h"
+	"begin_code.h"
+	"close_code.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_keysym.h
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_mouse.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_video.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_joystick.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_quit.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_loadso.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_timer.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1268221310 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\debug\lib\sdl\include\sdl\sdl_version.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1273945872 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\manager\texturemanager.h
+	<vector>
+	<string>
+	<GL/gl.h>
+	<GL/glut.h>
+	<SDL/SDL_image.h>
+	<unistd.h>
+
+1274877466 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rttriangle.h
+	<vector>
+	"GraphBasis/Vector3.h"
+	"GraphBasis/Color.h"
+
+1274880453 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtscene.h
+	<vector>
+	<string>
+	"GraphBasis/Vector3.h"
+	"GraphBasis/Color.h"
+	"RayTracerObjects\RTCamera.h"
+	"RayTracerObjects\RTLight.h"
+	"RayTracerObjects\RTMesh.h"
+	"RayTracerObjects\RTMaterial.h"
+	"RayTracerObjects\RTTriangle.h"
+
+1274881276 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtcamera.h
+	<string>
+	"GraphBasis/Vector3.h"
+
+1274880548 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtlight.h
+	<string>
+	"GraphBasis/Vector3.h"
+	"GraphBasis/Color.h"
+
+1274880530 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtmesh.h
+	<string>
+	"GraphBasis/Vector3.h"
+	"RayTracerObjects/RTTriangle.h"
+
+1274880538 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtmaterial.h
+	<string>
+	"GraphBasis/Vector3.h"
+	"GraphBasis/Color.h"
+
+1270820870 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\manager\shadermanager.cpp
+	<iostream>
+	"Manager/ShaderManager.h"
+	"GraphBasis/Shader.h"
+
+1268743288 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\manager\texturemanager.cpp
+	"Manager/TextureManager.h"
+	<iostream>
+
+1274881305 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtcamera.cpp
+	<iostream>
+	"RayTracerObjects/RTCamera.h"
+
+1274881925 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtlight.cpp
+	<iostream>
+	"RayTracerObjects/RTLight.h"
+
+1274882883 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtmaterial.cpp
+	<iostream>
+	"RayTracerObjects/RTMaterial.h"
+
+1274883361 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtmesh.cpp
+	<iostream>
+	"RayTracerObjects/RTMesh.h"
+
+1274883490 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtscene.cpp
+	<iostream>
+	"RayTracerObjects/RTScene.h"
+
+1274877493 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rttriangle.cpp
+	<iostream>
+	"RayTracerObjects\RTTriangle.h"
+	<assert.h>
+
+1274277503 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\main.cpp
+	"application.h"
+	"Manager/Manager.h"
+	<iostream>
+
