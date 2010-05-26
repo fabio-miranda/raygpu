@@ -10,10 +10,14 @@ using namespace std;
 ///////////////////
 //~ VertexBufferObject
 //////////////////
-VertexBufferObject::VertexBufferObject()
-:mActive(false)
+VertexBufferObject::VertexBufferObject(GLenum primitive)
+:mPrimitive(primitive)
+,mActive(false)
+,mModified(0)
 ,mCalculed(false)
-,mIndexEnabled(false)
+,mvboId(0)
+,mvboIndicesId(0)
+,mVBOBuffersTotalSize(0)
 {
    mSupported = true;
    GLenum err = glewInit();
@@ -44,76 +48,111 @@ VertexBufferObject :: ~VertexBufferObject()
    if(mSupported)
    {
       glDeleteBuffersARB(1, &mvboId);
-      if(mIndexEnabled)
+      if(mvboIndicesId)
          glDeleteBuffersARB(1, &mvboIndicesId);
    }
+}
+
+void VertexBufferObject :: clear()
+{
+   mVBOBuffers.clear();
+   mvboIndicesId = 0;
+   mVBOBuffersTotalSize = 0;
 }
 
 void VertexBufferObject :: configure()
 {
    if(!mCalculed)
    {
+      if(mModified>0)
+      {
+         glDeleteBuffersARB(1, &mvboId);
+         if(mvboIndicesId)
+         {
+            glDeleteBuffersARB(1, &mvboIndicesId);
+            mvboIndicesId = 0;
+         }
+      }
+
       glGenBuffersARB(1, &mvboId);
 
+      vector<VBOBuffer> :: iterator it;
+      mVBOBuffersTotalSize = 0;
+      for(it = mVBOBuffers.begin(); it != mVBOBuffers.end(); ++it)
+      {
+         it->offset = mVBOBuffersTotalSize;
+         mVBOBuffersTotalSize += it->sizeInBytes();
+      }
+
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, mvboId);
-      // glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(vertices)+sizeof(normals)+sizeof(colors), 0, GL_STATIC_DRAW_ARB);
-      // glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, sizeof(vertices), vertices);                             // copy vertices starting from 0 offest
-      // glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, sizeof(vertices), sizeof(normals), normals);                // copy normals after vertices
-      // glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, sizeof(vertices)+sizeof(normals), sizeof(colors), colors);  // copy colours after normals
+      glBufferDataARB(GL_ARRAY_BUFFER_ARB, mVBOBuffersTotalSize, 0, GL_STATIC_DRAW_ARB); // Alocates space for the memory block
 
+      for(it = mVBOBuffers.begin(); it != mVBOBuffers.end(); ++it)
+         glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, it->offset, it->sizeInBytes(), it->data);
 
-      if(mIndexEnabled)
+      if(mvboIndicesId)
       {
          glGenBuffersARB(1, &mvboIndicesId);
          glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mvboIndicesId);
-         // glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_indicesSize*sizeof(GLushort), indices, GL_STATIC_DRAW_ARB);
+         glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mVBOIndexBuffer.sizeInBytes(), mVBOIndexBuffer.data, GL_STATIC_DRAW_ARB);
       }
 
+      mModified++;
       mCalculed = true;
    }
 }
 
 void VertexBufferObject :: render()
 {
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, mvboId);
-  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mvboIndicesId);
+   glBindBufferARB(GL_ARRAY_BUFFER_ARB, mvboId);
+   if(mvboIndicesId)
+      glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, mvboIndicesId);
 
-  // glEnableClientState(GL_NORMAL_ARRAY);
-  // glEnableClientState(GL_COLOR_ARRAY);
-  // glEnableClientState(GL_SECONDARY_COLOR_ARRAY);
-  // glEnableClientState(GL_VERTEX_ARRAY);
-  // glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  // glEnableClientState(GL_INDEX_ARRAY);
-  // glEnableClientState(GL_FOG_COORD_ARRAY);
-  // glEnableClientState(GL_EDGE_FLAG_ARRAY);
+   vector<VBOBuffer> :: iterator it;
+   for(it = mVBOBuffers.begin(); it != mVBOBuffers.end(); ++it)
+   {
+      glEnableClientState(it->clientState);
+      it->setPointer();
+   }
 
-  // glNormalPointer(GL_FLOAT, 0, (void*)sizeof(vertices));
-  // glColorPointer(3, GL_FLOAT, 0, (void*)(sizeof(vertices)+sizeof(normals)));
-  // glColorPointer(3, GL_FLOAT, 0, (void*)(sizeof(vertices)+sizeof(normals)));
-  // glVertexPointer(3, GL_FLOAT, 0, 0);
-  // glTexCoordPointer()
-  // glIndexPointer()
-  // glFogCoordPointer()
-  // glEdgeFlagPointer()
+   if(mvboIndicesId)
+      glDrawElements(mPrimitive, mVBOIndexBuffer.n, mVBOIndexBuffer.type, 0);
+   else glDrawArrays(mPrimitive, 0, mVBOBuffers.begin()->n);
 
+   for(it = mVBOBuffers.begin(); it != mVBOBuffers.end(); ++it)
+      glDisableClientState(it->clientState);
 
-  // glDrawArrays(GL_QUADS, 0, 24);
-  // glDrawElements(GL_QUADS, 24, GL_UNSIGNED_BYTE, indices);
-
-
-  // glDisableClientState(GL_NORMAL_ARRAY);
-  // glDisableClientState(GL_COLOR_ARRAY);
-  // glDisableClientState(GL_SECONDARY_COLOR_ARRAY);
-  // glDisableClientState(GL_VERTEX_ARRAY);
-  // glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  // glDisableClientState(GL_INDEX_ARRAY);
-  // glDisableClientState(GL_FOG_COORD_ARRAY);
-  // glDisableClientState(GL_EDGE_FLAG_ARRAY);
-
-  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+   if(mvboIndicesId)
+      glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+   glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 }
 
+
+void VertexBufferObject :: setVBOBuffer(GLenum clientState, GLenum type, int n, void* data)
+{
+   if(clientState == GL_INDEX_ARRAY)
+   {
+      setVBOIndexBuffer(type, n, data);
+      return;
+   }
+
+   VBOBuffer buff;
+   buff.clientState = clientState;
+   buff.type = type;
+   buff.n = n;
+   buff.data = data;
+
+   mVBOBuffers.push_back(buff);
+   mCalculed = false;
+}
+void VertexBufferObject :: setVBOIndexBuffer(GLenum type, int n, void* data)
+{
+   mVBOIndexBuffer.clientState = GL_INDEX_ARRAY;
+   mVBOIndexBuffer.type = type;
+   mVBOIndexBuffer.n = n;
+   mVBOIndexBuffer.data = data;
+   mCalculed = false;
+}
 
 
 
