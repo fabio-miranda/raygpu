@@ -11,12 +11,12 @@ using namespace std;
 ///////////////////
 //~ RTScene
 //////////////////
-RTScene :: RTScene(string rt4FileName, string umFileName)
+RTScene :: RTScene(string rt4FileName)
 {
-   readFromFile(rt4FileName, umFileName);
+   readFromFile(rt4FileName);
 }
 
-void RTScene :: readFromFile(string rt4FileName, string umFileName)
+void RTScene :: readFromFile(string rt4FileName)
 {
 	FILE *file;
 	char buffer[1024];
@@ -111,3 +111,34 @@ void RTScene :: readFromStr(char buffer[])
 //   cout <<"Scene Clear, Ambient" << mClear  << mAmbient<<endl;
 }
 
+void RTScene :: configure()
+{
+   vector<RTLight> :: iterator lightIt;
+   for( lightIt = mLights.begin(); lightIt!=mLights.end(); ++lightIt)
+      lightIt->configure();
+
+   vector<RTMesh> :: iterator meshIt;
+   for( meshIt = mMeshes.begin(); meshIt!=mMeshes.end(); ++meshIt)
+   {
+      mMaterials[meshIt->getMaterialIndex()].configure();
+      meshIt->configure();
+   }
+
+}
+void RTScene :: render()
+{
+   glPushAttrib(GL_LIGHTING_BIT);
+      vector<RTLight> :: iterator lightIt;
+      for( lightIt = mLights.begin(); lightIt!=mLights.end(); ++lightIt)
+         lightIt->render();
+
+      vector<RTMesh> :: iterator meshIt;
+      for( meshIt = mMeshes.begin(); meshIt!=mMeshes.end(); ++meshIt)
+      {
+         glPushAttrib(GL_LIGHTING_BIT);
+            mMaterials[meshIt->getMaterialIndex()].render();
+            meshIt->render();
+         glPopAttrib();
+      }
+   glPopAttrib();
+}

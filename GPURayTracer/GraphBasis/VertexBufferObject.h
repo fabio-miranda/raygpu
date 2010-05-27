@@ -29,7 +29,20 @@ typedef struct vbobuffer
 
    int sizeInBytes()
    {
-      return n*sizeof(type);
+      switch(clientState)
+      {
+         case GL_NORMAL_ARRAY:
+         case GL_COLOR_ARRAY:
+//         case GL_SECONDARY_COLOR_ARRAY:
+         case GL_VERTEX_ARRAY:
+            return n*sizeof(type)*3;
+         case GL_TEXTURE_COORD_ARRAY:
+            return n*sizeof(type)*2;
+         case GL_INDEX_ARRAY:
+//         case GL_FOG_COORD_ARRAY:
+         case GL_EDGE_FLAG_ARRAY:
+            return n*sizeof(type);
+      }
    }
 
    void setPointer()
@@ -40,7 +53,7 @@ typedef struct vbobuffer
             glNormalPointer(type, 0, (GLvoid*)offset);
          break;
          case GL_COLOR_ARRAY:
-         case GL_SECONDARY_COLOR_ARRAY:
+//         case GL_SECONDARY_COLOR_ARRAY:
             glColorPointer(3, type,  0, (GLvoid*)offset);
          break;
          case GL_VERTEX_ARRAY:
@@ -52,9 +65,9 @@ typedef struct vbobuffer
          case GL_INDEX_ARRAY:
             glIndexPointer(type, 0, (GLvoid*)offset);
          break;
-         case GL_FOG_COORD_ARRAY:
-            glFogCoordPointer(type, 0, (GLvoid*)offset);
-         break;
+//         case GL_FOG_COORD_ARRAY:
+//            glFogCoordPointer(type, 0, (GLvoid*)offset);
+//         break;
          case GL_EDGE_FLAG_ARRAY:
             glEdgeFlagPointer(0, (GLvoid*)offset);
          break;
@@ -67,9 +80,11 @@ using namespace std;
 
 class VertexBufferObject
 {
+   static bool sIsSupported();
+
    bool mSupported;
    bool mActive;
-   GLuint mvboId;
+
    GLuint mvboIndicesId;
 
    GLenum mPrimitive;
@@ -83,10 +98,13 @@ class VertexBufferObject
    VBOBuffer mVBOIndexBuffer;
 
 public:
+   GLuint mvboId;
    VertexBufferObject(GLenum primitive = GL_TRIANGLES);
    ~VertexBufferObject();
 
    void clear();
+
+   void calcVBO();
 
    void configure();
    void render();
@@ -96,3 +114,58 @@ public:
 private:
 
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+//*Example
+
+//   GLfloat vertices[] = {1,1,1,  -1,1,1,  -1,-1,1,  1,-1,1,        // v0-v1-v2-v3
+//                      1,1,1,  1,-1,1,  1,-1,-1,  1,1,-1,        // v0-v3-v4-v5
+//                      1,1,1,  1,1,-1,  -1,1,-1,  -1,1,1,        // v0-v5-v6-v1
+//                      -1,1,1,  -1,1,-1,  -1,-1,-1,  -1,-1,1,    // v1-v6-v7-v2
+//                      -1,-1,-1,  1,-1,-1,  1,-1,1,  -1,-1,1,    // v7-v4-v3-v2
+//                      1,-1,-1,  -1,-1,-1,  -1,1,-1,  1,1,-1};   // v4-v7-v6-v5
+//
+//   GLfloat normals[] = {0,0,1,  0,0,1,  0,0,1,  0,0,1,             // v0-v1-v2-v3
+//                     1,0,0,  1,0,0,  1,0,0, 1,0,0,              // v0-v3-v4-v5
+//                     0,1,0,  0,1,0,  0,1,0, 0,1,0,              // v0-v5-v6-v1
+//                     -1,0,0,  -1,0,0, -1,0,0,  -1,0,0,          // v1-v6-v7-v2
+//                     0,-1,0,  0,-1,0,  0,-1,0,  0,-1,0,         // v7-v4-v3-v2
+//                     0,0,-1,  0,0,-1,  0,0,-1,  0,0,-1};        // v4-v7-v6-v5
+//
+//   GLfloat colors[] = {1,1,1,  1,1,0,  1,0,0,  1,0,1,              // v0-v1-v2-v3
+//                    1,1,1,  1,0,1,  0,0,1,  0,1,1,              // v0-v3-v4-v5
+//                    1,1,1,  0,1,1,  0,1,0,  1,1,0,              // v0-v5-v6-v1
+//                    1,1,0,  0,1,0,  0,0,0,  1,0,0,              // v1-v6-v7-v2
+//                    0,0,0,  0,0,1,  1,0,1,  1,0,0,              // v7-v4-v3-v2
+//                    0,0,1,  0,0,0,  0,1,0,  0,1,1};             // v4-v7-v6-v5
+//
+//
+//   GLubyte indices[] = {0,1,2,3,
+//                     4,5,6,7,
+//                     8,9,10,11,
+//                     12,13,14,15,
+//                     16,17,18,19,
+//                     20,21,22,23};
+//
+//
+//   vbo = new VertexBufferObject(GL_QUADS);
+//   vbo->setVBOBuffer( GL_VERTEX_ARRAY, GL_FLOAT, sizeof(vertices)/sizeof(GLfloat)/3, vertices); sizeof(vertices)/sizeof(GLfloat)/3 == 24
+//   vbo->setVBOBuffer( GL_COLOR_ARRAY, GL_FLOAT, sizeof(colors)/sizeof(GLfloat)/3, colors);
+//   vbo->setVBOBuffer( GL_COLOR_ARRAY, GL_FLOAT, sizeof(normals)/sizeof(GLfloat)/3, normals);
+//   vbo->setVBOIndexBuffer( GL_UNSIGNED_BYTE, sizeof(indices)/sizeof(GLubyte), indices); //Not necessary
+//   vbo->calcVBO();
+
+//...
+
+//vbo->render();

@@ -3,6 +3,7 @@
 \**********************************************************/
 #pragma once
 #include <string>
+#include <GL/gl.h>
 
 #include "GraphBasis/Vector3.h"
 #include "GraphBasis/Color.h"
@@ -15,6 +16,13 @@ class RTMaterial
 
 
    protected:
+      bool mCalculed;
+
+      GLfloat mGAmbient[4];
+      GLfloat mGSpecular[4];
+      GLfloat mGDiffuse[4];
+      GLfloat mGShi;
+
       Color mSpecular;
       Color mDiffuse;
       float mSpecularExp;
@@ -25,11 +33,12 @@ class RTMaterial
       int myRTMaterialNum;
    public:
       RTMaterial();
-      RTMaterial(Color specular, Color diffuse, float specularExp,
-         float reflective, float refractive, float opacity);
 
       int getMyRTMaterialNumber() const;
       void readFromStr(char buffer[]);
+
+      void configure();
+      void render();
 
 };
 
