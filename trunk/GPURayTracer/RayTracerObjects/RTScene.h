@@ -23,18 +23,20 @@ class RTScene
       Color mClear;
       Color mAmbient;
 
-      vector<RTTriangle> mTriangles;
       vector<RTMaterial> mMaterials;
       vector<RTLight> mLights;
       vector<RTMesh> mMeshes;
       RTCamera mCamera;
 
    public:
-      RTScene(string rt4FileName, string umFileName);
+      RTScene(string rt4FileName);
       void readFromStr(char buffer[]);
 
+      void configure();
+      void render();
+
    protected:
-      void readFromFile(string rt4FileName, string umFileName);
+      void readFromFile(string rt4FileName);
 
 };
 

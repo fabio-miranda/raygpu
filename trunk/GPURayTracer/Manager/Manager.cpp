@@ -22,6 +22,7 @@
 #include "GraphBasis\Shader.h"
 
 #include "GraphBasis\FrameBufferObject.h"
+#include "GraphBasis\VertexBufferObject.h"
 
 #include "RayTracerObjects\RTTriangle.h"
 #include "RayTracerObjects\RTScene.h"
@@ -66,10 +67,10 @@ struct AppOptions
    FrameBufferObject *frameBuffer;
    SDL_Surface* imgSDLSurface;
 }app = {
-   450,
+   50,
    1.0,
    0,
-   .01,
+   5.,
    false,
    true,
    false,
@@ -223,7 +224,7 @@ void Manager :: openGlInit()
    glClearColor( clearColor.r, clearColor.g, clearColor.b, 1.0 );
 
 	glShadeModel(GL_SMOOTH);
-//	gl.ShadeModel(gl.FLAT);
+//	glShadeModel(GL_FLAT);
 
 	glPolygonMode(GL_FRONT, GL_FILL);
 //   glPolygonMode(GL_BACK, GL_LINE);
@@ -301,16 +302,16 @@ void Manager :: onSpecialKeyPressed(int key,int x,int y)
       break;
 
       case K_UP_ARROW:
-         app.alpha = min(app.alpha + app.angInc,5.0f);
+         app.alpha = ((int)(app.alpha + app.angInc))%360;
       break;
       case K_DOWN_ARROW:
-         app.alpha = max(app.alpha - app.angInc,-2.0f);
+         app.alpha = ((int)(app.alpha - app.angInc))%360;
       break;
       case K_LEFT_ARROW:
-//         app.beta = ((int)(app.beta - app.angInc))%360;
+         app.beta = ((int)(app.beta - app.angInc))%360;
       break;
       case K_RIGHT_ARROW:
-//         app.beta = ((int)(app.beta + app.angInc))%360;
+         app.beta = ((int)(app.beta + app.angInc))%360;
       break;
 
       case K_PG_UP:
@@ -385,25 +386,49 @@ void Manager :: onMouseEntry(int state)
 
 }
 
+RTScene * scene;
 
 void Manager :: render()
 {
    timeFromLastFrame = fps.getTimeFromLastFrame();
 
+   const float cFovY = 40.0;
+   const float cNear = 1.0;
+   const float cFar = 2000.0;
+   const float cAspect = appWidth/appHeight;
+
+   const Vector3 pos = Vector3(0,0,0);
+   const Vector3 at = Vector3(0,0,0);
+
    glMatrixMode(GL_PROJECTION);
-   glPushMatrix();
-   glLoadIdentity();
-   gluOrtho2D(0, appWidth, appHeight, 0);
-
+   glLoadIdentity( );
+   gluPerspective(cFovY, cAspect, cNear, cFar);
    glMatrixMode(GL_MODELVIEW);
-   glPushMatrix();
-   glLoadIdentity();
 
-   glEnable( GL_TEXTURE );
-   glEnable( GL_TEXTURE_2D );
+   glLoadIdentity( );
 
 
-/**//*
+   float x = app.r*sin(DEG_TO_RAD(app.beta))*cos(DEG_TO_RAD(app.alpha));
+   float y = app.r*sin(DEG_TO_RAD(app.alpha));
+   float z = app.r*cos(DEG_TO_RAD(app.beta))*cos(DEG_TO_RAD(app.alpha));
+
+
+   float nextAlpha =  min(app.alpha + app.angInc,360.0f);
+
+   float ux = sin(DEG_TO_RAD(app.beta))*cos(DEG_TO_RAD(nextAlpha)) - x;
+   float uy = sin(DEG_TO_RAD(nextAlpha)) - y;
+   float uz = cos(DEG_TO_RAD(app.beta))*cos(DEG_TO_RAD(nextAlpha)) - z;
+
+   gluLookAt(  x, y, z,
+               at.x, at.y, at.z,
+               ux, uy, uz);
+
+   scene->configure();
+   scene->render();
+
+
+
+/*
    app.fontRender.initText();
 
    char alphaInfo[40];
@@ -446,10 +471,8 @@ void Manager :: createScenes()
 //   app.frameBuffer = new FrameBufferObject(appWidth, appHeight);
 //   app.textureID2 = app.frameBuffer->attachToColorBuffer(BufferType::Texture);
 
-   string triangleObjFileName = "Models/cavalo.um";
    string sceneFileName = "Scenes/cavalo.rt4";
-//   vector<RTTriangle> triangleList = RTTriangle::readFromFile(triangleObjFileName);
-   RTScene scene = RTScene(sceneFileName, triangleObjFileName);
+   scene = new RTScene(sceneFileName);
 }
 
 

@@ -2358,7 +2358,7 @@
 	"GraphBasis/Vector3.h"
 	"GraphBasis/Color.h"
 
-1272575282 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\light\light.cpp
+1274998633 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\light\light.cpp
 	<iostream>
 	<GL/glew.h>
 	<GL/glut.h>
@@ -2387,7 +2387,7 @@
 	"Light/Light.h"
 	"GraphBasis/Vector3.h"
 
-1274878530 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\manager\manager.cpp
+1274999118 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\manager\manager.cpp
 	<GL/glew.h>
 	<GL/glut.h>
 	<stdlib.h>
@@ -2402,6 +2402,7 @@
 	"GraphBasis\GLFont.h"
 	"GraphBasis\Shader.h"
 	"GraphBasis\FrameBufferObject.h"
+	"GraphBasis\VertexBufferObject.h"
 	"RayTracerObjects\RTTriangle.h"
 	"RayTracerObjects\RTScene.h"
 	"application.h"
@@ -2605,7 +2606,7 @@
 	"GraphBasis/Vector3.h"
 	"GraphBasis/Color.h"
 
-1274880453 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtscene.h
+1274994227 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtscene.h
 	<vector>
 	<string>
 	"GraphBasis/Vector3.h"
@@ -2620,18 +2621,20 @@
 	<string>
 	"GraphBasis/Vector3.h"
 
-1274880548 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtlight.h
+1274998054 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtlight.h
 	<string>
 	"GraphBasis/Vector3.h"
 	"GraphBasis/Color.h"
+	"Light/PointLight.h"
 
-1274880530 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtmesh.h
+1274997062 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtmesh.h
 	<string>
 	"GraphBasis/Vector3.h"
 	"RayTracerObjects/RTTriangle.h"
 
-1274880538 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtmaterial.h
+1274997590 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtmaterial.h
 	<string>
+	<GL/gl.h>
 	"GraphBasis/Vector3.h"
 	"GraphBasis/Color.h"
 
@@ -2648,19 +2651,20 @@
 	<iostream>
 	"RayTracerObjects/RTCamera.h"
 
-1274881925 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtlight.cpp
+1274999007 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtlight.cpp
 	<iostream>
 	"RayTracerObjects/RTLight.h"
 
-1274882883 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtmaterial.cpp
+1274997568 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtmaterial.cpp
 	<iostream>
 	"RayTracerObjects/RTMaterial.h"
 
-1274883361 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtmesh.cpp
+1274997014 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtmesh.cpp
 	<iostream>
 	"RayTracerObjects/RTMesh.h"
+	"GraphBasis\VertexBufferObject.h"
 
-1274883490 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtscene.cpp
+1274999157 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\raytracerobjects\rtscene.cpp
 	<iostream>
 	"RayTracerObjects/RTScene.h"
 
@@ -2673,4 +2677,16 @@
 	"application.h"
 	"Manager/Manager.h"
 	<iostream>
+
+1274995692 source:d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\graphbasis\vertexbufferobject.cpp
+	<GL/glew.h>
+	<iostream>
+	"GraphBasis/VertexBufferObject.h"
+
+1274993312 d:\users\favera\my dropbox\mestrado\fundamentos de computacao grafica\t3\raygpu\gpuraytracer\graphbasis\vertexbufferobject.h
+	<GL/glut.h>
+	<stdio.h>
+	<stdlib.h>
+	<string>
+	<vector>
 

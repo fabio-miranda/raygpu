@@ -71,9 +71,6 @@ void Light :: render()
       glLightfv(myLightNum, GL_POSITION, pos); //Setada para que as transformaçoes acima sejam aplicadas a luz tb
    }
    else glDisable(myLightNum);
-
-//   GLfloat null[ ] = {0,0,0,1};
-//   glMaterialfv(GL_FRONT,GL_EMISSION,null);
 }
 
 

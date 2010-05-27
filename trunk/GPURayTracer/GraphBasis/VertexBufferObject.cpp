@@ -7,6 +7,38 @@
 
 using namespace std;
 
+
+bool VertexBufferObject :: sIsSupported()
+{
+   static int supported = -1;
+   if(supported != -1)
+      return supported == 1;
+
+   supported = 1;
+
+   GLenum err = glewInit();
+   if (GLEW_OK != err)
+   {
+      supported = 0;
+      fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+   }
+
+   if (!glewIsSupported("GL_VERSION_2_0"))
+   {
+      supported = 0;
+      printf("OpenGL 2.0 not supported\n");
+   }
+
+   if(!glGenBuffersARB || !glBindBufferARB || !glBufferDataARB || !glBufferSubDataARB ||
+         !glMapBufferARB || !glUnmapBufferARB || !glDeleteBuffersARB || !glGetBufferParameterivARB)
+   {
+      supported = 0;
+      cout << "Video card does NOT support GL_ARB_vertex_buffer_object." << endl;
+   }
+
+   return supported == 1;
+}
+
 ///////////////////
 //~ VertexBufferObject
 //////////////////
@@ -19,33 +51,14 @@ VertexBufferObject::VertexBufferObject(GLenum primitive)
 ,mvboIndicesId(0)
 ,mVBOBuffersTotalSize(0)
 {
-   mSupported = true;
-   GLenum err = glewInit();
-   if (GLEW_OK != err)
-   {
-      mSupported = false;
-      fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-   }
-
-   if (!glewIsSupported("GL_VERSION_2_0"))
-   {
-      mSupported = false;
-      printf("OpenGL 2.0 not supported\n");
-   }
-
-   if(glGenBuffersARB && glBindBufferARB && glBufferDataARB && glBufferSubDataARB &&
-           glMapBufferARB && glUnmapBufferARB && glDeleteBuffersARB && glGetBufferParameterivARB)
-   {
-      mSupported = false;
-      cout << "Video card does NOT support GL_ARB_vertex_buffer_object." << endl;
-   }
+   mSupported = sIsSupported();
 
    assert(mSupported);
 }
 
 VertexBufferObject :: ~VertexBufferObject()
 {
-   if(mSupported)
+   if(mSupported && mvboId)
    {
       glDeleteBuffersARB(1, &mvboId);
       if(mvboIndicesId)
@@ -60,7 +73,8 @@ void VertexBufferObject :: clear()
    mVBOBuffersTotalSize = 0;
 }
 
-void VertexBufferObject :: configure()
+
+void VertexBufferObject :: calcVBO()
 {
    if(!mCalculed)
    {
@@ -102,6 +116,10 @@ void VertexBufferObject :: configure()
    }
 }
 
+void VertexBufferObject :: configure()
+{
+}
+
 void VertexBufferObject :: render()
 {
    glBindBufferARB(GL_ARRAY_BUFFER_ARB, mvboId);
@@ -117,7 +135,8 @@ void VertexBufferObject :: render()
 
    if(mvboIndicesId)
       glDrawElements(mPrimitive, mVBOIndexBuffer.n, mVBOIndexBuffer.type, 0);
-   else glDrawArrays(mPrimitive, 0, mVBOBuffers.begin()->n);
+   else
+      glDrawArrays(mPrimitive, 0, mVBOBuffers.begin()->n);
 
    for(it = mVBOBuffers.begin(); it != mVBOBuffers.end(); ++it)
       glDisableClientState(it->clientState);
@@ -145,6 +164,7 @@ void VertexBufferObject :: setVBOBuffer(GLenum clientState, GLenum type, int n, 
    mVBOBuffers.push_back(buff);
    mCalculed = false;
 }
+
 void VertexBufferObject :: setVBOIndexBuffer(GLenum type, int n, void* data)
 {
    mVBOIndexBuffer.clientState = GL_INDEX_ARRAY;

@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "RayTracerObjects/RTMesh.h"
+#include "GraphBasis\VertexBufferObject.h"
 
 using namespace std;
 
@@ -13,6 +14,8 @@ int RTMesh :: sMeshNum = 0;
 //~ RTMesh
 //////////////////
 RTMesh :: RTMesh()
+:mCalculed(false)
+,mVbo(NULL)
 {
    myRTMeshNum = sMeshNum++;
 }
@@ -36,5 +39,64 @@ void RTMesh :: readFromStr(char buffer[])
 }
 
 
+int RTMesh :: getMaterialIndex()
+{
+   return mMaterialIndex;
+}
 
 
+void RTMesh :: configure()
+{
+   if(!mCalculed)
+   {
+      calcVBO();
+      mCalculed = true;
+   }
+}
+
+void RTMesh :: render()
+{
+   glPushMatrix();
+      glTranslatef(mPos.x, mPos.y, mPos.z);
+      mVbo->render();
+   glPopMatrix();
+}
+
+
+void RTMesh :: calcVBO()
+{
+   mVbo = new VertexBufferObject();
+   int n = mTriangles.size()*3;
+   GLfloat vertices[n*3];
+   GLfloat normals[n*3];
+
+   for(int i = 0; i < n/3; ++i)
+   {
+      Vector3 n = (mTriangles[i].v2 - mTriangles[i].v1) ^ (mTriangles[i].v3 - mTriangles[i].v2);
+      n = n.unitary();
+
+      int index = i*9;
+      normals[index] = n.x;
+      vertices[index++] = mTriangles[i].v1.x;
+      normals[index] = n.y;
+      vertices[index++] = mTriangles[i].v1.y;
+      normals[index] = n.z;
+      vertices[index++] = mTriangles[i].v1.z;
+      normals[index] = n.x;
+      vertices[index++] = mTriangles[i].v2.x;
+      normals[index] = n.y;
+      vertices[index++] = mTriangles[i].v2.y;
+      normals[index] = n.z;
+      vertices[index++] = mTriangles[i].v2.z;
+      normals[index] = n.x;
+      vertices[index++] = mTriangles[i].v3.x;
+      normals[index] = n.y;
+      vertices[index++] = mTriangles[i].v3.y;
+      normals[index] = n.z;
+      vertices[index++] = mTriangles[i].v3.z;
+   }
+
+   mVbo->setVBOBuffer( GL_VERTEX_ARRAY, GL_FLOAT, n, vertices);
+   mVbo->setVBOBuffer( GL_NORMAL_ARRAY, GL_FLOAT, n, normals);
+   mVbo->calcVBO();
+}

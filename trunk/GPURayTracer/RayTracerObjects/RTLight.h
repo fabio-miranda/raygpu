@@ -8,6 +8,11 @@
 #include "GraphBasis/Vector3.h"
 #include "GraphBasis/Color.h"
 
+
+#include "Light/PointLight.h"
+
+
+
 using namespace std;
 
 class RTLight
@@ -16,6 +21,10 @@ class RTLight
 
 
    protected:
+      PointLight mPLight;
+
+      bool mCalculed;
+
       Vector3 mPos;
       Color mSpecular;
       Color mDiffuse;
@@ -25,16 +34,12 @@ class RTLight
       enum {Max_Lights = 8};
 
       RTLight();
-      RTLight(Vector3 pos, Color specular, Color diffuse);
-
-      Vector3 getPosition() const;
-
-      Color getSpecularColor() const;
-
-      Color getDiffuseColor() const;
 
       int getMyRTLightNumber() const;
       void readFromStr(char buffer[]);
+
+      void configure();
+      void render();
 
 };
 

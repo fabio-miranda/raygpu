@@ -9,11 +9,16 @@
 
 using namespace std;
 
+class VertexBufferObject;
+
 class RTMesh
 {
    static int sMeshNum;
 
    protected:
+      VertexBufferObject* mVbo;
+      bool mCalculed;
+
       int mMaterialIndex;
       Vector3 mPos;
       Vector3 mPos2;
@@ -26,5 +31,11 @@ class RTMesh
       int getMyRTMeshNumber() const;
       void readFromStr(char buffer[]);
 
+      int getMaterialIndex();
+
+      void configure();
+      void render();
+   protected:
+       void calcVBO();
 };
 
