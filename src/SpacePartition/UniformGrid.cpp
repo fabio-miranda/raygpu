@@ -68,6 +68,12 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 		}
 	}
 
+	m_gridArray = new GLfloat[(int)(p_numVoxels.x * p_numVoxels.y * p_numVoxels.z)];
+	m_triangleListArray = new GLuint[size];
+	m_triangleVertexArray = new GLfloat[(int)(p_numTriangles * 3.0 * 3.0)];
+	m_triangleAmbientArray = new GLfloat[(int)(p_numTriangles * 3.0)];
+	m_triangleDiffuseArray = new GLfloat[(int)(p_numTriangles * 3.0)];
+	m_triangleSpecularArray = new GLfloat[(int)(p_numTriangles * 4.0)];
 	m_gridArraySize = (int)(p_numVoxels.x * p_numVoxels.y * p_numVoxels.z);
 	m_gridArray = new GLfloat[m_gridArraySize];
 	memset(m_gridArray, 0, sizeof(GLfloat) * m_gridArraySize);
@@ -204,6 +210,11 @@ int UniformGrid::getTriangleListArraySize(){
 int UniformGrid::getTriangleVertexArraySize(){
 	return m_triangleAmbientArraySize;
 }
+
+int UniformGrid::getTriangleAmbientArraySize(){
+  return m_triangleDiffuseArraySize;
+}
+
 
 int UniformGrid::getTriangleDiffuseArraySize(){
 	return m_triangleDiffuseArraySize;

@@ -49,7 +49,12 @@ class RTScene
       void configure();
       void render();
 
-      GLuint getUniformGridTexId();
+      GLuint getGridTexId();
+      GLuint getTriangleListTexId();
+      GLuint getVertexesTexId();
+      GLuint getAmbientTexId();
+      GLuint getDiffuseTexId();
+      GLuint getSpecularTexId();
 
    protected:
       void readFromStr(char buffer[]);
