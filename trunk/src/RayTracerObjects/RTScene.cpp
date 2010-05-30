@@ -171,23 +171,23 @@ unsigned int RTScene::getSceneNumTriangles()
 
 void RTScene::calcTextures()
 {
-  /*GLuint id[6];
-  //GLfloat* data[6] = {mGrid->m_gridArray, mGrid->m_
+  GLuint id[6];
+  GLfloat* data[6] = { mGrid->getGridArray(), mGrid->getTriangleListArray(),
+                       mGrid->getTriangleVertexArray(), mGrid->getTriangleAmbientArray(),
+                       mGrid->getTriangleDiffuseArray(), mGrid->getTriangleSpecularArray()};
+  unsigned int size[6] = {  mGrid->getGridArraySize(), mGrid->getTriangleListArraySize(),
+                            mGrid->getTriangleVertexArraySize(), mGrid->getTriangleAmbientArraySize(),
+                            mGrid->getTriangleDiffuseArraySize(), mGrid->getTriangleSpecularArraySize()};
+
   glGenTextures(6, id);
   for(int i=0; i<6; ++i)
   {
-    glBindTexture(GL_TEXTURE_2D, id[i]);
+    glBindTexture(GL_TEXTURE_1D, id[i]);
     //   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    //glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    //   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE); // automatic mipmap generation included in OpenGL v1.4
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F_ARB, width, height, 0, GL_RGBA, GL_FLOAT, 0);
+    glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexImage1D(GL_TEXTURE_2D, 0, GL_RGBA32F_ARB, size[i], 0, GL_RGBA, GL_FLOAT, data[i]);
     glBindTexture(GL_TEXTURE_2D, 0);
   }
 
@@ -199,6 +199,6 @@ void RTScene::calcTextures()
   mVertexesTexId = id[2];
   mAmbientTexId = id[3];
   mDiffuseTexId = id[4];
-  mSpecularTexId = id[5];*/
+  mSpecularTexId = id[5];
 
 }

@@ -165,3 +165,35 @@ GLfloat* UniformGrid::getTriangleSpecularArray()
   return m_triangleSpecularArray;
 }
 
+
+
+GLfloat* UniformGrid::getGridArraySize()
+{
+  return m_gridArray;
+}
+
+GLuint* UniformGrid::getTriangleListArraySize()
+{
+  return m_triangleListArray;
+}
+
+GLfloat* UniformGrid::getTriangleVertexArraySize()
+{
+  return m_triangleVertexArray;
+}
+
+GLfloat* UniformGrid::getTriangleAmbientArraySize()
+{
+  return m_triangleAmbientArray;
+}
+
+GLfloat* UniformGrid::getTriangleDiffuseArraySize()
+{
+  return m_triangleDiffuseArray;
+}
+
+GLfloat* UniformGrid::getTriangleSpecularArraySize()
+{
+  return m_triangleSpecularArray;
+}
+

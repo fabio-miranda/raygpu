@@ -26,6 +26,13 @@ public:
   GLfloat* getTriangleDiffuseArray();
   GLfloat* getTriangleSpecularArray();
 
+  GLfloat* getGridArraySize();
+  GLuint* getTriangleListArraySize();
+  GLfloat* getTriangleVertexArraySize();
+  GLfloat* getTriangleAmbientArraySize();
+  GLfloat* getTriangleDiffuseArraySize();
+  GLfloat* getTriangleSpecularArraySize();
+
 private:
 	void calculateBB(std::vector<RTMesh>* p_triangles, Vector3 p_numVoxels);
 	void calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>* p_triangles, std::vector<RTMaterial>* p_material, Vector3 p_numVoxels);
