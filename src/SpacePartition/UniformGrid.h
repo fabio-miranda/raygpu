@@ -26,12 +26,12 @@ public:
   GLfloat* getTriangleDiffuseArray();
   GLfloat* getTriangleSpecularArray();
 
-  GLfloat* getGridArraySize();
-  GLuint* getTriangleListArraySize();
-  GLfloat* getTriangleVertexArraySize();
-  GLfloat* getTriangleAmbientArraySize();
-  GLfloat* getTriangleDiffuseArraySize();
-  GLfloat* getTriangleSpecularArraySize();
+  int getGridArraySize();
+  int getTriangleListArraySize();
+  int getTriangleVertexArraySize();
+  int getTriangleAmbientArraySize();
+  int getTriangleDiffuseArraySize();
+  int getTriangleSpecularArraySize();
 
 private:
 	void calculateBB(std::vector<RTMesh>* p_triangles, Vector3 p_numVoxels);
@@ -40,6 +40,7 @@ private:
 	unsigned int getNumTriangles();
 	unsigned int getVoxelAt(Vector3 index);
 	void setMinMax(Vector3 vertex);
+	void initialize(void** vector, int size);
 
 	Vector3 m_min;
 	Vector3 m_max;
@@ -52,6 +53,13 @@ private:
 	GLfloat* m_triangleAmbientArray;
 	GLfloat* m_triangleDiffuseArray;
 	GLfloat* m_triangleSpecularArray;
+
+	int m_gridArraySize;
+	int m_triangleVertexArraySize;
+	int m_triangleListArraySize;
+	int m_triangleAmbientArraySize;
+	int m_triangleDiffuseArraySize;
+	int m_triangleSpecularArraySize;
 };
 
 

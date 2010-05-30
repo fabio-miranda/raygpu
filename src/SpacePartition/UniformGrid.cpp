@@ -10,12 +10,21 @@ UniformGrid::UniformGrid(unsigned int p_numTriangles, std::vector<RTMesh>* p_mes
 	calculateGrid(p_numTriangles, p_mesh, p_material, p_numVoxels);
 }
 
-UniformGrid::~UniformGrid()
-{
+
+UniformGrid::~UniformGrid(){
+
+	delete [] m_gridArray;
+	delete [] m_triangleListArray;
+	delete [] m_triangleVertexArray;
+	delete [] m_triangleAmbientArray;
+	delete [] m_triangleDiffuseArray;
+	delete [] m_triangleSpecularArray;
 
 }
+	
 void UniformGrid::calculateBB(std::vector<RTMesh>* p_mesh, Vector3 p_numVoxels)
 {
+
 	std::vector<RTMesh> :: iterator meshIt;
 	for(meshIt = p_mesh->begin(); meshIt!=p_mesh->end(); ++meshIt){
 		std::vector<RTTriangle>* trianglesArray = meshIt->getTriangles();
@@ -59,13 +68,31 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 		}
 	}
 
-	m_gridArray = new GLfloat[(int)(p_numVoxels.x * p_numVoxels.y * p_numVoxels.z)];
-	m_triangleListArray = new GLuint[size];
-	m_triangleVertexArray = new GLfloat[(int)(p_numTriangles * 3.0 * 3.0)];
-	m_triangleAmbientArray = new GLfloat[(int)(p_numTriangles * 3.0)];
-	m_triangleDiffuseArray = new GLfloat[(int)(p_numTriangles * 3.0)];
-	m_triangleSpecularArray = new GLfloat[(int)(p_numTriangles * 4.0)];
+	m_gridArraySize = (int)(p_numVoxels.x * p_numVoxels.y * p_numVoxels.z);
+	m_gridArray = new GLfloat[m_gridArraySize];
+	memset(m_gridArray, 0, sizeof(GLfloat) * m_gridArraySize);
 
+	m_triangleAmbientArraySize = size;
+	m_triangleListArray = new GLuint[m_triangleAmbientArraySize];
+	memset(m_triangleListArray, 0, sizeof(GLuint) * m_triangleAmbientArraySize);
+
+	m_triangleVertexArraySize = p_numTriangles * 3 * 3;
+	m_triangleVertexArray = new GLfloat[m_triangleVertexArraySize];
+	memset(m_triangleVertexArray, 0, sizeof(GLfloat) * m_triangleVertexArraySize);
+
+	m_triangleAmbientArraySize = p_numTriangles * 3;
+	m_triangleAmbientArray = new GLfloat[m_triangleAmbientArraySize];
+	memset(m_triangleAmbientArray, 0, sizeof(GLfloat) * p_numTriangles * 3);
+
+	m_triangleDiffuseArraySize = p_numTriangles * 3;
+	m_triangleDiffuseArray = new GLfloat[m_triangleDiffuseArraySize];
+	memset(m_triangleDiffuseArray, 0, sizeof(GLfloat) * m_triangleDiffuseArraySize);
+
+	m_triangleSpecularArraySize = p_numTriangles * 4;
+	m_triangleSpecularArray = new GLfloat[m_triangleSpecularArraySize];
+	memset(m_triangleSpecularArray, 0, sizeof(GLuint) * m_triangleSpecularArraySize);
+
+ 
 	unsigned int gridCount = 0;
 	for(int i=0; i<p_numVoxels.x * p_numVoxels.y * p_numVoxels.z; i++){
 		for(int j=0; j<aux_grid[i].size(); j++){
@@ -166,34 +193,22 @@ GLfloat* UniformGrid::getTriangleSpecularArray()
 }
 
 
-
-GLfloat* UniformGrid::getGridArraySize()
-{
-  return m_gridArray;
+int UniformGrid::getGridArraySize(){
+	return m_gridArraySize;
 }
 
-GLuint* UniformGrid::getTriangleListArraySize()
-{
-  return m_triangleListArray;
+int UniformGrid::getTriangleListArraySize(){
+	return m_triangleListArraySize;
 }
 
-GLfloat* UniformGrid::getTriangleVertexArraySize()
-{
-  return m_triangleVertexArray;
+int UniformGrid::getTriangleVertexArraySize(){
+	return m_triangleAmbientArraySize;
 }
 
-GLfloat* UniformGrid::getTriangleAmbientArraySize()
-{
-  return m_triangleAmbientArray;
+int UniformGrid::getTriangleDiffuseArraySize(){
+	return m_triangleDiffuseArraySize;
 }
 
-GLfloat* UniformGrid::getTriangleDiffuseArraySize()
-{
-  return m_triangleDiffuseArray;
+int UniformGrid::getTriangleSpecularArraySize(){
+	return m_triangleSpecularArraySize;
 }
-
-GLfloat* UniformGrid::getTriangleSpecularArraySize()
-{
-  return m_triangleSpecularArray;
-}
-
