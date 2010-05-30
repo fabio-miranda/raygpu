@@ -23,6 +23,15 @@ RTScene :: RTScene(string rt4FileName)
 RTScene :: ~RTScene()
 {
   delete mGrid;
+  GLuint id[5] = {
+    mGridTexId,
+    mVertexesTexId,
+    mAmbientTexId,
+    mDiffuseTexId,
+    mSpecularTexId
+  };
+  glDeleteTextures(5, id);
+  glDeleteTextures(1, &mTrianglesTexId);
 }
 
 void RTScene :: readFromFile(string rt4FileName)
@@ -127,6 +136,7 @@ void RTScene :: configure()
     if(mGrid)
       delete mGrid;
     mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, Vector3(10, 10, 10));
+    calcTextures();
     mCalculed = true;
   }
   
@@ -171,16 +181,16 @@ unsigned int RTScene::getSceneNumTriangles()
 
 void RTScene::calcTextures()
 {
-  GLuint id[6];
-  GLfloat* data[6] = { mGrid->getGridArray(), mGrid->getTriangleListArray(),
+  GLuint id[5];
+  GLfloat* data[5] = { mGrid->getGridArray(),
                        mGrid->getTriangleVertexArray(), mGrid->getTriangleAmbientArray(),
                        mGrid->getTriangleDiffuseArray(), mGrid->getTriangleSpecularArray()};
-  unsigned int size[6] = {  mGrid->getGridArraySize(), mGrid->getTriangleListArraySize(),
+  
+  unsigned int size[5] = {  mGrid->getGridArraySize(),
                             mGrid->getTriangleVertexArraySize(), mGrid->getTriangleAmbientArraySize(),
                             mGrid->getTriangleDiffuseArraySize(), mGrid->getTriangleSpecularArraySize()};
-
-  glGenTextures(6, id);
-  for(int i=0; i<6; ++i)
+  glGenTextures(5, id);
+  for(int i=0; i<5; ++i)
   {
     glBindTexture(GL_TEXTURE_1D, id[i]);
     //   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -191,14 +201,49 @@ void RTScene::calcTextures()
     glBindTexture(GL_TEXTURE_2D, 0);
   }
 
-  
-
+  glGenTextures(1, &mTrianglesTexId);
+  glBindTexture(GL_TEXTURE_1D, mTrianglesTexId);
+  //   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexImage1D(GL_TEXTURE_2D, 0, GL_RGBA32F_ARB, mGrid->getTriangleListArraySize(), 0, GL_RGBA, GL_INT,  mGrid->getTriangleListArray());
+  glBindTexture(GL_TEXTURE_2D, 0);
 
   mGridTexId = id[0];
-  mTrianglesTexId = id[1];
-  mVertexesTexId = id[2];
-  mAmbientTexId = id[3];
-  mDiffuseTexId = id[4];
-  mSpecularTexId = id[5];
+  mVertexesTexId = id[1];
+  mAmbientTexId = id[2];
+  mDiffuseTexId = id[3];
+  mSpecularTexId = id[4];
+}
 
+GLuint RTScene::getGridTexId()
+{
+  return mGridTexId;
+  
+}
+
+GLuint RTScene::getTriangleListTexId()
+{
+  return mTrianglesTexId;
+}
+
+GLuint RTScene::getVertexesTexId()
+{
+  return mVertexesTexId;
+}
+
+GLuint RTScene::getAmbientTexId()
+{
+  return mAmbientTexId;
+}
+
+GLuint RTScene::getDiffuseTexId()
+{
+  return mDiffuseTexId;
+}
+
+GLuint RTScene::getSpecularTexId()
+{
+  return mSpecularTexId;
 }
