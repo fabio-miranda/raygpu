@@ -11,13 +11,20 @@
 #include "RayTracerObjects/RTMaterial.h"
 
 class UniformGrid {
-	
-	
+
 public:
 	UniformGrid(unsigned int p_numTriangles, std::vector<RTMesh>* p_triangles, std::vector<RTMaterial>* p_material, Vector3 p_sizeVoxel);
 	~UniformGrid();
+
 	void render();
 
+
+  GLfloat* getGridArray();
+  GLuint* getTriangleListArray();
+  GLfloat* getTriangleVertexArray();
+  GLfloat* getTriangleAmbientArray();
+  GLfloat* getTriangleDiffuseArray();
+  GLfloat* getTriangleSpecularArray();
 
 private:
 	void calculateBB(std::vector<RTMesh>* p_triangles, Vector3 p_numVoxels);

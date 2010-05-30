@@ -20,9 +20,11 @@
 
 using namespace std;
 
+
 class RTScene
 {
-   protected:
+  protected:
+      bool mCalculed;
       Color mClear;
       Color mAmbient;
 
@@ -31,16 +33,29 @@ class RTScene
       vector<RTMesh> mMeshes;
       RTCamera mCamera;
 
+      UniformGrid* mGrid;
+
+      GLuint mGridTexId;
+      GLuint mTrianglesTexId;
+      GLuint mVertexesTexId;
+      GLuint mAmbientTexId;
+      GLuint mDiffuseTexId;
+      GLuint mSpecularTexId;
+
    public:
       RTScene(string rt4FileName);
-      void readFromStr(char buffer[]);
+      ~RTScene();
 
       void configure();
       void render();
 
-   protected:
-      void readFromFile(string rt4FileName);
-	  unsigned int getSceneNumTriangles();
+      GLuint getUniformGridTexId();
 
+   protected:
+      void readFromStr(char buffer[]);
+      void readFromFile(string rt4FileName);
+	    unsigned int getSceneNumTriangles();
+
+      void calcTextures();
 };
 
