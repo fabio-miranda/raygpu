@@ -450,7 +450,7 @@ void Manager :: render()
 
 void Manager :: createScenes()
 {
-//   app.simpleContrastShader = new Shader("SimpleContrast","Shaders/simpleContrast");
+   app.simpleContrastShader = new Shader("IntersectorKernel","./src/Shaders/IntersectorKernel");
 //   app.textureLoc = app.simpleContrastShader->getUniformLoc("text");
 //   app.imgAlphaLoc = app.simpleContrastShader->getUniformLoc("alpha");
 //   app.imgAvgLuminanceLoc = app.simpleContrastShader->getUniformLoc("avgLuminance");
@@ -470,6 +470,10 @@ void Manager :: createScenes()
 
    string sceneFileName = "./resources/Scenes/cavalo.rt4";
    scene = new RTScene(sceneFileName);
+
+   int maxTextCoord;
+   glGetIntegerv(GL_MAX_TEXTURE_COORDS, &maxTextCoord);
+   cout << maxTextCoord << " Camadas de Textura Disponiveis"<<endl;
 }
 
 
