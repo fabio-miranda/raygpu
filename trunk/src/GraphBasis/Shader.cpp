@@ -16,6 +16,8 @@ using namespace std;
 ///////////////////
 //~ Shader
 //////////////////
+Shader::Shader(){}
+
 Shader::Shader(string name, string pack)
 {
    string vertStr = pack+".vert";

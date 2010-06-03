@@ -26,6 +26,7 @@ class Shader
    bool enabled, enablable;
    string _name;
 public:
+	Shader();
    Shader(string name, string pack);
    Shader(string name, const char *vert, const char *frag);
    ~Shader();

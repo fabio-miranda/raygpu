@@ -12,6 +12,10 @@ using namespace std;
 ///////////////////
 //~ FrameBufferObject
 //////////////////
+
+FrameBufferObject::FrameBufferObject(){}
+
+
 FrameBufferObject::FrameBufferObject(int width, int height)
 :mActive(false)
 ,mWidth(width)

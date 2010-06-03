@@ -2,9 +2,11 @@
             Nome:Eduardo Ceretta Dalla Favera
 \**********************************************************/
 
-#pragma once
+#ifndef RenderBufferObject_H
+#define RenderBufferObject_H
 
-#include <GL/glut.h>
+#include <GL/glew.h>
+#include <GL/freeglut.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -26,5 +28,7 @@ public:
    GLuint getId();
 private:
 };
+
+#endif
 
 
