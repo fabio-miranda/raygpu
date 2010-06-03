@@ -168,6 +168,13 @@ void UniformGrid::setMinMax(Vector3 vertex){
 
 }
 
+Vector3 UniformGrid::getBBMin(){
+	return m_min;
+}
+Vector3 UniformGrid::getBBMax(){
+	return m_max;
+}
+
 GLfloat* UniformGrid::getGridArray()
 {
   return m_gridArray;
@@ -222,4 +229,8 @@ int UniformGrid::getTriangleDiffuseArraySize(){
 
 int UniformGrid::getTriangleSpecularArraySize(){
 	return m_triangleSpecularArraySize;
+}
+
+Vector3 UniformGrid::getVoxelSize(){
+	return m_voxelSize;
 }

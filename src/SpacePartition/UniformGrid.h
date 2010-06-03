@@ -26,12 +26,17 @@ public:
   GLfloat* getTriangleDiffuseArray();
   GLfloat* getTriangleSpecularArray();
 
+  Vector3 getBBMin();
+  Vector3 getBBMax();
   int getGridArraySize();
   int getTriangleListArraySize();
   int getTriangleVertexArraySize();
   int getTriangleAmbientArraySize();
   int getTriangleDiffuseArraySize();
   int getTriangleSpecularArraySize();
+
+  GLuint getGridTextureId();
+  Vector3 getVoxelSize();
 
 private:
 	void calculateBB(std::vector<RTMesh>* p_triangles, Vector3 p_numVoxels);
