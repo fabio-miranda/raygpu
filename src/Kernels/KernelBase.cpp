@@ -5,7 +5,7 @@ KernelBase::KernelBase(){
 }
 
 KernelBase::KernelBase(char* frag, char* vert, int width, int height){
-	m_shader = Shader(frag, vert);
+	m_shader = Shader("", frag, vert);
 	m_fbo = FrameBufferObject(width, height);
 }
 
@@ -30,6 +30,14 @@ GLuint KernelBase::addInputVec3(char* name, Vector3 value){
 	return loc;
 }
 
+GLuint KernelBase::addInputFloat( char* name, GLfloat value )
+{
+  GLuint loc = m_shader.getUniformLoc(name);
+  glUniform1f(loc, value);
+
+  return loc;
+}
+
 GLuint KernelBase::addOutput(int index, GLuint textureId){
 
 	return m_fbo.attachToColorBuffer(bufferType::Texture, index, textureId);
@@ -46,8 +54,12 @@ void KernelBase::activateTextures(){
 }
 
 void KernelBase::renderQuad(){
-
-
+  glBegin(GL_QUADS);
+    glVertex3f(0,0,0); glTexCoord2f(0,0);
+    glVertex3f(1,0,0); glTexCoord2f(1,0);
+    glVertex3f(1,1,0); glTexCoord2f(1,1);
+    glVertex3f(0,1,0); glTexCoord2f(0,1);
+  glEnd();
 }
 
 void KernelBase::step(){
@@ -60,3 +72,5 @@ void KernelBase::step(){
 	m_fbo.setActive(false);
 
 }
+
+

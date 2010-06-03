@@ -86,10 +86,11 @@ Shader::Shader(string name, const char *vert, const char *frag)
       fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
       enablable = false;
    }
-   fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
+   //fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
 
    if (GLEW_ARB_vertex_shader && GLEW_ARB_fragment_shader)
-      printf("Ready for GLSL\n");
+      //printf("Ready for GLSL\n");
+      ;
    else
    {
       printf("Not totally ready :( \n");
@@ -97,7 +98,8 @@ Shader::Shader(string name, const char *vert, const char *frag)
       //exit(1);
    }
    if (glewIsSupported("GL_VERSION_2_0"))
-      printf("Ready for OpenGL 2.0\n");
+      //printf("Ready for OpenGL 2.0\n");
+      ;
    else
    {
       printf("OpenGL 2.0 not supported\n");

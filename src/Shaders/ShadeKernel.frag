@@ -1,110 +1,167 @@
-uniform sampler2D rayPos;
-uniform sampler2D rayDir;
+uniform sampler2D triangleInfo;
 
-uniform sampler1D grid;
-uniform sampler1D triangleList;
 uniform sampler1D vertexes;
+uniform sampler1D normals;
+uniform sampler1D diffuseTex;
+uniform sampler1D especularTex;
+uniform sampler1D lights;
 
-uniform float gridSize;
-uniform float triangleListSize;
+uniform float normalsSize;
 uniform float vertexesSize;
+uniform float diffuseSize;
+uniform float especularSize;
+uniform float lightsSize;
 
-#define ContainTriangles 1
-#define Empty 0
+uniform vec3 eyePos;
+
+
+void calcDirLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular);
+void calcPointLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular);
+void calcSpotLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular);
+
 
 //enum {Traversing = 0, Intersecting , Shading, Done}
+///lightStruct
+//{
+//0|   difuse   //alpha == spotExponent
+//1|   specular //alpha == enable or disable
+//2|   pos      //w == type :0 directional, 1 point, 2 = spot
+//3|   spot     //rgb == spotDir, a == spotAngle(rad)
+//}
+const vec3 defaultAmbientMaterial  = vec3(0.2, 0.2, 0.2);
+vec3 ambient, diffuse, specular;
 
-const float infinity = 1.0/0.0;
-vec2 intersect(float vertexIndex, vec4 rPos, vec4 rDir, vec2 lastHit);
+vec4 lightSpecular;
+vec4 lightPosition;
+vec3 lightDir;
+
+
+vec3 fragPos;
+vec3 eyeDir;
+struct material
+{
+   vec3 diffuse;
+   vec3 specular;
+   float shininess;
+}fragMaterial;
+
 
 void main()
 {
-   vec4 rDir = texture2D(rayDir, gl_TexCoord[0].st);
-   vec4 rPos = texture2D(rayDir, gl_TexCoord[0].st);
+   ///If stencil ray state == shading
+   ///else
+   /// discard;
 
-   int triangleFlag = int(floor(rDir.w+.5));
-   float gridIndex =  floor(rPos.w+.5);
 
-   if(triangleFlag == ContainTriangles)
+   vec4 triangleInfos = texture2D(triangleInfo, gl_TexCoord[0].st);
+   fragPos = triangleInfos.rgb;
+   float triangleIndex = floor(triangleInfos.a + .5);
+
+   vec3 normal = texture1D(normals, triangleIndex/normalsSize).xyz;
+   ambient = defaultAmbientMaterial;
+   diffuse = vec3(0, 0, 0);
+
+   vec4 matInfo = texture1D(diffuseTex, triangleIndex/diffuseSize);
+   specular = vec3(0, 0, 0);
+   eyeDir = eyePos - fragPos;
+
+   fragMaterial.specular = texture1D(diffuseTex, triangleIndex/diffuseSize).rgb;
+   fragMaterial.diffuse = matInfo.rgb;
+   fragMaterial.shininess = matInfo.a;
+
+   float numLights = lightsSize/4.0;
+   for(float i = 0.0; i<numLights; i += 1.0)
    {
-
-      float triangleIndex = floor(texture1D(grid, gridIndex/gridSize).r + .5);
-      float vertexIndex = floor(texture1D(triangleList, triangleIndex/triangleListSize).r + .5);
-      vec2 lastHit = vec2(infinity, vertexIndex);
-
-      while(vertexIndex != -1.0)
+      lightSpecular = texture1D(lights, (i*4.0 + 1.0)/lightsSize);
+      if(floor(lightSpecular.a + .5) != 0.0) //Is Light Enabled?
       {
-         lastHit = intersect(vertexIndex, rPos, rDir, lastHit);
-         triangleIndex++;
-         vertexIndex = floor(texture1D(triangleList, triangleIndex/triangleListSize).r + .5);
+         lightPosition = texture1D(lights, (i*4.0 + 2.0)/lightsSize);
+         float lightType = floor(lightPosition.w+.5);
+         if(lightType == 0.0) //Directional Light
+         {
+            lightDir = - lightPosition.xyz;
+            calcDirLight(i, normal, ambient, diffuse, specular);
+         }
+         else if(lightType == 2.0) //Spot Light
+         {
+            lightDir = lightPosition.xyz - fragPos;
+            calcSpotLight(i, normal, ambient, diffuse, specular);
+         }
+         else //Point Light
+         {
+            lightDir = lightPosition.xyz - fragPos;
+            calcPointLight(i, normal, ambient, diffuse, specular);
+         }
       }
 
-      if(lastHit.r != infinity)
-      {
-         ///Set Stencil Bufer to Shading
-         vec4 vertxesIndex = vec4(lastHit.g*3., lastHit.g*3. + 1., lastHit.g*3. + 2., 1.);
-         gl_FragData[3] = vertxesIndex;
-         return;
-      }
    }
 
-   ///Set Stencil Bufer to Traversing
-//   gl_FragData[0] = rDir;
-//   gl_FragData[1] = rPos;
+   vec3 intensity = ambient + diffuse;
+   gl_FragData[0] = vec4(intensity + specular, 1.0);
+   ///Set Stencil Bufer to Done
 }
 
-
-vec2 intersect(float vertexIndex, vec4 rPos, vec4 rDir, vec2 lastHit)
+void calcDirLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular)
 {
-   vec3 v0 = texture1D(vertexes, (vertexIndex*3.)/vertexesSize).xyz;
-   vec3 v1 = texture1D(vertexes, (vertexIndex*3.+1.)/vertexesSize).xyz;
-   vec3 v2 = texture1D(vertexes, (vertexIndex*3.+2.)/vertexesSize).xyz;
+   vec3 L = normalize(lightDir);
+   vec3 H = normalize(L + normalize(eyeDir));
 
-   vec3 edge1 = v1 - v0;
-   vec3 edge2 = v2 - v0;
+   float NdotL = max(0.0, dot(N, L));
+   if ( NdotL > 0.0 )
+   {
+      vec3 lightDiffuse = texture1D(lights, (i*4.0)/lightsSize).rgb;
+      float att = 1.0; //future work
+      float NdotH = max(0.0, dot(N, H));
 
-   vec3 pvec, qvec;
-   float det, inv_det;
-   float u,v,t;
+      diffuse += fragMaterial.diffuse * lightDiffuse * NdotL;
 
-   //find vectors for two edges sharing v0
-  //begin calculating determinant – also used to calculate U param
-   pvec = cross(rDir.xyz, edge2);
-
-   //if determinant is near zero, ray lies in plane of triangle
-   det = dot(pvec, edge1);
-
-   if(det < 0.000001)
-      return lastHit ;
-
-   //calculate distance from v0 to ray origin
-   vec3 tvec = rPos.xyz;
-   tvec = tvec - v0;
-//   tvec = rPos.xyz – v0;
-
-   //calculate U param and test bounds
-   u = dot(tvec, pvec);
-   if(u < 0.0 || u > det)
-      return lastHit;
-
-   //prepare to test V param
-   qvec = cross(tvec, edge1);
-
-   //calculate V param and test bounds
-   v = dot(rDir.xyz, qvec);
-   if(v < 0.0 || u + v > det)
-      return lastHit;
-
-   //calculate t, scale params, ray intersect triangle
-   t = dot(edge2, qvec);
-   inv_det = 1.0 / det;
-   t*=inv_det;
-   //u*=inv_det;
-   //v*=inv_det;
-
-   if(t < lastHit.r)
-      return vec2(t, vertexIndex);
-   else
-      return lastHit;
+		specular += fragMaterial.specular * lightSpecular.rgb * NdotL * pow(NdotH, fragMaterial.shininess);
+	}
 }
 
+
+void calcPointLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular)
+{
+   vec3 L = normalize(lightDir);
+   vec3 H = normalize(L + normalize(eyeDir));
+
+   float NdotL = max(0.0, dot(N, L));
+   if ( NdotL > 0.0 )
+   {
+      vec3 lightDiffuse = texture1D(lights, (i*4.0)/lightsSize).rgb;
+      float att = 1.0; //future work
+      float NdotH = max(0.0, dot(N, H));
+
+      diffuse += fragMaterial.diffuse * lightDiffuse * NdotL;
+
+		specular += fragMaterial.specular * lightSpecular.rgb * NdotL * pow(NdotH, fragMaterial.shininess);
+	}
+}
+
+
+void calcSpotLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular)
+{
+   vec3 L = normalize(lightDir);
+   vec3 H = normalize(L + normalize(eyeDir));
+
+   float NdotL = max(0.0, dot(N, L));
+   if ( NdotL > 0.0 )
+   {
+      vec4 lightSpotInfo = texture1D(lights, (i*4.0 + 3.0)/lightsSize);
+      vec3 lightSpotDir = lightSpotInfo.rgb;
+      float lightSpotAngle = lightSpotInfo.a;
+
+      float spotEffect = dot(normalize(lightSpotDir),-L);
+      if (spotEffect > lightSpotAngle)
+      {
+         vec4 lightDiffuse = texture1D(lights, (i*4.0)/lightsSize);
+         float att = 1.0; //future work
+         float NdotH = max(0.0, dot(N, H));
+
+         spotEffect = pow(spotEffect, lightDiffuse.a);
+         diffuse += fragMaterial.diffuse * lightDiffuse.rgb * NdotL * spotEffect;
+
+         specular += fragMaterial.specular * lightSpecular.rgb * NdotL * pow(NdotH, fragMaterial.shininess)*spotEffect;
+      }
+	}
+}

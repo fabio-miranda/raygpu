@@ -15,7 +15,7 @@ uniform float vertexesSize;
 //enum {Traversing = 0, Intersecting , Shading, Done}
 
 const float infinity = 1.0/0.0;
-vec2 intersect(float vertexIndex, vec4 rPos, vec4 rDir, vec2 lastHit);
+vec3 intersect(float vertexIndex, vec4 rPos, vec4 rDir, vec3 lastHit, float triangleIndex);
 
 void main()
 {
@@ -30,11 +30,11 @@ void main()
 
       float triangleIndex = floor(texture1D(grid, gridIndex/gridSize).r + .5);
       float vertexIndex = floor(texture1D(triangleList, triangleIndex/triangleListSize).r + .5);
-      vec2 lastHit = vec2(infinity, vertexIndex);
+      vec3 lastHit = vec3(infinity, vertexIndex, triangleIndex);
 
       while(vertexIndex != -1.0)
       {
-         lastHit = intersect(vertexIndex, rPos, rDir, lastHit);
+         lastHit = intersect(vertexIndex, rPos, rDir, lastHit, triangleIndex);
          triangleIndex++;
          vertexIndex = floor(texture1D(triangleList, triangleIndex/triangleListSize).r + .5);
       }
@@ -42,8 +42,9 @@ void main()
       if(lastHit.r != infinity)
       {
          ///Set Stencil Bufer to Shading
-         vec4 vertxesIndex = vec4(lastHit.g*3., lastHit.g*3. + 1., lastHit.g*3. + 2., 1.);
-         gl_FragData[3] = vertxesIndex;
+         vec3 fragPos = rPos.xyz+rDir.xyz*lastHit.r;
+         vec4 triangleInfo = vec4(fragPos, lastHit.b);
+         gl_FragData[0] = triangleInfo;
          return;
       }
    }
@@ -54,7 +55,7 @@ void main()
 }
 
 
-vec2 intersect(float vertexIndex, vec4 rPos, vec4 rDir, vec2 lastHit)
+vec3 intersect(float vertexIndex, vec4 rPos, vec4 rDir, vec3 lastHit, float triangleIndex)
 {
    vec3 v0 = texture1D(vertexes, (vertexIndex*3.)/vertexesSize).xyz;
    vec3 v1 = texture1D(vertexes, (vertexIndex*3.+1.)/vertexesSize).xyz;
@@ -103,7 +104,7 @@ vec2 intersect(float vertexIndex, vec4 rPos, vec4 rDir, vec2 lastHit)
    //v*=inv_det;
 
    if(t < lastHit.r)
-      return vec2(t, vertexIndex);
+      return vec3(t, vertexIndex, triangleIndex);
    else
       return lastHit;
 }

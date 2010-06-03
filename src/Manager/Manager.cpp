@@ -23,6 +23,7 @@
 
 #include "RayTracerObjects\RTTriangle.h"
 #include "RayTracerObjects\RTScene.h"
+#include "Kernels/KernelMng.h"
 
 #include "application.h"
 
@@ -63,6 +64,7 @@ struct AppOptions
    Vector3 avgLuminanceG;
    FrameBufferObject *frameBuffer;
    //SDL_Surface* imgSDLSurface;
+   KernelMng * kMng;
 }app = {
    50,
    1.0,
@@ -87,6 +89,7 @@ struct AppOptions
    0,
    Vector3(0.299, 0.587, 0.114),
    Vector3(0.299, 0.587, 0.114),
+   NULL,
    NULL,
    //NULL,
 };
@@ -394,7 +397,6 @@ void Manager :: render()
    const float cFar = 2000.0;
    const float cAspect = appWidth/appHeight;
 
-   const Vector3 pos = Vector3(0,0,0);
    const Vector3 at = Vector3(0,0,0);
 
    glMatrixMode(GL_PROJECTION);
@@ -404,25 +406,26 @@ void Manager :: render()
 
    glLoadIdentity( );
 
-
-   float x = app.r*sin(DEG_TO_RAD(app.beta))*cos(DEG_TO_RAD(app.alpha));
-   float y = app.r*sin(DEG_TO_RAD(app.alpha));
-   float z = app.r*cos(DEG_TO_RAD(app.beta))*cos(DEG_TO_RAD(app.alpha));
+    Vector3 pos;
+   pos.x = app.r*sin(DEG_TO_RAD(app.beta))*cos(DEG_TO_RAD(app.alpha));
+   pos.y = app.r*sin(DEG_TO_RAD(app.alpha));
+   pos.z = app.r*cos(DEG_TO_RAD(app.beta))*cos(DEG_TO_RAD(app.alpha));
 
 
    float nextAlpha =  min(app.alpha + app.angInc,360.0f);
 
-   float ux = sin(DEG_TO_RAD(app.beta))*cos(DEG_TO_RAD(nextAlpha)) - x;
-   float uy = sin(DEG_TO_RAD(nextAlpha)) - y;
-   float uz = cos(DEG_TO_RAD(app.beta))*cos(DEG_TO_RAD(nextAlpha)) - z;
+   float ux = sin(DEG_TO_RAD(app.beta))*cos(DEG_TO_RAD(nextAlpha)) - pos.x;
+   float uy = sin(DEG_TO_RAD(nextAlpha)) - pos.y;
+   float uz = cos(DEG_TO_RAD(app.beta))*cos(DEG_TO_RAD(nextAlpha)) - pos.z;
 
-   gluLookAt(  x, y, z,
+   gluLookAt(  pos.x, pos.y, pos.z,
                at.x, at.y, at.z,
                ux, uy, uz);
 
-   scene->configure();
-   scene->render();
-
+   //scene->configure();
+   //scene->render();
+  
+   app.kMng->step(pos, at-pos);
 
 
 /*
@@ -450,7 +453,8 @@ void Manager :: render()
 
 void Manager :: createScenes()
 {
-   app.simpleContrastShader = new Shader("IntersectorKernel","./src/Shaders/IntersectorKernel");
+   //app.simpleContrastShader = new Shader("IntersectorKernel","./src/Shaders/IntersectorKernel");
+   //app.simpleContrastShader = new Shader("ShadeKernel","./src/Shaders/ShadeKernel");
 //   app.textureLoc = app.simpleContrastShader->getUniformLoc("text");
 //   app.imgAlphaLoc = app.simpleContrastShader->getUniformLoc("alpha");
 //   app.imgAvgLuminanceLoc = app.simpleContrastShader->getUniformLoc("avgLuminance");
@@ -470,10 +474,13 @@ void Manager :: createScenes()
 
    string sceneFileName = "./resources/Scenes/cavalo.rt4";
    scene = new RTScene(sceneFileName);
+   scene->configure();
 
    int maxTextCoord;
    glGetIntegerv(GL_MAX_TEXTURE_COORDS, &maxTextCoord);
    cout << maxTextCoord << " Camadas de Textura Disponiveis"<<endl;
+
+   app.kMng = new KernelMng(appWidth, appHeight, scene);
 }
 
 
