@@ -2,10 +2,11 @@
             Nome:Eduardo Ceretta Dalla Favera
 \**********************************************************/
 
-#pragma once
+#ifndef FrameBufferObject_H
+#define FrameBufferObject_H
 
-
-#include <GL/glut.h>
+#include <GL/glew.h>
+#include <GL/freeglut.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -59,6 +60,7 @@ class FrameBufferObject
 
    vector<RenderBufferObject> mRenderBuffers;
 public:
+	FrameBufferObject();
    FrameBufferObject(int width, int height);
    ~FrameBufferObject();
 
@@ -74,5 +76,7 @@ private:
    GLuint createRenderFrameObjectToRender(int width, int height);
    bool checkFramebufferStatus();
 };
+
+#endif
 
 
