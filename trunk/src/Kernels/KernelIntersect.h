@@ -8,12 +8,18 @@
 class KernelIntersect : public KernelBase {
 
 public:
-	KernelIntersect();
+  KernelIntersect();
+
+  KernelIntersect(int width, int height, GLuint texIdRayPos, GLuint texIdRayDir, GLuint texIdGrid,
+    GLuint texIdTriangleList, GLuint texIdvertexes, GLfloat gridTexSize, 
+    GLfloat triangleListTexSize, GLfloat vertexesTexSize);
 	~KernelIntersect();
 
-
+   
+  GLuint getTexIdTriangleHitInfo() const;
+  
 private:
-
+  GLuint m_texIdTriangleHitInfo;
 };
 
 

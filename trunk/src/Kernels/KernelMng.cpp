@@ -1,18 +1,28 @@
 #include "KernelMng.h"
 
 
-KernelMng::KernelMng(int width, int height, UniformGrid* uniformGrid){
-	m_kernelGenerateRay = KernelGenerateRay(width, height, uniformGrid->getBBMin(), uniformGrid->getBBMax());
+KernelMng::KernelMng(int width, int height,RTScene* scene){
+  UniformGrid* uniformGrid = scene->GetUniformGrid();
 
-	m_kernelTraverse = KernelTraverse(width, height, uniformGrid->getVoxelSize(),
-										uniformGrid->getGridTextureId(),
-										m_kernelGenerateRay.getTexIdRayPos(),
-										m_kernelGenerateRay.getTexIdRayDir());
+	//m_kernelGenerateRay = KernelGenerateRay(width, height, uniformGrid->getBBMin(), uniformGrid->getBBMax());
 
-	m_kernelIntersect = KernelIntersect();
-	m_kernelShade = KernelShade();
-	m_currentState = GENERATERAY;
-	m_uniformGrid = uniformGrid;
+	//m_kernelTraverse = KernelTraverse(width, height, uniformGrid->getVoxelSize(),
+	//									scene->getGridTexId(),
+	//									m_kernelGenerateRay.getTexIdRayPos(),
+	//									m_kernelGenerateRay.getTexIdRayDir());
+
+  m_kernelIntersect = KernelIntersect(width, height, m_kernelGenerateRay.getTexIdRayPos(),
+    m_kernelGenerateRay.getTexIdRayDir(), scene->getGridTexId(), scene->getTriangleListTexId(),
+    scene->getVertexesTexId(), scene->getGridTexSize(), scene->getTriangleListTexSize(),
+    scene->getVertexesTexSize());
+
+	m_kernelShade = KernelShade(width, height, m_kernelIntersect.getTexIdTriangleHitInfo(), 
+                                scene->getVertexesTexId(), scene->getNormalsTexId(), scene->getDiffuseTexId(),
+                                scene->getSpecularTexId(), scene->getLightsTexId(), scene->getNormalsTexSize(),
+                                scene->getVertexesTexSize(), scene->getDiffuseTexSize(), scene->getSpecularTexSize(),
+                                scene->getLightsTexSize());
+	//m_currentState = GENERATERAY;
+	//m_uniformGrid = uniformGrid;
 
 }
 
@@ -51,7 +61,7 @@ void KernelMng::render(Vector3 eyePos, Vector3 eyeDir){
 			m_kernelIntersect.step();
 			break;
 		default:
-			m_kernelShade.step();
+			m_kernelShade.step(eyePos);
 			break;
 	}
 

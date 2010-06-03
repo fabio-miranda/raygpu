@@ -14,6 +14,7 @@ int RTLight :: lightNum = 0;
 //////////////////
 RTLight :: RTLight()
 :mCalculed(false)
+,mLightStruct(NULL)
 {
    myRTLightNum = lightNum++;
 
@@ -21,7 +22,11 @@ RTLight :: RTLight()
       myRTLightNum = myRTLightNum%Max_Lights;
 }
 
-
+RTLight :: ~RTLight()
+{
+  if(mLightStruct)
+    delete mLightStruct;
+}
 
 int RTLight :: getMyRTLightNumber() const
 {
@@ -47,6 +52,9 @@ void RTLight :: configure()
       mPLight.setDiffuseColor(mDiffuse);
       mPLight.setSpecularColor(mSpecular);
       mPLight.setPosition(mPos);
+
+      
+
       mCalculed = true;
    }
    mPLight.configure();
@@ -56,4 +64,31 @@ void RTLight :: render()
 {
    mPLight.render();
 }
+
+struct lightStruct * RTLight::getLightStruct()
+{
+  if(mLightStruct)
+    return mLightStruct;
+
+  mLightStruct = new lightStruct;
+  mLightStruct->diffuse[0] = mDiffuse.r;
+  mLightStruct->diffuse[1] = mDiffuse.g;
+  mLightStruct->diffuse[2] = mDiffuse.b;
+  mLightStruct->spotExponent = 0.0;
+  mLightStruct->specular[0] = mSpecular.r;
+  mLightStruct->specular[1] = mSpecular.g;
+  mLightStruct->specular[2] = mSpecular.b;
+  mLightStruct->enabled = 1.0;
+  mLightStruct->pos[0] = mPos.x;
+  mLightStruct->pos[1] = mPos.y;
+  mLightStruct->pos[2] = mPos.z;
+  mLightStruct->type = 1.0;
+  mLightStruct->spotDir[0] = 1;
+  mLightStruct->spotDir[1] = 0;
+  mLightStruct->spotDir[2] = 1;
+  mLightStruct->spotAngle = 3.1415;
+  return mLightStruct;
+}
+
+
 

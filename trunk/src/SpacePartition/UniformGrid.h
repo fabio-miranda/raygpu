@@ -20,8 +20,9 @@ public:
 
 
   GLfloat* getGridArray();
-  GLuint* getTriangleListArray();
+  GLfloat* getTriangleListArray();
   GLfloat* getTriangleVertexArray();
+  GLfloat* getTriangleNormalsArray();
   GLfloat* getTriangleAmbientArray();
   GLfloat* getTriangleDiffuseArray();
   GLfloat* getTriangleSpecularArray();
@@ -31,6 +32,7 @@ public:
   int getGridArraySize();
   int getTriangleListArraySize();
   int getTriangleVertexArraySize();
+  int getTriangleNormalsArraySize();
   int getTriangleAmbientArraySize();
   int getTriangleDiffuseArraySize();
   int getTriangleSpecularArraySize();
@@ -53,8 +55,9 @@ private:
 	Vector3 m_numVoxels;
 	Vector3 m_voxelSize;
 	GLfloat* m_gridArray;
-	GLuint* m_triangleListArray;
+	GLfloat* m_triangleListArray;
 	GLfloat* m_triangleVertexArray;
+  GLfloat* m_triangleNormalsArray;
 	GLfloat* m_triangleAmbientArray;
 	GLfloat* m_triangleDiffuseArray;
 	GLfloat* m_triangleSpecularArray;
@@ -62,7 +65,8 @@ private:
 	int m_gridArraySize;
 	int m_triangleVertexArraySize;
 	int m_triangleListArraySize;
-	int m_triangleAmbientArraySize;
+	int m_triangleNormalsArraySize;
+  int m_triangleAmbientArraySize;
 	int m_triangleDiffuseArraySize;
 	int m_triangleSpecularArraySize;
 };

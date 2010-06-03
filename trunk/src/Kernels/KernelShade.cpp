@@ -1,14 +1,46 @@
 #include "KernelShade.h"
 
-KernelShade::KernelShade(){
+KernelShade::KernelShade()
+{
 
+}
 
+KernelShade::KernelShade(int width, int height, GLuint texIdTriangleHitInfo, GLuint texIdvertexes, GLuint texIdNormals, 
+                          GLuint texIdDiffuseTex, GLuint texIdSpecularTex, GLuint texIdLights, 
+                          GLfloat normalsTexSize, GLfloat vertexesTexSize, GLfloat diffuseTexSize, GLfloat specularTexSize,
+                          GLfloat lightsTexSize)
+: KernelBase("ShadeKernel.frag", "ShadeKernel.vert", width, height){
+      //Output
+      m_texIdColor = addOutput(0);
+
+      //Input
+      m_shader.setActive(true);
+        addInputTexture("triangleInfo", texIdTriangleHitInfo);
+        addInputTexture("vertexes", texIdvertexes);
+        addInputTexture("normals", texIdNormals);
+        addInputTexture("diffuseTex", texIdDiffuseTex);
+        addInputTexture("especularTex", texIdSpecularTex);
+        addInputTexture("lights", texIdLights);
+
+        addInputFloat("normalsSize", normalsTexSize);
+        addInputFloat("vertexesSize", vertexesTexSize);
+        addInputFloat("diffuseSize", diffuseTexSize);
+        addInputFloat("especularSize", specularTexSize);
+        addInputFloat("lightsSize", lightsTexSize);
+        m_locEyePos = addInputVec3("eyePos", Vector3(0, 0, 0));
+      m_shader.setActive(false);
 }
 
 KernelShade::~KernelShade(){
 
 }
 
-void KernelShade::step(){
+void KernelShade::step(Vector3 eyePos){
 
+  m_fbo.setActive(true);
+  m_shader.setActive(true);
+    glUniform3f(m_locEyePos, eyePos.x, eyePos.y, eyePos.z);
+    renderQuad();
+  m_shader.setActive(false);
+  m_fbo.setActive(false);
 }

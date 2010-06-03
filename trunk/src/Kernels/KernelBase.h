@@ -20,6 +20,7 @@ protected:
 	void activateTextures();
 	GLuint addInputTexture(char* name, GLuint id);
 	GLuint addInputVec3(char* name, Vector3 value);
+  GLuint addInputFloat(char* name, GLfloat value);
 	GLuint addOutput(int index, GLuint textureId = -1);
 
 	FrameBufferObject m_fbo;

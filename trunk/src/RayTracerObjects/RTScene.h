@@ -41,6 +41,11 @@ class RTScene
       GLuint mAmbientTexId;
       GLuint mDiffuseTexId;
       GLuint mSpecularTexId;
+      GLuint mNormalsTexId;
+      
+      
+
+      GLuint mLightsTexId;;
 
    public:
       RTScene(string rt4FileName);
@@ -49,12 +54,26 @@ class RTScene
       void configure();
       void render();
 
+      UniformGrid* GetUniformGrid() const;
+
+
       GLuint getGridTexId();
       GLuint getTriangleListTexId();
       GLuint getVertexesTexId();
       GLuint getAmbientTexId();
       GLuint getDiffuseTexId();
       GLuint getSpecularTexId();
+      GLuint getNormalsTexId();
+      GLuint getLightsTexId();
+
+      GLfloat getGridTexSize();
+      GLfloat getTriangleListTexSize();
+      GLfloat getVertexesTexSize();
+      GLfloat getAmbientTexSize();
+      GLfloat getDiffuseTexSize();
+      GLfloat getSpecularTexSize();
+      GLfloat getNormalsTexSize();
+      GLfloat getLightsTexSize();
 
    protected:
       void readFromStr(char buffer[]);

@@ -296,6 +296,38 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Kernels"
+				>
+				<File
+					RelativePath="..\..\src\Kernels\KernelBase.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\Kernels\KernelGenerateRay.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\Kernels\KernelIntersect.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\Kernels\KernelMng.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\Kernels\KernelShade.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\Kernels\KernelTraverse.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\Kernels\ShaderGenerateRay.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -427,6 +459,42 @@
 				</File>
 				<File
 					RelativePath="..\..\src\RayTracerObjects\RTTriangle.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Kernels"
+				>
+				<File
+					RelativePath="..\..\src\Kernels\KernelBase.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\Kernels\KernelGenerateRay.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\Kernels\KernelIntersect.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\Kernels\KernelMng.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\Kernels\KernelMngStates.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\Kernels\KernelShade.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\Kernels\KernelTraverse.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\Kernels\ShaderGenerateRay.h"
 					>
 				</File>
 			</Filter>

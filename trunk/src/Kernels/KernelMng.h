@@ -9,11 +9,12 @@
 #include "Kernels/KernelMngStates.h"
 #include "SpacePartition/UniformGrid.h"
 #include "GraphBasis/FrameBufferObject.h"
+#include "RayTracerObjects/RTScene.h"
 
 class KernelMng {
 
 public:
-	KernelMng(int width, int height, UniformGrid* uniformGrid);
+	KernelMng(int width, int height, RTScene* scene);
 	~KernelMng();
 
 	void step(Vector3 eyePos, Vector3 eyeDir);
