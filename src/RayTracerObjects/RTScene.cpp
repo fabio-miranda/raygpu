@@ -138,7 +138,7 @@ void RTScene :: configure()
     if(mGrid)
       delete mGrid;
     mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, Vector3(10, 10, 10));
-    calcTextures();
+    //calcTextures();
     mCalculed = true;
   }
   
