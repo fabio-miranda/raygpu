@@ -138,7 +138,7 @@ void RTScene :: configure()
     if(mGrid)
       delete mGrid;
     mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, Vector3(10, 10, 10));
-    //calcTextures();
+    calcTextures();
     mCalculed = true;
   }
   
@@ -188,10 +188,12 @@ unsigned int RTScene::getSceneNumTriangles()
 void RTScene::calcTextures()
 {
   GLuint id[7];
-  GLfloat* data[] = { mGrid->getGridArray(),
-                       mGrid->getTriangleVertexArray(), mGrid->getTriangleAmbientArray(),
-                       mGrid->getTriangleDiffuseArray(), mGrid->getTriangleSpecularArray(),
-                        mGrid->getTriangleListArray(), mGrid->getTriangleNormalsArray()};
+  
+
+  GLfloat* data[] = { mGrid->getGridArray()/*A*/,
+                       mGrid->getTriangleVertexArray()/*RGB*/, mGrid->getTriangleAmbientArray()/*RGB*/,
+                       mGrid->getTriangleDiffuseArray()/*RGB*/, mGrid->getTriangleSpecularArray()/*RGBA*/,
+                        mGrid->getTriangleListArray()/*A*/, mGrid->getTriangleNormalsArray()/*RGB*/};
   
   unsigned int size[] = {  mGrid->getGridArraySize(),
                             mGrid->getTriangleVertexArraySize(), mGrid->getTriangleAmbientArraySize(),
