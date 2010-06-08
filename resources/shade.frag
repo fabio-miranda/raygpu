@@ -1,3 +1,4 @@
+uniform sampler2D rayDir;
 uniform sampler2D triangleInfo;
 
 uniform sampler1D vertexes;
@@ -19,9 +20,14 @@ void calcDirLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout
 void calcPointLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular);
 void calcSpotLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular);
 
+#define INACTIVE 0
+#define ACTIVE_TRAVERSE 1
+#define ACTIVE_INTERSECT 2
+#define ACTIVE_SHADING 3
+#define DONE 4
+#define OVERFLOW 5
 
-//enum {Traversing = 0, Intersecting , Shading, Done}
-///lightStruct
+//lightStruct
 //{
 //0|   difuse   //alpha == spotExponent
 //1|   specular //alpha == enable or disable
@@ -48,57 +54,64 @@ struct material
 
 void main()
 {
-   ///If stencil ray state == shading
-   ///else
-   /// discard;
+   vec4 rDir = texture2D(rayDir, gl_TexCoord[0].st);
+   int triangleFlag = int(floor(rDir.w+.5));
 
-
-   vec4 triangleInfos = texture2D(triangleInfo, gl_TexCoord[0].st);
-   fragPos = triangleInfos.rgb;
-   float triangleIndex = floor(triangleInfos.a + .5);
-
-   vec3 normal = texture1D(normals, triangleIndex/normalsSize).xyz;
-   ambient = defaultAmbientMaterial;
-   diffuse = vec3(0, 0, 0);
-
-   vec4 matInfo = texture1D(diffuseTex, triangleIndex/diffuseSize);
-   specular = vec3(0, 0, 0);
-   eyeDir = eyePos - fragPos;
-
-   fragMaterial.specular = texture1D(diffuseTex, triangleIndex/diffuseSize).rgb;
-   fragMaterial.diffuse = matInfo.rgb;
-   fragMaterial.shininess = matInfo.a;
-
-   float numLights = lightsSize/4.0;
-   for(float i = 0.0; i<numLights; i += 1.0)
+   if(triangleFlag == ACTIVE_SHADING)
    {
-      lightSpecular = texture1D(lights, (i*4.0 + 1.0)/lightsSize);
-      if(floor(lightSpecular.a + .5) != 0.0) //Is Light Enabled?
+      vec4 triangleInfos = texture2D(triangleInfo, gl_TexCoord[0].st);
+      fragPos = triangleInfos.rgb;
+      float triangleIndex = floor(triangleInfos.a + .5);
+
+      vec3 normal = texture1D(normals, triangleIndex/normalsSize).xyz;
+      ambient = defaultAmbientMaterial;
+      diffuse = vec3(0, 0, 0);
+
+      vec4 matInfo = texture1D(diffuseTex, triangleIndex/diffuseSize);
+      specular = vec3(0, 0, 0);
+      eyeDir = eyePos - fragPos;
+
+      fragMaterial.specular = texture1D(diffuseTex, triangleIndex/diffuseSize).rgb;
+      fragMaterial.diffuse = matInfo.rgb;
+      fragMaterial.shininess = matInfo.a;
+
+      float numLights = lightsSize/4.0;
+      for(float i = 0.0; i<numLights; i += 1.0)
       {
-         lightPosition = texture1D(lights, (i*4.0 + 2.0)/lightsSize);
-         float lightType = floor(lightPosition.w+.5);
-         if(lightType == 0.0) //Directional Light
+         lightSpecular = texture1D(lights, (i*4.0 + 1.0)/lightsSize);
+         if(floor(lightSpecular.a + .5) != 0.0) //Is Light Enabled?
          {
-            lightDir = - lightPosition.xyz;
-            calcDirLight(i, normal, ambient, diffuse, specular);
-         }
-         else if(lightType == 2.0) //Spot Light
-         {
-            lightDir = lightPosition.xyz - fragPos;
-            calcSpotLight(i, normal, ambient, diffuse, specular);
-         }
-         else //Point Light
-         {
-            lightDir = lightPosition.xyz - fragPos;
-            calcPointLight(i, normal, ambient, diffuse, specular);
+            lightPosition = texture1D(lights, (i*4.0 + 2.0)/lightsSize);
+            float lightType = floor(lightPosition.w+.5);
+            if(lightType == 0.0) //Directional Light
+            {
+               lightDir = - lightPosition.xyz;
+               calcDirLight(i, normal, ambient, diffuse, specular);
+            }
+            else if(lightType == 2.0) //Spot Light
+            {
+               lightDir = lightPosition.xyz - fragPos;
+               calcSpotLight(i, normal, ambient, diffuse, specular);
+            }
+            else //Point Light
+            {
+               lightDir = lightPosition.xyz - fragPos;
+               calcPointLight(i, normal, ambient, diffuse, specular);
+            }
          }
       }
+      ///Set Ray State to Done
+      rDir.w = float(DONE);
+      gl_FragData[0] = rDir;
 
+      vec3 intensity = ambient + diffuse;
+      gl_FragData[1] = vec4(intensity + specular, 1.0);
+   }else
+   {
+      ///Discard Pixel
+      gl_FragData[0] = rDir;
+      gl_FragData[1] = vec4(-1, -1, -1, -1);
    }
-
-   vec3 intensity = ambient + diffuse;
-   gl_FragData[0] = vec4(intensity + specular, 1.0);
-   ///Set Stencil Bufer to Done
 }
 
 void calcDirLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular)
