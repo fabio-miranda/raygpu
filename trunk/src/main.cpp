@@ -1,6 +1,8 @@
 #include "main.h"
 
 #define ANGLE_STEP 1.0
+#define APP_WIDTH 1280
+#define APP_HEIGHT 720
 
 float angleX;
 float angleY;
@@ -43,8 +45,8 @@ void render(){
     glRotatef(angleY, 0.0, 1.0, 0.0); //rotate on the y axis
     glRotatef(angleZ, 0.0, 0.0, 1.0); //rotate on the z axis
 
-	//renderAxis();
-	//rtScene->render();
+	renderAxis();
+	rtScene->render();
 	kernelMng->step(GENERATERAY, eyePos, eyeDir, eyeUp, eyeDir ^ eyeUp, nearPlane);
 	kernelMng->renderKernelOutput(GENERATERAY, 0);
 
@@ -83,7 +85,7 @@ void init(int argc, char *argv[]){
 	glutInit(&argc, argv);
 
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-	glutInitWindowSize(1280,720);
+	glutInitWindowSize(APP_WIDTH,APP_HEIGHT);
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow("Ray tracing");
 	
@@ -108,20 +110,17 @@ void init(int argc, char *argv[]){
 	rtScene = new RTScene("./resources/scenes/cavalo.rt4");
 	rtScene->configure();
 
-	kernelMng = new KernelMng(1280, 720, rtScene);
+	kernelMng = new KernelMng(APP_WIDTH, APP_HEIGHT, rtScene);
 
 }
 
 
 void reshape(int w, int h){
-	
-
 	glViewport (0, 0, (GLsizei)w, (GLsizei)h);
     glMatrixMode (GL_PROJECTION);
     glLoadIdentity ();
     gluPerspective (60, (GLfloat)w / (GLfloat)h, nearPlane, 1000000.0);
     glMatrixMode (GL_MODELVIEW);
-
 }
 
 void keyboardSpecial(int key, int x, int y){
@@ -130,12 +129,9 @@ void keyboardSpecial(int key, int x, int y){
 	else if( key == GLUT_KEY_RIGHT ) angleY-=ANGLE_STEP;
 	else if( key == GLUT_KEY_UP ) angleX+=ANGLE_STEP;
 	else if( key == GLUT_KEY_DOWN ) angleX-=ANGLE_STEP;
-
 }
 
 void keyboard(unsigned char key, int x, int y){
-	
-
 }
 
 void mouseButtons(int button, int state, int x, int y){

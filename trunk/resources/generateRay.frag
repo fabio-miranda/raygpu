@@ -25,7 +25,7 @@ vec3 getRay(vec2 screenPos){
 }
 
 bool insideGrid(vec3 position){
-	
+
 	if(position.x >= bbMin.x && position.y >= bbMin.y && position.z >= bbMin.z
 		&& position.x <= bbMax.x && position.y <= bbMax.y && position.z <= bbMax.z)
 		return true;
@@ -72,7 +72,7 @@ bool hitGrid(vec3 position, vec3 direction, out vec3 intersectionMin, out vec3 i
 	return true;
 }
 
-
+/**/
 void main(){
 
 	vec4 rayDir = vec4(getRay(gl_TexCoord[0].xy), 1.0);
@@ -98,17 +98,18 @@ void main(){
 			rayDir.a = INACTIVE;
 		}
 	}
-	
-	/*
+
+/*
 	gl_FragData[0] = vec4(rayPos, -1.0);
 	gl_FragData[1] = rayDir;
 	gl_FragData[2] = vec4(intersectionMin, 0.0);
 	gl_FragData[3] = vec4(intersectionMax, 0.0);
-	*/
-	
-	gl_FragData[0] = vec4(1, 0, 0, 0);
-	gl_FragData[1] = vec4(0, 1, 0, 0);
+*/
+
+
+	gl_FragData[0] = vec4(1.1, 5.5, .6, 1.0);
+	gl_FragData[1] = vec4(2.1, 4.5, 9.6, 1.0);
 	gl_FragData[2] = vec4(0, 0, 1, 0);
 	gl_FragData[3] = vec4(0, 1, 0, 1);
-	
+
 }

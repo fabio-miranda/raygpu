@@ -5,13 +5,14 @@ KernelShade::KernelShade()
 
 }
 
-KernelShade::KernelShade(int width, int height, GLuint texIdTriangleHitInfo, GLuint texIdvertexes, GLuint texIdNormals, 
+KernelShade::KernelShade(int width, int height, GLuint texIdRayDir, GLuint texIdTriangleHitInfo, GLuint texIdvertexes, GLuint texIdNormals, 
                           GLuint texIdDiffuseTex, GLuint texIdSpecularTex, GLuint texIdLights, 
                           GLfloat normalsTexSize, GLfloat vertexesTexSize, GLfloat diffuseTexSize, GLfloat specularTexSize,
                           GLfloat lightsTexSize)
 : KernelBase("./resources/vertice.vert", "./resources/shade.frag", width, height){
       //Output
-      m_texIdColor = addOutput(0);
+      addOutput(0, texIdRayDir);    
+      m_texIdColor = addOutput(1);
 
       //Input
       m_shader->setActive(true);

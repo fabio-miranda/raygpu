@@ -12,7 +12,8 @@ KernelIntersect::KernelIntersect(int width, int height, GLuint texIdRayPos, GLui
 
 
 	//Output
-	m_texIdTriangleHitInfo = addOutput(0);
+	addOutput(0, texIdRayDir);
+	m_texIdTriangleHitInfo = addOutput(1);
 
 	//Input
 	m_shader->setActive(true);

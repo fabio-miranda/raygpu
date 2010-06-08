@@ -203,10 +203,17 @@ void FrameBufferObject::setActive(bool active)
    mActive = active;
    if(mActive)
    {
+      glPushAttrib(GL_ENABLE_BIT);
+      glDisable(GL_ALPHA_TEST);
+      glDisable(GL_BLEND);
       glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, mfboId);
-	  glDrawBuffers(m_numBuffers, m_drawBuffers);
+	    glDrawBuffers(m_numBuffers, m_drawBuffers);
    }
-   else glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+   else
+   {
+     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+     glPopAttrib();
+   }
 }
 
 bool FrameBufferObject :: isActive()

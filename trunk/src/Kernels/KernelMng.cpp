@@ -20,11 +20,12 @@ KernelMng::KernelMng(int width, int height,RTScene* scene){
 											scene->getVertexesTexId(), scene->getGridTexSize(), scene->getTriangleListTexSize(),
 											scene->getVertexesTexSize());
 
-	m_kernelShade = new KernelShade(width, height, m_kernelIntersect->getTexIdTriangleHitInfo(), 
+	m_kernelShade = new KernelShade(width, height, m_kernelGenerateRay->getTexIdRayDir(), m_kernelIntersect->getTexIdTriangleHitInfo(), 
 									scene->getVertexesTexId(), scene->getNormalsTexId(), scene->getDiffuseTexId(),
 									scene->getSpecularTexId(), scene->getLightsTexId(), scene->getNormalsTexSize(),
 									scene->getVertexesTexSize(), scene->getDiffuseTexSize(), scene->getSpecularTexSize(),
 									scene->getLightsTexSize());
+	
 	m_currentState = GENERATERAY;
 	//m_uniformGrid = uniformGrid;
 
