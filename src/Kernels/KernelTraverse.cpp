@@ -12,7 +12,7 @@ KernelTraverse::KernelTraverse(int width, int height, Vector3 voxelSize, GLuint 
 	//Output
 	addOutput(0, texIdRayPos);
 	addOutput(1, texIdRayDir);
-	addOutput(2, texIdGrid);
+	//addOutput(2, texIdGrid);
 
 	//Input
 	m_shader->setActive(true);
@@ -23,6 +23,7 @@ KernelTraverse::KernelTraverse(int width, int height, Vector3 voxelSize, GLuint 
 		addInputVec3("gridSize", gridSize);
 		addInputFloat("gridArraySize", gridArraySize);
 	m_shader->setActive(false);
+
 
 }
 

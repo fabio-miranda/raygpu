@@ -46,7 +46,7 @@ void render(){
     glRotatef(angleZ, 0.0, 0.0, 1.0); //rotate on the z axis
 
 	renderAxis();
-	rtScene->render();
+	//rtScene->render();
 	kernelMng->step(GENERATERAY, eyePos, eyeDir, eyeUp, eyeDir ^ eyeUp, nearPlane);
 	kernelMng->renderKernelOutput(GENERATERAY, 0);
 
@@ -104,6 +104,8 @@ void init(int argc, char *argv[]){
 	glEnable(GL_ALPHA_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
+	glEnable(GL_TEXTURE);
+	glEnable(GL_TEXTURE_2D);
 
 
 

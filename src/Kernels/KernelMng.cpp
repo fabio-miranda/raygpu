@@ -8,6 +8,7 @@ KernelMng::KernelMng(int width, int height,RTScene* scene){
 
 	m_kernelGenerateRay = new KernelGenerateRay(width, height, uniformGrid->getBBMin(), uniformGrid->getBBMax());
 
+
 	m_kernelTraverse = new KernelTraverse(width, height, uniformGrid->getVoxelSize(),
 											scene->getGridTexId(),
 											scene->getGridTexSize(),
@@ -15,10 +16,12 @@ KernelMng::KernelMng(int width, int height,RTScene* scene){
 											m_kernelGenerateRay->getTexIdRayPos(),
 											m_kernelGenerateRay->getTexIdRayDir());
 
+
 	m_kernelIntersect = new KernelIntersect(width, height, m_kernelGenerateRay->getTexIdRayPos(),
 											m_kernelGenerateRay->getTexIdRayDir(), scene->getGridTexId(), scene->getTriangleListTexId(),
 											scene->getVertexesTexId(), scene->getGridTexSize(), scene->getTriangleListTexSize(),
 											scene->getVertexesTexSize());
+
 
 	m_kernelShade = new KernelShade(width, height, m_kernelGenerateRay->getTexIdRayDir(), m_kernelIntersect->getTexIdTriangleHitInfo(), 
 									scene->getVertexesTexId(), scene->getNormalsTexId(), scene->getDiffuseTexId(),
@@ -28,6 +31,7 @@ KernelMng::KernelMng(int width, int height,RTScene* scene){
 	
 	m_currentState = GENERATERAY;
 	//m_uniformGrid = uniformGrid;
+
 
 }
 
@@ -44,6 +48,10 @@ GLuint KernelMng::getTextureColorId(){
 void KernelMng::update(KernelMngState stateToStop){
 	
 	KernelMngState newState;
+
+	if(m_currentState == stateToStop)
+		return;
+
 	if(m_currentState == GENERATERAY){
 			newState = TRAVERSE;
 	}
@@ -55,9 +63,6 @@ void KernelMng::update(KernelMngState stateToStop){
 		else
 			newState = SHADE;
 	}
-
-	if(m_currentState != stateToStop)
-		m_currentState = newState;
 }
 
 void KernelMng::render(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane){
