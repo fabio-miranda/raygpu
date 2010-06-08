@@ -45,6 +45,36 @@ void KernelGenerateRay::step(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vect
 	m_shader->setActive(false);
 	m_fbo->setActive(false);
 
+
+	float value0[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+	m_fbo->setActive(true);
+	glReadBuffer(m_fbo->m_drawBuffers[0]);
+	glReadPixels(0, 0, 1, 1, GL_RGBA, GL_FLOAT, &value0);
+	std::cout <<  "Buffer 0: " << value0[0] << ", " << value0[1] << ", " << value0[2] << ", " << value0[3] << "\n";
+	m_fbo->setActive(false);
+
+	float value1[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+	m_fbo->setActive(true);
+	glReadBuffer(m_fbo->m_drawBuffers[1]);
+	glReadPixels(0, 0, 1, 1, GL_RGBA, GL_FLOAT, &value1);
+	std::cout <<  "Buffer 1: " << value1[0] << ", " << value1[1] << ", " << value1[2] << ", " << value1[3] << "\n";
+	m_fbo->setActive(false);
+
+	float value2[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+	m_fbo->setActive(true);
+	glReadBuffer(m_fbo->m_drawBuffers[2]);
+	glReadPixels(0, 0, 1, 1, GL_RGBA, GL_FLOAT, &value2);
+	std::cout << "Buffer 2: " << value2[0] << ", " << value2[1] << ", " << value2[2] << ", " << value2[3] << "\n";
+	m_fbo->setActive(false);
+
+	float value3[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+	m_fbo->setActive(true);
+	glReadBuffer(m_fbo->m_drawBuffers[3]);
+	glReadPixels(0, 0, 1, 1, GL_RGBA, GL_FLOAT, &value3);
+	std::cout <<  "Buffer 3: " << value3[0] << ", " << value3[1] << ", " << value3[2] << ", " << value3[3] << "\n";
+	m_fbo->setActive(false);
+
+
 }
 
 GLuint KernelGenerateRay::getTexIdRayPos(){return m_texIdRayPos;}

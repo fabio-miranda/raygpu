@@ -44,3 +44,7 @@ void KernelShade::step(Vector3 eyePos){
   m_shader->setActive(false);
   m_fbo->setActive(false);
 }
+
+GLuint KernelShade::getTextureColorId(){
+	return m_texIdColor;
+}

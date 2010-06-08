@@ -42,9 +42,14 @@ GLuint KernelBase::addInputFloat( char* name, GLfloat value )
 }
 
 GLuint KernelBase::addOutput(int index, GLuint textureId){
+	GLuint id = m_fbo->attachToColorBuffer(bufferType::Texture, index, textureId);
+	m_outputTextures.push_back(id);
+	return id;
 
-	return m_fbo->attachToColorBuffer(bufferType::Texture, index, textureId);
+}
 
+GLuint KernelBase::getOutputTexture(int index){
+	return m_outputTextures.at(index);
 }
 
 void KernelBase::activateTextures(){

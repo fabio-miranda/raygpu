@@ -2,9 +2,10 @@ uniform sampler2D samplerRayPos;
 uniform sampler2D samplerRayDir;
 uniform sampler2D samplerGridIntersectionMax;
 uniform sampler2D samplerGridIntersectionMin;
-uniform sampler2D samplerGridVec;
+uniform sampler1D samplerGrid;
 
 uniform vec3 gridSize;
+uniform float gridArraySize;
 
 //Ray states (stored on rayDir.a)
 #define INACTIVE 0.0
@@ -19,7 +20,7 @@ void main(){
 
 	vec4 rayDir = texture2D(samplerRayDir, gl_TexCoord[0].st);
 	vec4 rayPos = texture2D(samplerRayPos, gl_TexCoord[0].st);
-	vec4 gridIndex = texture2D(samplerGridVec, gl_TexCoord[0].st);
+	vec4 gridIndex = floor(texture1D(samplerGrid, floor(rayPos.w+.5)/gridArraySize) + .5);
 	vec4 gridIntersectionMax = texture2D(samplerGridIntersectionMax, gl_TexCoord[0].st);
 	vec4 gridIntersectionMin = texture2D(samplerGridIntersectionMin, gl_TexCoord[0].st);
 	
@@ -46,10 +47,12 @@ void main(){
 		}
 	}
 
+	
 	gl_FragData[0] = rayPos;
 	gl_FragData[1] = rayDir;
 	gl_FragData[2] = gridIndex;
-
+	
+	
 	
 	
 
