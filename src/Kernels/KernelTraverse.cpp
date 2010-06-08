@@ -6,20 +6,22 @@ KernelTraverse::KernelTraverse(){
 
 }
 
-KernelTraverse::KernelTraverse(int width, int height, Vector3 voxelSize, GLuint texIdGrid, GLuint texIdRayPos, GLuint texIdRayDir)
-: KernelBase("traverse.frag", "traverse.vert", width, height){
+KernelTraverse::KernelTraverse(int width, int height, Vector3 voxelSize, GLuint texIdGrid, Vector3 gridSize, GLuint texIdRayPos, GLuint texIdRayDir)
+: KernelBase("./resources/vertice.vert", "./resources/traverse.frag", width, height){
 
 	//Output
 	addOutput(0, texIdRayPos);
 	addOutput(1, texIdRayDir);
-	m_texIdVoxelsIntersection = addOutput(2);
+	addOutput(2, texIdGrid);
 
 	//Input
-	m_shader.setActive(true);
+	m_shader->setActive(true);
 		addInputTexture("textureRayPos", texIdRayPos);
 		addInputTexture("textureRayDir", texIdRayDir);
+		addInputTexture("samplerGridVec", texIdGrid);
 		addInputVec3("voxelSize", voxelSize);
-	m_shader.setActive(false);
+		addInputVec3("gridSize", gridSize);
+	m_shader->setActive(false);
 
 }
 

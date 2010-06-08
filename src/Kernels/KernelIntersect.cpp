@@ -8,12 +8,14 @@ KernelIntersect::KernelIntersect()
 KernelIntersect::KernelIntersect(int width, int height, GLuint texIdRayPos, GLuint texIdRayDir, GLuint texIdGrid,
                                  GLuint texIdTriangleList, GLuint texIdvertexes, GLfloat gridTexSize, 
                                  GLfloat triangleListTexSize, GLfloat vertexesTexSize)
-: KernelBase("IntersectorKernel.frag", "IntersectorKernel.vert", width, height){
-  //Output
-  m_texIdTriangleHitInfo = addOutput(0);
+: KernelBase("./resources/vertice.vert", "./resources/intersector.frag", width, height){
 
-  //Input
-  m_shader.setActive(true);
+
+	//Output
+	m_texIdTriangleHitInfo = addOutput(0);
+
+	//Input
+	m_shader->setActive(true);
     addInputTexture("rayPos", texIdRayPos);
     addInputTexture("rayDir", texIdRayDir);
     addInputTexture("grid", texIdGrid);
@@ -23,7 +25,7 @@ KernelIntersect::KernelIntersect(int width, int height, GLuint texIdRayPos, GLui
     addInputFloat("gridSize", gridTexSize);
     addInputFloat("triangleListSize", triangleListTexSize);
     addInputFloat("vertexesSize", vertexesTexSize);
-  m_shader.setActive(false);
+	m_shader->setActive(false);
 }
 
 KernelIntersect::~KernelIntersect(){
@@ -32,5 +34,5 @@ KernelIntersect::~KernelIntersect(){
 
 GLuint KernelIntersect::getTexIdTriangleHitInfo() const 
 {
-  return m_texIdTriangleHitInfo; 
+	return m_texIdTriangleHitInfo; 
 }

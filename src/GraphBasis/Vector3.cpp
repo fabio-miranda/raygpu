@@ -10,7 +10,6 @@
 #include <cmath>
 
 #include "GraphBasis\Vector3.h"
-#include "application.h"
 
 ///////////////////
 //~ Vector3
