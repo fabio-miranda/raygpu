@@ -16,6 +16,8 @@ public:
 	void step();
 	GLuint getOutputTexture(int index);
 
+	FrameBufferObject* m_fbo;
+
 protected:
 	void renderQuad();
 	void activateTextures();
@@ -25,7 +27,7 @@ protected:
 	GLuint addOutput(int index, GLuint textureId = -1);
 	
 
-	FrameBufferObject* m_fbo;
+	
 	Shader* m_shader;
 	std::vector<GLuint> m_inputTextures;
 	std::vector<GLuint> m_outputTextures;
