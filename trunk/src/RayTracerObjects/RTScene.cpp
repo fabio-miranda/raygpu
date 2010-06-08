@@ -23,17 +23,17 @@ RTScene :: RTScene(string rt4FileName)
 RTScene :: ~RTScene()
 {
   delete mGrid;
-  GLuint id[7] = {
+  GLuint id[] = {
     mGridTexId,
     mVertexesTexId,
     mAmbientTexId,
     mDiffuseTexId,
     mSpecularTexId,
     mNormalsTexId,
-    mTrianglesTexId
+    mTrianglesTexId,
+    mLightsTexId
   };
-  glDeleteTextures(7, id);
-  glDeleteTextures(1, &mLightsTexId);
+  glDeleteTextures(sizeof(id)/sizeof(GLuint), id);
 }
 
 void RTScene :: readFromFile(string rt4FileName)
@@ -187,56 +187,75 @@ unsigned int RTScene::getSceneNumTriangles()
 
 void RTScene::calcTextures()
 {
-  GLuint id[7];
+  GLenum sizeType [] = {0,GL_ALPHA, 2 ,GL_RGB, GL_RGBA};
   
+  GLfloat* lData = new GLfloat[mLights.size()*sizeof(struct lightStruct)];
+  for( unsigned int i = 0; i < mLights.size(); ++i)
+    memcpy(&lData[i*sizeof(struct lightStruct)], mLights[i].getLightStruct(), sizeof(struct lightStruct));
+  int lightArraySize = mLights.size()*sizeof(struct lightStruct)/(4*sizeof(GLfloat));
+  int lightArrayAbsoluteSize = mLights.size()*sizeof(struct lightStruct)/(sizeof(GLfloat));
 
-  GLfloat* data[] = { mGrid->getGridArray()/*A*/,
-                       mGrid->getTriangleVertexArray()/*RGB*/, mGrid->getTriangleAmbientArray()/*RGB*/,
-                       mGrid->getTriangleDiffuseArray()/*RGB*/, mGrid->getTriangleSpecularArray()/*RGBA*/,
-                        mGrid->getTriangleListArray()/*A*/, mGrid->getTriangleNormalsArray()/*RGB*/};
+
+  GLfloat* data[] = {   mGrid->getGridArray()/*A*/,
+                        mGrid->getTriangleVertexArray()/*RGB*/, mGrid->getTriangleAmbientArray()/*RGB*/,
+                        mGrid->getTriangleDiffuseArray()/*RGB*/, mGrid->getTriangleSpecularArray()/*RGBA*/,
+                        mGrid->getTriangleListArray()/*A*/, mGrid->getTriangleNormalsArray()/*RGB*/,
+                        lData/*RGBA*/};
   
-  unsigned int size[] = {  mGrid->getGridArraySize(),
+  
+  unsigned int size[] = {   mGrid->getGridArraySize(),
                             mGrid->getTriangleVertexArraySize(), mGrid->getTriangleAmbientArraySize(),
                             mGrid->getTriangleDiffuseArraySize(), mGrid->getTriangleSpecularArraySize(),
-                            mGrid->getTriangleListArraySize(), mGrid->getTriangleNormalsArraySize()};
-  glGenTextures(7, id);
-  for(int i=0; i<7; ++i)
+                            mGrid->getTriangleListArraySize(), mGrid->getTriangleNormalsArraySize(),
+                            lightArraySize };
+  
+  int sizeIndex [] = {  mGrid->getGridArrayAbsoluteSize()/mGrid->getGridArraySize(),
+                        mGrid->getTriangleVertexArrayAbsoluteSize()/mGrid->getTriangleVertexArraySize(), 
+                        mGrid->getTriangleAmbientArrayAbsoluteSize()/mGrid->getTriangleAmbientArraySize(),
+                        mGrid->getTriangleDiffuseArrayAbsoluteSize()/mGrid->getTriangleDiffuseArraySize(), 
+                        mGrid->getTriangleSpecularArrayAbsoluteSize()/mGrid->getTriangleSpecularArraySize(),
+                        mGrid->getTriangleListArrayAbsoluteSize()/mGrid->getTriangleListArraySize(), 
+                        mGrid->getTriangleNormalsArrayAbsoluteSize()/mGrid->getTriangleNormalsArraySize(),
+                        lightArrayAbsoluteSize/lightArraySize
+                        };
+  
+  int numTextures = sizeof(data)/sizeof(GLfloat*);
+  GLuint *id = new GLuint[numTextures];
+  //// //DEBUG
+  //char sizeTypeStr [5][10] = {"NOT","GL_ALPHA", "2" ,"GL_RGB", "GL_RGBA"};
+  //for(int i=0;i<numTextures;++i)
+  //{
+  //  printf("%d %s\n",sizeIndex[i], sizeTypeStr[sizeIndex[i]]);
+  //}
+
+  glGenTextures(numTextures, id);
+  for(int i=0; i<numTextures; ++i)
   {
     glBindTexture(GL_TEXTURE_1D, id[i]);
     //   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA32F_ARB, size[i], 0, GL_RGBA, GL_FLOAT, data[i]);
+    glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA32F_ARB, size[i], 0, sizeType[sizeIndex[i]], GL_FLOAT, data[i]);
     glBindTexture(GL_TEXTURE_1D, 0);
   }
-  glGenTextures(1, &mLightsTexId);
-  GLfloat* lData = new GLfloat[mLights.size()*sizeof(struct lightStruct)];
-  for( unsigned int i = 0; i < mLights.size(); ++i)
-    memcpy(&lData[i*sizeof(struct lightStruct)], mLights[i].getLightStruct(), sizeof(struct lightStruct));
- 
-  glBindTexture(GL_TEXTURE_1D, mLightsTexId);
-  //   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA32F_ARB, mLights.size()*sizeof(struct lightStruct)/sizeof(GLfloat), 0, GL_RGBA, GL_FLOAT,  lData);
-  glBindTexture(GL_TEXTURE_1D, 0);
-
-
-  mGridTexId = id[0];
-  mVertexesTexId = id[1];
-  mAmbientTexId = id[2];
-  mDiffuseTexId = id[3];
-  mSpecularTexId = id[4];
-  mTrianglesTexId = id[5];
-  mNormalsTexId = id[6];
+  
+  int i = 0;
+  mGridTexId = id[i++];
+  mVertexesTexId = id[i++];
+  mAmbientTexId = id[i++];
+  mDiffuseTexId = id[i++];
+  mSpecularTexId = id[i++];
+  mTrianglesTexId = id[i++];
+  mNormalsTexId = id[i++];
+  mLightsTexId = id[i++];
+  
+  delete[] id;
 }
 
 GLuint RTScene::getGridTexId()
 {
   return mGridTexId;
-  
 }
 
 GLuint RTScene::getTriangleListTexId()
@@ -277,7 +296,7 @@ GLuint RTScene::getLightsTexId()
 
 GLfloat RTScene::getLightsTexSize()
 {
-  return  mLights.size()*sizeof(struct lightStruct)/sizeof(GLfloat);
+  return  mLights.size()*sizeof(struct lightStruct)/(4*sizeof(GLfloat));
 }
 
 GLfloat RTScene::getGridTexSize()
