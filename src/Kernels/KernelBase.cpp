@@ -53,12 +53,10 @@ GLuint KernelBase::getOutputTexture(int index){
 }
 
 void KernelBase::activateTextures(){
-
 	for(int i=0; i<m_inputTextures.size(); i++){
 		glActiveTextureARB(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D,m_inputTextures.at(i));
 	}
-
 }
 
 void KernelBase::renderQuad(){
