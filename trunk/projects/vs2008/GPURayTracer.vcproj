@@ -200,14 +200,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\GraphBasis\Frames.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\GraphBasis\GLFont.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\GraphBasis\Matrix3.cpp"
 					>
 				</File>
@@ -224,7 +216,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\GraphBasis\ShaderVars.cpp"
+					RelativePath="..\..\src\GraphBasis\textfile.cpp"
 					>
 				</File>
 				<File
@@ -240,31 +232,11 @@
 				Name="Light"
 				>
 				<File
-					RelativePath="..\..\src\Light\DirectionalLight.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\Light\Light.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\..\src\Light\PointLight.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\Light\SpotLight.cpp"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="Manager"
-				>
-				<File
-					RelativePath="..\..\src\Manager\Manager.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\Manager\ShaderManager.cpp"
 					>
 				</File>
 			</Filter>
@@ -323,10 +295,6 @@
 					RelativePath="..\..\src\Kernels\KernelTraverse.cpp"
 					>
 				</File>
-				<File
-					RelativePath="..\..\src\Kernels\ShaderGenerateRay.cpp"
-					>
-				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -335,7 +303,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\src\application.h"
+				RelativePath="..\..\src\main.h"
 				>
 			</File>
 			<Filter
@@ -355,14 +323,6 @@
 				</File>
 				<File
 					RelativePath="..\..\src\GraphBasis\FrameBufferObject.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\GraphBasis\Frames.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\GraphBasis\GLFont.h"
 					>
 				</File>
 				<File
@@ -390,7 +350,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\GraphBasis\ShaderVars.h"
+					RelativePath="..\..\src\GraphBasis\textfile.h"
 					>
 				</File>
 				<File
@@ -406,31 +366,11 @@
 				Name="Light"
 				>
 				<File
-					RelativePath="..\..\src\Light\DirectionalLight.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\Light\Light.h"
 					>
 				</File>
 				<File
 					RelativePath="..\..\src\Light\PointLight.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\Light\SpotLight.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="Manager"
-				>
-				<File
-					RelativePath="..\..\src\Manager\Manager.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\src\Manager\ShaderManager.h"
 					>
 				</File>
 			</Filter>
@@ -493,10 +433,6 @@
 					RelativePath="..\..\src\Kernels\KernelTraverse.h"
 					>
 				</File>
-				<File
-					RelativePath="..\..\src\Kernels\ShaderGenerateRay.h"
-					>
-				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -504,23 +440,27 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
-		</Filter>
-		<File
-			RelativePath="..\..\src\Shaders\IntersectorKernel.frag"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\Shaders\IntersectorKernel.vert"
-			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				ExcludedFromBuild="true"
+			<File
+				RelativePath="..\..\resources\generateRay.frag"
 				>
-				<Tool
-					Name="VCCustomBuildTool"
-				/>
-			</FileConfiguration>
-		</File>
+			</File>
+			<File
+				RelativePath="..\..\resources\intersector.frag"
+				>
+			</File>
+			<File
+				RelativePath="..\..\resources\shade.frag"
+				>
+			</File>
+			<File
+				RelativePath="..\..\resources\traverse.frag"
+				>
+			</File>
+			<File
+				RelativePath="..\..\resources\vertice.vert"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>
