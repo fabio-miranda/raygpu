@@ -10,6 +10,7 @@
 #include "SpacePartition/UniformGrid.h"
 #include "GraphBasis/FrameBufferObject.h"
 #include "RayTracerObjects/RTScene.h"
+#include "GraphBasis/Vector3.h"
 
 class KernelMng {
 
@@ -17,12 +18,12 @@ public:
 	KernelMng(int width, int height, RTScene* scene);
 	~KernelMng();
 
-	void step(Vector3 eyePos, Vector3 eyeDir);
+	void step(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane);
 
 private:
 	KernelMngState oracle();
 	void update();
-	void render(Vector3 eyePos, Vector3 eyeDir);
+	void render(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane);
 	int countActiveRays();
 
 	KernelGenerateRay m_kernelGenerateRay;

@@ -21,8 +21,9 @@ FrameBufferObject::FrameBufferObject(int width, int height)
 ,mWidth(width)
 ,mHeight(height)
 {
+	
    mSupported = true;
-   GLenum err = glewInit();
+   /*GLenum err = glewInit();
    if (GLEW_OK != err)
    {
       mSupported = false;
@@ -33,7 +34,7 @@ FrameBufferObject::FrameBufferObject(int width, int height)
    {
       mSupported = false;
       printf("OpenGL 2.0 not supported\n");
-   }
+   }*/
 
    if(!(glGenFramebuffersEXT && glDeleteFramebuffersEXT && glBindFramebufferEXT && glCheckFramebufferStatusEXT &&
       glGetFramebufferAttachmentParameterivEXT && glGenerateMipmapEXT && glFramebufferTexture2DEXT &&

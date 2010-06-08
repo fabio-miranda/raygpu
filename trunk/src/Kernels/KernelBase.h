@@ -11,7 +11,7 @@ class KernelBase {
 
 public:
 	KernelBase();
-	KernelBase(char* frag, char* vert, int width, int height);
+	KernelBase(char* vert, char* frag, int width, int height);
 	~KernelBase();
 	void step();
 
@@ -23,8 +23,8 @@ protected:
   GLuint addInputFloat(char* name, GLfloat value);
 	GLuint addOutput(int index, GLuint textureId = -1);
 
-	FrameBufferObject m_fbo;
-	Shader m_shader;
+	FrameBufferObject* m_fbo;
+	Shader* m_shader;
 	std::vector<GLuint> m_inputTextures;
 };
 

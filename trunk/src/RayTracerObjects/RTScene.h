@@ -48,6 +48,7 @@ class RTScene
       GLuint mLightsTexId;;
 
    public:
+	   RTScene(){};
       RTScene(string rt4FileName);
       ~RTScene();
 

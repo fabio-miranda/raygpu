@@ -4,18 +4,21 @@ KernelBase::KernelBase(){
 
 }
 
-KernelBase::KernelBase(char* frag, char* vert, int width, int height){
-	m_shader = Shader("", frag, vert);
-	m_fbo = FrameBufferObject(width, height);
+KernelBase::KernelBase(char* vert, char* frag, int width, int height){
+	m_shader = new Shader(vert, frag);
+	m_fbo = new FrameBufferObject(width, height);
 }
 
 KernelBase::~KernelBase(){
+
+	delete m_shader;
+	delete m_fbo;
 
 }
 
 GLuint KernelBase::addInputTexture(char* name, GLuint id){
 
-	GLuint loc = m_shader.getUniformLoc(name);
+	GLuint loc = m_shader->getUniformLocation(name);
 	glUniform1iARB(loc, m_inputTextures.size());
 	m_inputTextures.push_back(id);
 
@@ -24,7 +27,7 @@ GLuint KernelBase::addInputTexture(char* name, GLuint id){
 
 GLuint KernelBase::addInputVec3(char* name, Vector3 value){
 	
-	GLuint loc = m_shader.getUniformLoc(name);
+	GLuint loc = m_shader->getUniformLocation(name);
 	glUniform3fARB(loc, value.x, value.y, value.z);
 
 	return loc;
@@ -32,7 +35,7 @@ GLuint KernelBase::addInputVec3(char* name, Vector3 value){
 
 GLuint KernelBase::addInputFloat( char* name, GLfloat value )
 {
-  GLuint loc = m_shader.getUniformLoc(name);
+  GLuint loc = m_shader->getUniformLocation(name);
   glUniform1f(loc, value);
 
   return loc;
@@ -40,7 +43,7 @@ GLuint KernelBase::addInputFloat( char* name, GLfloat value )
 
 GLuint KernelBase::addOutput(int index, GLuint textureId){
 
-	return m_fbo.attachToColorBuffer(bufferType::Texture, index, textureId);
+	return m_fbo->attachToColorBuffer(bufferType::Texture, index, textureId);
 
 }
 
@@ -64,12 +67,12 @@ void KernelBase::renderQuad(){
 
 void KernelBase::step(){
 
-	m_fbo.setActive(true);
-	m_shader.setActive(true);
+	m_fbo->setActive(true);
+	m_shader->setActive(true);
 	activateTextures();
 	renderQuad();
-	m_shader.setActive(false);
-	m_fbo.setActive(false);
+	m_shader->setActive(false);
+	m_fbo->setActive(false);
 
 }
 
