@@ -3,17 +3,16 @@
 #define ANGLE_STEP 1.0
 #define APP_WIDTH 1280
 #define APP_HEIGHT 720
+#define DEG_TO_RAD(a) ((float)(a)*PI/180.0)
 
-float angleX;
-float angleY;
-float angleZ;
 int lastMousePosX;
 int lastMousePosY;
 int mouseState;
 int mouseButton;
-Vector3 eyePos;
-Vector3 eyeDir;
-Vector3 eyeUp;
+float camAlpha;
+float camBeta;
+float camR;
+
 float nearPlane;
 RTScene* rtScene;
 KernelMng* kernelMng;
@@ -39,15 +38,21 @@ void render(){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	glLoadIdentity();
-	gluLookAt(eyePos.x,eyePos.y,eyePos.z, 0.0, 0.0, 0.0, eyeUp.x, eyeUp.y, eyeUp.z);
 
-	glRotatef(angleX, 1.0, 0.0, 0.0); //rotate on the x axis
-    glRotatef(angleY, 0.0, 1.0, 0.0); //rotate on the y axis
-    glRotatef(angleZ, 0.0, 0.0, 1.0); //rotate on the z axis
+	float x = camR*sin(DEG_TO_RAD(camBeta))*cos(DEG_TO_RAD(camAlpha));
+	float y = camR*sin(DEG_TO_RAD(camAlpha));
+	float z = camR*cos(DEG_TO_RAD(camBeta))*cos(DEG_TO_RAD(camAlpha));
+
+	gluLookAt(x,y,z, 0, 0, 0, 1, 0, 0);
 
 	renderAxis();
-	//rtScene->render();
-	kernelMng->step(GENERATERAY, eyePos, eyeDir, eyeUp, eyeDir ^ eyeUp, nearPlane);
+	rtScene->render();
+	kernelMng->step(GENERATERAY,
+					Vector3(x, y, z),
+					Vector3(0,0,0) - Vector3(x,y,z),
+					Vector3(1,0,0),
+					Vector3(0,0,0) - Vector3(x,y,z) ^ Vector3(1,0,0),
+					nearPlane);
 	kernelMng->renderKernelOutput(GENERATERAY, 0);
 
 	
@@ -70,15 +75,13 @@ void renderAxis(){
 void init(int argc, char *argv[]){
 	
 
-	angleZ = 0;
-	angleX = 0;
-	angleY = 0;
+	camAlpha = 0.0;
+	camBeta = 45.0;
+	camR = 100.0;
 	lastMousePosX = 0;
 	lastMousePosY = 0;
 	mouseState = GLUT_UP;
 	mouseButton = GLUT_RIGHT_BUTTON;
-	eyePos = Vector3(0, 0, 5);
-	eyeUp = Vector3(0, 1, 0);
 	nearPlane = 0.1f;
 
 
@@ -126,11 +129,12 @@ void reshape(int w, int h){
 }
 
 void keyboardSpecial(int key, int x, int y){
-	
+	/*	
 	if( key == GLUT_KEY_LEFT ) angleY+=ANGLE_STEP;
 	else if( key == GLUT_KEY_RIGHT ) angleY-=ANGLE_STEP;
 	else if( key == GLUT_KEY_UP ) angleX+=ANGLE_STEP;
 	else if( key == GLUT_KEY_DOWN ) angleX-=ANGLE_STEP;
+	*/
 }
 
 void keyboard(unsigned char key, int x, int y){
@@ -147,11 +151,15 @@ void mouseButtons(int button, int state, int x, int y){
 
 void mouseActive(int x, int y){
 	if(mouseButton == GLUT_LEFT_BUTTON && mouseState == GLUT_DOWN){
-		angleX += (y - lastMousePosY)/5.0f;
-		angleY += (x - lastMousePosX)/5.0f;
+		float angleX = (x - lastMousePosX)/5.0f;
+		float angleY = (y - lastMousePosY)/5.0f;
+
+
+		camAlpha = ((int)(camAlpha + angleX))%360;
+		camBeta = ((int)(camBeta + angleY))%360;
 	}
 	else if(mouseButton == GLUT_RIGHT_BUTTON && mouseState == GLUT_DOWN){
-		eyePos.z += (y - lastMousePosY)/50.0;
+		camR += (y - lastMousePosY)/50.0;
 	}
 	
 
