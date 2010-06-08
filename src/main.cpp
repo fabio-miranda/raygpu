@@ -43,11 +43,10 @@ void render(){
     glRotatef(angleY, 0.0, 1.0, 0.0); //rotate on the y axis
     glRotatef(angleZ, 0.0, 0.0, 1.0); //rotate on the z axis
 
-	renderAxis();
+	//renderAxis();
 	//rtScene->render();
-
-
-	kernelMng->step(eyePos, eyeDir, eyeUp, eyeDir ^ eyeUp, nearPlane);
+	kernelMng->step(GENERATERAY, eyePos, eyeDir, eyeUp, eyeDir ^ eyeUp, nearPlane);
+	kernelMng->renderKernelOutput(GENERATERAY, 0);
 
 	
 	

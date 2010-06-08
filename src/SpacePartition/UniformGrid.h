@@ -49,6 +49,7 @@ public:
 
   GLuint getGridTextureId();
   Vector3 getVoxelSize();
+  Vector3 getNumVoxels();
 
 private:
 	void calculateBB(std::vector<RTMesh>* p_triangles, Vector3 p_numVoxels);

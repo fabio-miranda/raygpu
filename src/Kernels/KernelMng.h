@@ -18,18 +18,20 @@ public:
 	KernelMng(int width, int height, RTScene* scene);
 	~KernelMng();
 
-	void step(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane);
+	void step(KernelMngState stateToStop, Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane);
+	GLuint getTextureColorId();
+	void renderKernelOutput(KernelMngState stateToRender, int outputNum);
 
 private:
 	KernelMngState oracle();
-	void update();
+	void update(KernelMngState stateToStop);
 	void render(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane);
 	int countActiveRays();
 
-	KernelGenerateRay m_kernelGenerateRay;
-	KernelTraverse m_kernelTraverse;
-	KernelIntersect m_kernelIntersect;
-	KernelShade m_kernelShade;
+	KernelGenerateRay* m_kernelGenerateRay;
+	KernelTraverse* m_kernelTraverse;
+	KernelIntersect* m_kernelIntersect;
+	KernelShade* m_kernelShade;
 	KernelMngState m_currentState;
 	UniformGrid* m_uniformGrid;
 	GLuint m_textureRayPosition;

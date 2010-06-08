@@ -57,6 +57,9 @@ FrameBufferObject::FrameBufferObject(int width, int height)
 
    mDephtBuffer.textureTarget = GL_DEPTH_ATTACHMENT_EXT;
    mStencilBuffer.textureTarget = GL_STENCIL_ATTACHMENT_EXT;
+
+   m_numBuffers = 0;
+   m_drawBuffers = NULL;
 }
 
 FrameBufferObject :: ~FrameBufferObject()
@@ -111,6 +114,16 @@ GLuint FrameBufferObject :: attachToColorBuffer(BufferType::BindType bt, int ind
    if(!checkFramebufferStatus())
       mSupported = false;
    assert(mSupported);
+
+
+   m_numBuffers++;
+   //Fill m_drawBuffers
+   if(m_drawBuffers != NULL) delete [] m_drawBuffers;
+   m_drawBuffers = new GLenum[m_numBuffers];
+   for(int i=0; i<m_numBuffers; i++){
+	   m_drawBuffers[i] = GL_COLOR_ATTACHMENT0_EXT + i;
+   }
+
 
    return id;
 }
@@ -191,6 +204,7 @@ void FrameBufferObject::setActive(bool active)
    if(mActive)
    {
       glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, mfboId);
+	  glDrawBuffers(m_numBuffers, m_drawBuffers);
    }
    else glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 }

@@ -14,6 +14,7 @@ public:
 	~KernelShade();
 
 	void step(Vector3 eyePos);
+	GLuint getTextureColorId();
 
 private:
   GLuint m_locEyePos;

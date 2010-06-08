@@ -53,6 +53,8 @@ class FrameBufferObject
 
    int mWidth;
    int mHeight;
+   int m_numBuffers;
+   
 
    BufferType mCollorBuffers [GL_MAX_COLOR_ATTACHMENTS_EXT];
    BufferType mDephtBuffer;
@@ -70,6 +72,8 @@ public:
 
    void setActive(bool);
    bool isActive();
+
+   GLenum* m_drawBuffers;
 
 private:
    GLuint createTextureToRender(int width, int height);
