@@ -82,23 +82,25 @@ void main(){
 	vec3 intersectionMax = vec3(0, 0, 0);
 	//Sets the ray state
 	//The camera is inside the grid
+	float breakpoint = 0.0;
 	if(insideGrid(rayPos)){
 		rayDir.a = ACTIVE_TRAVERSE;
 		rayPos = rayPos;
+		
 	}
 	else{
-
 		//Check if the ray hits the grid
 		if(hitGrid(rayPos, rayDir.xyz, intersectionMin, intersectionMax)){
 			rayDir.a = ACTIVE_TRAVERSE;
 			rayPos = intersectionMin;
+			breakpoint = 1.0;
 		}
 		else{
 			rayDir.a = INACTIVE;
 		}
 	}
 
-	gl_FragData[0] = vec4(rayDir.xyz, 1.0);
+	gl_FragData[0] = vec4(vec3(breakpoint), 1.0);
 	/*
 	gl_FragData[0] = vec4(rayPos, -1.0);
 	gl_FragData[1] = rayDir;
