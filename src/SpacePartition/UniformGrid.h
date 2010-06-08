@@ -29,6 +29,16 @@ public:
 
   Vector3 getBBMin();
   Vector3 getBBMax();
+
+  int getGridArrayAbsoluteSize();
+  int getTriangleListArrayAbsoluteSize();
+  int getTriangleVertexArrayAbsoluteSize();
+  int getTriangleNormalsArrayAbsoluteSize();
+  int getTriangleAmbientArrayAbsoluteSize();
+  int getTriangleDiffuseArrayAbsoluteSize();
+  int getTriangleSpecularArrayAbsoluteSize();
+
+
   int getGridArraySize();
   int getTriangleListArraySize();
   int getTriangleVertexArraySize();

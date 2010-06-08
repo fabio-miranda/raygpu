@@ -193,6 +193,10 @@ Vector3 UniformGrid::getBBMax(){
 	return m_max;
 }
 
+
+Vector3 UniformGrid::getVoxelSize(){
+  return m_voxelSize;
+}
 GLfloat* UniformGrid::getGridArray()
 {
   return m_gridArray;
@@ -230,7 +234,7 @@ GLfloat* UniformGrid::getTriangleSpecularArray()
 
 
 int UniformGrid::getGridArraySize(){
-	return m_gridArraySize;
+	return (int)((float)(m_gridArraySize)/4.0);
 }
 
 int UniformGrid::getTriangleListArraySize(){
@@ -238,27 +242,60 @@ int UniformGrid::getTriangleListArraySize(){
 }
 
 int UniformGrid::getTriangleVertexArraySize(){
-	return m_triangleVertexArraySize;
+	return (int)((float)(m_triangleVertexArraySize)/3.0);
 }
 
 int UniformGrid::getTriangleAmbientArraySize(){
-  return m_triangleAmbientArraySize;
+  return (int)((float)(m_triangleAmbientArraySize)/3.0);
 }
 
 
 int UniformGrid::getTriangleDiffuseArraySize(){
-	return m_triangleDiffuseArraySize;
+	return (int)((float)(m_triangleDiffuseArraySize)/3.0);
 }
 
 int UniformGrid::getTriangleSpecularArraySize(){
-	return m_triangleSpecularArraySize;
+	return (int)((float)(m_triangleSpecularArraySize)/4.0);
 }
 
-Vector3 UniformGrid::getVoxelSize(){
-	return m_voxelSize;
-}
 
 int UniformGrid::getTriangleNormalsArraySize()
 {
+  return (int)((float)(m_triangleNormalsArraySize)/3.0);
+}
+
+
+int UniformGrid::getGridArrayAbsoluteSize()
+{
+  return m_gridArraySize;
+}
+
+int UniformGrid::getTriangleListArrayAbsoluteSize()
+{
+  return m_triangleListArraySize;
+}
+
+int UniformGrid::getTriangleVertexArrayAbsoluteSize()
+{
+  return m_triangleVertexArraySize;
+}
+
+int UniformGrid::getTriangleNormalsArrayAbsoluteSize()
+{
   return m_triangleNormalsArraySize;
 }
+
+int UniformGrid::getTriangleAmbientArrayAbsoluteSize()
+{
+  return m_triangleAmbientArraySize;
+}
+
+int UniformGrid::getTriangleDiffuseArrayAbsoluteSize()
+{
+  return m_triangleDiffuseArraySize;
+}
+
+int UniformGrid::getTriangleSpecularArrayAbsoluteSize()
+{
+  return m_triangleSpecularArraySize;
+} 

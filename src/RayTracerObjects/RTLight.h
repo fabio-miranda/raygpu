@@ -18,7 +18,7 @@ using namespace std;
 
 ///lightStruct
 //{
-//0|   ambient  //alpha == enable or disable
+//0|   ambient  //alpha == enable or disable 
 //1|   diffuse   //alpha == spotExponent
 //2|   specular //
 //3|   pos      //w == type :0 directional, 1 point, 2 = spot
