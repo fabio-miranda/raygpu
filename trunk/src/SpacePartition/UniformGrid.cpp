@@ -70,7 +70,7 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 	}
 
 
-	m_gridArraySize = (int)(p_numVoxels.x * p_numVoxels.y * p_numVoxels.z);
+	m_gridArraySize = (int)(p_numVoxels.x * p_numVoxels.y * p_numVoxels.z) * 3;
 	m_gridArray = new GLfloat[m_gridArraySize];
 	memset(m_gridArray, 0, sizeof(GLfloat) * m_gridArraySize);
 
@@ -100,40 +100,51 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 
  
 	unsigned int gridCount = 0;
-	for(int i=0; i<p_numVoxels.x * p_numVoxels.y * p_numVoxels.z; i++){
-		for(int j=0; j<aux_grid[i].size(); j++){
-			unsigned int triangleIndex = aux_grid[i].at(j)->getGlobalIndex();
-			m_triangleListArray[gridCount+j] = aux_grid[i].at(j)->getGlobalIndex();
-			m_triangleVertexArray[gridCount+j] = aux_grid[i].at(j)->v1.x;
-			m_triangleVertexArray[gridCount+j+1] = aux_grid[i].at(j)->v1.y;
-			m_triangleVertexArray[gridCount+j+2] = aux_grid[i].at(j)->v1.z;
+	int cont = 0;
+	for(int x=0; x<p_numVoxels.x; x++){
+		for(int y=0; y<p_numVoxels.y; y++){
+			for(int z=0; z<p_numVoxels.z; z++){
+				for(int j=0; j<aux_grid[cont].size(); j++){
+					unsigned int triangleIndex = aux_grid[cont].at(j)->getGlobalIndex();
+					m_triangleListArray[gridCount+j] = aux_grid[cont].at(j)->getGlobalIndex();
+					m_triangleVertexArray[gridCount+j] = aux_grid[cont].at(j)->v1.x;
+					m_triangleVertexArray[gridCount+j+1] = aux_grid[cont].at(j)->v1.y;
+					m_triangleVertexArray[gridCount+j+2] = aux_grid[cont].at(j)->v1.z;
 
-			m_triangleVertexArray[gridCount+j+1] = aux_grid[i].at(j)->v2.x;
-			m_triangleVertexArray[gridCount+j+1+1] = aux_grid[i].at(j)->v2.y;
-			m_triangleVertexArray[gridCount+j+1+2] = aux_grid[i].at(j)->v2.z;
+					m_triangleVertexArray[gridCount+j+1] = aux_grid[cont].at(j)->v2.x;
+					m_triangleVertexArray[gridCount+j+1+1] = aux_grid[cont].at(j)->v2.y;
+					m_triangleVertexArray[gridCount+j+1+2] = aux_grid[cont].at(j)->v2.z;
 
-			m_triangleVertexArray[triangleIndex] = aux_grid[i].at(j)->v3.x;
-			m_triangleVertexArray[triangleIndex+1] = aux_grid[i].at(j)->v3.y;
-			m_triangleVertexArray[triangleIndex+2] = aux_grid[i].at(j)->v3.z;
+					m_triangleVertexArray[triangleIndex] = aux_grid[cont].at(j)->v3.x;
+					m_triangleVertexArray[triangleIndex+1] = aux_grid[cont].at(j)->v3.y;
+					m_triangleVertexArray[triangleIndex+2] = aux_grid[cont].at(j)->v3.z;
 
-			Vector3 n = (aux_grid[i].at(j)->v2 - aux_grid[i].at(j)->v1) ^ (aux_grid[i].at(j)->v3 - aux_grid[i].at(j)->v2);
-			n = n.unitary();
-			m_triangleNormalsArray[triangleIndex] = n.x;
-			m_triangleNormalsArray[triangleIndex+1] = n.y;
-			m_triangleNormalsArray[triangleIndex+2] = n.z;
+					Vector3 n = (aux_grid[cont].at(j)->v2 - aux_grid[cont].at(j)->v1) ^ (aux_grid[cont].at(j)->v3 - aux_grid[cont].at(j)->v2);
+					n = n.unitary();
+					m_triangleNormalsArray[triangleIndex] = n.x;
+					m_triangleNormalsArray[triangleIndex+1] = n.y;
+					m_triangleNormalsArray[triangleIndex+2] = n.z;
 
 
-			m_triangleSpecularArray[triangleIndex] = p_material->at(aux_grid[i].at(j)->getMaterialIndex()).mSpecular.r;
-			m_triangleSpecularArray[triangleIndex+1] = p_material->at(aux_grid[i].at(j)->getMaterialIndex()).mSpecular.g;
-			m_triangleSpecularArray[triangleIndex+2] = p_material->at(aux_grid[i].at(j)->getMaterialIndex()).mSpecular.b;
-			m_triangleSpecularArray[triangleIndex+3] = p_material->at(aux_grid[i].at(j)->getMaterialIndex()).mSpecularExp;
+					m_triangleSpecularArray[triangleIndex] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mSpecular.r;
+					m_triangleSpecularArray[triangleIndex+1] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mSpecular.g;
+					m_triangleSpecularArray[triangleIndex+2] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mSpecular.b;
+					m_triangleSpecularArray[triangleIndex+3] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mSpecularExp;
 
-			m_triangleDiffuseArray[triangleIndex] = p_material->at(aux_grid[i].at(j)->getMaterialIndex()).mDiffuse.r;
-			m_triangleDiffuseArray[triangleIndex+1] = p_material->at(aux_grid[i].at(j)->getMaterialIndex()).mDiffuse.g;
-			m_triangleDiffuseArray[triangleIndex+2] = p_material->at(aux_grid[i].at(j)->getMaterialIndex()).mDiffuse.b;
+					m_triangleDiffuseArray[triangleIndex] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mDiffuse.r;
+					m_triangleDiffuseArray[triangleIndex+1] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mDiffuse.g;
+					m_triangleDiffuseArray[triangleIndex+2] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mDiffuse.b;
+				}
+				m_gridArray[cont] = x;
+				m_gridArray[cont+1] = y;
+				m_gridArray[cont+2] = z;
+				m_gridArray[cont+3] = gridCount;
+				
+				gridCount+=aux_grid[cont].size();
+
+				cont++;
+			}
 		}
-		m_gridArray[i] = gridCount;
-		gridCount+=aux_grid[i].size();
 	}
 
 
