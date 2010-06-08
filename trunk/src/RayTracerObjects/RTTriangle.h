@@ -12,9 +12,9 @@ using namespace std;
 class RTTriangle
 {
     static unsigned int sTriangleNum;
-    static unsigned int sTriangleMax;
 
     unsigned int mMaterialIndex;
+    int mMyTriangleNum;
 public:
    Vector3 v1, v2, v3;
    RTTriangle();

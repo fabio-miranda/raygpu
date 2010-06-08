@@ -9,12 +9,15 @@ uniform float gridSize;
 uniform float triangleListSize;
 uniform float vertexesSize;
 
-#define ContainTriangles 1
-#define Empty 0
+#define INACTIVE 0
+#define ACTIVE_TRAVERSE 1
+#define ACTIVE_INTERSECT 2
+#define ACTIVE_SHADING 3
+#define DONE 4
+#define OVERFLOW 5
 
-//enum {Traversing = 0, Intersecting , Shading, Done}
+const float infinity = 9.99999999999999999999999999e37;
 
-const float infinity = 1.0/0.0;
 vec3 intersect(float vertexIndex, vec4 rPos, vec4 rDir, vec3 lastHit, float triangleIndex);
 
 void main()
@@ -25,10 +28,9 @@ void main()
    int triangleFlag = int(floor(rDir.w+.5));
    float gridIndex =  floor(rPos.w+.5);
 
-   if(triangleFlag == ContainTriangles)
+   if(triangleFlag == ACTIVE_INTERSECT)
    {
-
-      float triangleIndex = floor(texture1D(grid, gridIndex/gridSize).r + .5);
+      float triangleIndex = floor(texture1D(grid, gridIndex/gridSize).a + .5);
       float vertexIndex = floor(texture1D(triangleList, triangleIndex/triangleListSize).r + .5);
       vec3 lastHit = vec3(infinity, vertexIndex, triangleIndex);
 
@@ -41,17 +43,20 @@ void main()
 
       if(lastHit.r != infinity)
       {
-         ///Set Stencil Bufer to Shading
+         ///Set Ray State to Shading
+         rDir.w = float(ACTIVE_SHADING);
+         gl_FragData[0] = rDir;
+
          vec3 fragPos = rPos.xyz+rDir.xyz*lastHit.r;
          vec4 triangleInfo = vec4(fragPos, lastHit.b);
-         gl_FragData[0] = triangleInfo;
+         gl_FragData[1] = triangleInfo;
          return;
       }
    }
 
-   ///Set Stencil Bufer to Traversing
-//   gl_FragData[0] = rDir;
-//   gl_FragData[1] = rPos;
+   ///Discard Pixel
+   gl_FragData[0] = rDir;
+   gl_FragData[1] = vec4(-1, -1, -1, -1);
 }
 
 
