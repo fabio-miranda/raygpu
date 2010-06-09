@@ -186,6 +186,31 @@ void UniformGrid::setMinMax(Vector3 vertex){
 
 }
 
+void UniformGrid::render(){
+
+	glBegin(GL_LINES);
+		
+		glVertex3f(m_min.x, m_min.y, m_min.z); glVertex3f(m_min.x, m_min.y, m_max.z);
+		glVertex3f(m_min.x, m_min.y, m_min.z); glVertex3f(m_min.x, m_max.y, m_min.z);
+		glVertex3f(m_min.x, m_min.y, m_min.z); glVertex3f(m_max.x, m_min.y, m_min.z);
+
+		glVertex3f(m_max.x, m_max.y, m_max.z); glVertex3f(m_max.x, m_max.y, m_min.z);
+		glVertex3f(m_max.x, m_max.y, m_max.z); glVertex3f(m_max.x, m_min.y, m_max.z);
+		glVertex3f(m_max.x, m_max.y, m_max.z); glVertex3f(m_min.x, m_max.y, m_max.z);
+		
+		glVertex3f(m_max.x, m_min.y, m_max.z); glVertex3f(m_max.x, m_min.y, m_min.z);
+		glVertex3f(m_min.x, m_max.y, m_max.z); glVertex3f(m_min.x, m_max.y, m_min.z);
+		
+		glVertex3f(m_max.x, m_min.y, m_max.z); glVertex3f(m_min.x, m_min.y, m_max.z);
+		glVertex3f(m_min.x, m_max.y, m_min.z); glVertex3f(m_max.x, m_max.y, m_min.z);
+		
+
+		glVertex3f(m_min.x, m_min.y, m_max.z); glVertex3f(m_min.x, m_max.y, m_max.z);
+		glVertex3f(m_max.x, m_min.y, m_min.z); glVertex3f(m_max.x, m_max.y, m_min.z);
+	glEnd();
+
+}
+
 Vector3 UniformGrid::getBBMin(){
 	return m_min;
 }

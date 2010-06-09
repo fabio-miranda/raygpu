@@ -51,7 +51,7 @@ void render(){
 					Vector3(x, y, z),
 					Vector3(0,0,0) - Vector3(x,y,z),
 					Vector3(1,0,0),
-					Vector3(0,0,0) - Vector3(x,y,z) ^ Vector3(1,0,0),
+					(Vector3(0,0,0) - Vector3(x,y,z)) ^ Vector3(1,0,0),
 					nearPlane);
 	kernelMng->renderKernelOutput(GENERATERAY, 0);
 
@@ -77,7 +77,7 @@ void init(int argc, char *argv[]){
 
 	camAlpha = 0.0;
 	camBeta = 45.0;
-	camR = 100.0;
+	camR = 1000.0;
 	lastMousePosX = 0;
 	lastMousePosY = 0;
 	mouseState = GLUT_UP;
@@ -104,9 +104,9 @@ void init(int argc, char *argv[]){
 	
 	glEnable(GL_DOUBLEBUFFER);
 	glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_ALPHA_TEST);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//glEnable(GL_BLEND);
+	glEnable(GL_ALPHA_TEST);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
 	glEnable(GL_TEXTURE);
 	glEnable(GL_TEXTURE_2D);
 
@@ -151,8 +151,8 @@ void mouseButtons(int button, int state, int x, int y){
 
 void mouseActive(int x, int y){
 	if(mouseButton == GLUT_LEFT_BUTTON && mouseState == GLUT_DOWN){
-		float angleX = (x - lastMousePosX)/5.0f;
-		float angleY = (y - lastMousePosY)/5.0f;
+		float angleX = (x - lastMousePosX);
+		float angleY = (y - lastMousePosY);
 
 
 		camAlpha = ((int)(camAlpha + angleX))%360;

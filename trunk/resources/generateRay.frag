@@ -16,11 +16,17 @@ uniform vec3 screenSize;
 //Ray voxel (stored on rayPos.a)
 
 vec3 getRay(vec2 screenPos){
-
-	vec3 u = (screenPos.x/(screenSize.x - screenSize.x/2.0)) * eyeRight;
-	vec3 v = (screenPos.y/(screenSize.y - screenSize.y/2.0)) * eyeUp;
-	vec3 point = (eyePos + nearPlane*eyeDir) + u + v;
-
+	
+	vec3 u = ((screenPos.x) / screenSize.x) * eyeRight;
+	vec3 v = ((screenPos.y) / screenSize.y) * eyeUp;
+	vec3 point = nearPlane * normalize(eyeDir) + u + v;
+	point = point - vec3(screenSize.x/2.0, screenSize.y/2.0, 0.0);
+	
+	/*
+	vec3 u = (screenPos.x/(screenSize.x)) * eyeRight;
+	vec3 v = (screenPos.y/(screenSize.y)) * eyeUp;
+	vec3 point = u + v;
+	*/
 	return normalize(point - eyePos);
 }
 
@@ -74,7 +80,7 @@ bool hitGrid(vec3 position, vec3 direction, out vec3 intersectionMin, out vec3 i
 
 void main(){
 
-	vec4 rayDir = vec4(getRay(gl_TexCoord[0].xy), 1.0);
+	vec4 rayDir = vec4(getRay(gl_FragCoord.xy), 1.0);
 	vec3 rayPos = eyePos;
 
 
@@ -100,7 +106,8 @@ void main(){
 		}
 	}
 
-	gl_FragData[0] = vec4(vec3(breakpoint), 1.0);
+	//gl_FragData[0] = vec4(rayDir.xyz, 0.5);
+	gl_FragData[0] = vec4(vec3(breakpoint), 0.5);
 	/*
 	gl_FragData[0] = vec4(rayPos, -1.0);
 	gl_FragData[1] = rayDir;
