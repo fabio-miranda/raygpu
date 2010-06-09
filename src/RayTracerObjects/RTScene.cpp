@@ -171,6 +171,8 @@ void RTScene :: render()
          glPopAttrib();
       }
    glPopAttrib();
+
+   mGrid->render();
 }
 
 UniformGrid* RTScene ::GetUniformGrid() const 
