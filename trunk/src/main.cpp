@@ -46,7 +46,7 @@ void render(){
 
 	gluLookAt(x,y,z, 0, 0, 0, 1, 0, 0);
 
-	//New up
+	//TODO: get the values from the current MODELVIEW matrix
 	//GLfloat* lookAtMatrix;
 	//glGetFloatv(GL_MODELVIEW_MATRIX, lookAtMatrix);
 	Vector3 f = (Vector3(0,0,0) - Vector3(x,y,z)).unitary();
