@@ -1,8 +1,8 @@
 #include "main.h"
 
 #define ANGLE_STEP 1.0
-#define APP_WIDTH 1280
-#define APP_HEIGHT 720
+#define APP_WIDTH 800
+#define APP_HEIGHT 600
 #define DEG_TO_RAD(a) ((float)(a)*PI/180.0)
 
 int lastMousePosX;
@@ -14,6 +14,7 @@ float camBeta;
 float camR;
 
 float nearPlane;
+float fov;
 RTScene* rtScene;
 KernelMng* kernelMng;
 
@@ -45,15 +46,24 @@ void render(){
 
 	gluLookAt(x,y,z, 0, 0, 0, 1, 0, 0);
 
+	//New up
+	//GLfloat* lookAtMatrix;
+	//glGetFloatv(GL_MODELVIEW_MATRIX, lookAtMatrix);
+	Vector3 f = (Vector3(0,0,0) - Vector3(x,y,z)).unitary();
+	Vector3 up = Vector3(1, 0, 0).unitary();
+	Vector3 s = f ^ up;
+	Vector3 u = s ^ f;
+	Vector3 r = f ^ u;
+
 	renderAxis();
 	rtScene->render();
-	kernelMng->step(GENERATERAY,
+	kernelMng->step(TRAVERSE,
 					Vector3(x, y, z),
-					Vector3(0,0,0) - Vector3(x,y,z),
-					Vector3(1,0,0),
-					(Vector3(0,0,0) - Vector3(x,y,z)) ^ Vector3(1,0,0),
+					f,
+					u,
+					r,
 					nearPlane);
-	kernelMng->renderKernelOutput(GENERATERAY, 0);
+	kernelMng->renderKernelOutput(TRAVERSE, 0);
 
 	
 	
@@ -83,6 +93,7 @@ void init(int argc, char *argv[]){
 	mouseState = GLUT_UP;
 	mouseButton = GLUT_RIGHT_BUTTON;
 	nearPlane = 0.1f;
+	fov = 60.0f;
 
 
 	glutInit(&argc, argv);
@@ -115,7 +126,9 @@ void init(int argc, char *argv[]){
 	rtScene = new RTScene("./resources/scenes/cavalo.rt4");
 	rtScene->configure();
 
-	kernelMng = new KernelMng(APP_WIDTH, APP_HEIGHT, rtScene);
+	float nearPlaneHeight = 2.0f * tanf(DEG_TO_RAD(fov/2.0f)) * nearPlane;
+	float nearPlaneWidth = nearPlaneHeight * ((GLfloat)APP_WIDTH/(GLfloat)APP_HEIGHT);
+	kernelMng = new KernelMng(APP_WIDTH, APP_HEIGHT, rtScene, nearPlaneWidth, nearPlaneHeight);
 
 }
 
@@ -124,7 +137,7 @@ void reshape(int w, int h){
 	glViewport (0, 0, (GLsizei)w, (GLsizei)h);
     glMatrixMode (GL_PROJECTION);
     glLoadIdentity ();
-    gluPerspective (60, (GLfloat)w / (GLfloat)h, nearPlane, 1000000.0);
+    gluPerspective(fov, (GLfloat)w / (GLfloat)h, nearPlane, 1000000.0);
     glMatrixMode (GL_MODELVIEW);
 }
 

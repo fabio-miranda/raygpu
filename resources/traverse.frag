@@ -30,8 +30,11 @@ void main(){
 
 	if(rayPos.a == ACTIVE_TRAVERSE){
 
-		vec3 delta = abs(rayLength / gridIndex.xyz);
+		vec3 delta = abs(rayLength / rayDir.xyz);
 		vec3 step = vec3(1.0, 1.0, 1.0);
+		if(rayDir.x < 0) step.x = -1.0;
+		if(rayDir.y < 0) step.y = -1.0;
+		if(rayDir.z < 0) step.z = -1.0;
 
 		if(rayPos.x < rayPos.y && rayPos.x < rayPos.z){
 			gridIndex.x += 1.0;
@@ -48,7 +51,7 @@ void main(){
 	}
 
 	
-	gl_FragData[0] = rayPos;
+	gl_FragData[0] = vec4(vec3(rayPos), 1.0);
 	gl_FragData[1] = rayDir;
 	gl_FragData[2] = gridIndex;
 	
