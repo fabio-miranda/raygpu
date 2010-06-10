@@ -15,7 +15,7 @@
 class KernelMng {
 
 public:
-	KernelMng(int width, int height, RTScene* scene);
+	KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth, float nearPlaneHeight);
 	~KernelMng();
 
 	void step(KernelMngState stateToStop, Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane);

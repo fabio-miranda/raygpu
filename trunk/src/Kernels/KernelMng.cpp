@@ -1,12 +1,12 @@
 #include "KernelMng.h"
 
 
-KernelMng::KernelMng(int width, int height,RTScene* scene){
+KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth, float nearPlaneHeight){
 
 
 	UniformGrid* uniformGrid = scene->GetUniformGrid();
 
-	m_kernelGenerateRay = new KernelGenerateRay(width, height, uniformGrid->getBBMin(), uniformGrid->getBBMax());
+	m_kernelGenerateRay = new KernelGenerateRay(width, height, uniformGrid->getNumVoxels(), uniformGrid->getBBMin(), uniformGrid->getBBMax(), nearPlaneWidth, nearPlaneHeight);
 
 
 	m_kernelTraverse = new KernelTraverse(width, height, uniformGrid->getVoxelSize(),

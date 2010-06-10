@@ -4,7 +4,7 @@ KernelGenerateRay::KernelGenerateRay(){
 
 }
 
-KernelGenerateRay::KernelGenerateRay(int width, int height, Vector3 bbMin, Vector3 bbMax)
+KernelGenerateRay::KernelGenerateRay(int width, int height, Vector3 gridSize, Vector3 bbMin, Vector3 bbMax, float nearPlaneWidth, float nearPlaneHeight)
 : KernelBase("./resources/vertice.vert", "./resources/generateRay.frag", width, height){
 
 
@@ -21,9 +21,11 @@ KernelGenerateRay::KernelGenerateRay(int width, int height, Vector3 bbMin, Vecto
 		m_locEyeUp = addInputVec3("eyeUp", Vector3(0, 0, 0));
 		m_locEyeRight = addInputVec3("eyeRight", Vector3(0, 0, 0));
 		m_locNearPlanePos = addInputFloat("nearPlane", 0);
+		m_locNearPlaneSize = addInputVec3("nearPlaneSize", Vector3(nearPlaneWidth, nearPlaneHeight, 0.0f));
 		m_locScreenSize = addInputVec3("screenSize", Vector3(width, height, 0));
 		addInputVec3("bbMin", bbMin);
 		addInputVec3("bbMax", bbMax);
+		addInputVec3("gridSize", gridSize);
 	m_shader->setActive(false);
 
 }

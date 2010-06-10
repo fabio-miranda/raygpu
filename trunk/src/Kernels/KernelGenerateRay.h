@@ -12,7 +12,7 @@ class KernelGenerateRay : public KernelBase {
 
 public:
 	KernelGenerateRay();
-	KernelGenerateRay(int width, int height, Vector3 bbMin, Vector3 bbMax);
+	KernelGenerateRay(int width, int height, Vector3 gridSize, Vector3 bbMin, Vector3 bbMax, float farPlaneWidth, float farPlaneHeight);
 	~KernelGenerateRay();
 
 	void step(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane);
@@ -23,6 +23,7 @@ public:
 	GLuint m_locEyeDir;
 	GLuint m_locEyeUp;
 	GLuint m_locEyeRight;
+	GLuint m_locNearPlaneSize;
 	GLuint m_locNearPlanePos;
 	GLuint m_locScreenSize;
 	GLuint m_texIdRayPos;
