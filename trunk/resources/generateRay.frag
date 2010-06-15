@@ -168,7 +168,7 @@ void main(){
 			rayDir.w = ACTIVE_TRAVERSE;
 			rayPos.xyz = rayPos.xyz + intersectionMin * rayDir.xyz;
 			voxelIndex = findVoxel(rayPos.xyz);
-			rayPos.w = findVoxelLinearArray(rayPos.xyz);
+			rayPos.w = findVoxelLinearArray(voxelIndex.xyz);
 			posIntersectionOut = findIntersectionOut(rayPos.xyz, rayDir.xyz, voxelIndex.xyz);
 			
 			breakpoint = 1.0;
@@ -179,8 +179,10 @@ void main(){
 	}
 
 	//gl_FragData[0] = vec4(rayDir.xyz, 0.5);
-	gl_FragData[0] = vec4(vec3(breakpoint), 0.5);
-	//gl_FragData[0] = vec4(normalize(posIntersectionOut.xyz), 0.5);
+	//gl_FragData[0] = vec4(vec3(breakpoint), 0.5);
+	//gl_FragData[0] = vec4(normalize(rayPos.xyz + intersectionMax * rayDir.xyz;), 0.5);
+	//gl_FragData[0] = vec4(vec3(rayPos.w/(gridSize.x * gridSize.y * gridSize.z)), 0.5);
+	gl_FragData[0] = vec4(normalize(rayPos.xyz), 0.5);
 	/*
 	gl_FragData[0] = rayPos;
 	gl_FragData[1] = rayDir;

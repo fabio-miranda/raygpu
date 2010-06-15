@@ -6,7 +6,7 @@ KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth,
 
 	UniformGrid* uniformGrid = scene->GetUniformGrid();
 
-	m_kernelGenerateRay = new KernelGenerateRay(width, height, uniformGrid->getNumVoxels(), uniformGrid->getBBMin(), uniformGrid->getBBMax(), nearPlaneWidth, nearPlaneHeight);
+	m_kernelGenerateRay = new KernelGenerateRay(width, height, uniformGrid->getNumVoxels(), uniformGrid->getVoxelSize(), uniformGrid->getBBMin(), uniformGrid->getBBMax(), nearPlaneWidth, nearPlaneHeight);
 
 
 	m_kernelTraverse = new KernelTraverse(width, height, uniformGrid->getVoxelSize(),
