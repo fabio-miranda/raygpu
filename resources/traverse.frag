@@ -15,6 +15,12 @@ uniform float gridArraySize;
 
 //Voxel index (stored on rayPos.a)
 
+float findVoxelLinearArray(vec3 voxelIndex){
+
+	return voxelIndex.x*gridSize.y*gridSize.z + voxelIndex.y*gridSize.z + voxelIndex.z;
+
+}
+
 
 void main(){
 
@@ -27,6 +33,13 @@ void main(){
 	float rayLength = length(gridIntersectionMax.xyz - gridIntersectionMin.xyz);
 
 	if(gridIndex.x > gridSize.x || gridIndex.y > gridSize.y || gridIndex.z > gridSize.z) discard;
+
+	if(gridIndex.a > 0){
+		rayDir.a = ACTIVE_INTERSECT;
+	}
+	else{
+		rayDir.a = ACTIVE_TRAVERSE;
+	}
 
 	if(rayPos.a == ACTIVE_TRAVERSE){
 
@@ -51,7 +64,7 @@ void main(){
 	}
 
 	
-	gl_FragData[0] = vec4(vec3(rayPos), 1.0);
+	gl_FragData[0] = vec4(rayPos.xyz, findVoxelLinearArray(gridIndex.xyz));
 	gl_FragData[1] = rayDir;
 	gl_FragData[2] = gridIndex;
 	
