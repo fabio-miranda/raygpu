@@ -177,16 +177,16 @@ void main(){
 			rayDir.a = INACTIVE;
 		}
 	}
-
+	/*
 	//gl_FragData[0] = vec4(rayDir.xyz, 0.5);
-	//gl_FragData[0] = vec4(vec3(breakpoint), 0.5);
+	gl_FragData[0] = vec4(vec3(breakpoint), 0.5);
 	//gl_FragData[0] = vec4(normalize(rayPos.xyz + intersectionMax * rayDir.xyz;), 0.5);
 	//gl_FragData[0] = vec4(vec3(rayPos.w/(gridSize.x * gridSize.y * gridSize.z)), 0.5);
-	gl_FragData[0] = vec4(normalize(rayPos.xyz), 0.5);
-	/*
+	//gl_FragData[0] = vec4(normalize(rayPos.xyz), 0.5);
+	*/
 	gl_FragData[0] = rayPos;
 	gl_FragData[1] = rayDir;
 	gl_FragData[2] = vec4(intersectionMin);
 	gl_FragData[3] = vec4(posIntersectionOut, 1.0);
-	*/
+	
 }
