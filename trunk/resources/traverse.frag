@@ -61,6 +61,9 @@ void main(){
 			gridIndex.y += 1.0;
 			rayPos.y += delta.y;
 		}
+
+		if(rayDir.a = ACTIVE_INTERSECT);
+
 	}
 
 	
