@@ -32,7 +32,7 @@ int main(int argc, char *argv[]){
 
 
 void render(){
-	
+	  GLenum e = glGetError();
 	
 	glClearColor(1.0,1.0,1.0,1.0);
 	
@@ -47,23 +47,29 @@ void render(){
 	gluLookAt(x,y,z, 0, 0, 0, 1, 0, 0);
 
 	//TODO: get the values from the current MODELVIEW matrix
-	//GLfloat* lookAtMatrix;
+	////GLfloat* lookAtMatrix;
 	//glGetFloatv(GL_MODELVIEW_MATRIX, lookAtMatrix);
 	Vector3 f = (Vector3(0,0,0) - Vector3(x,y,z)).unitary();
 	Vector3 up = Vector3(1, 0, 0).unitary();
 	Vector3 s = f ^ up;
 	Vector3 u = s ^ f;
 	Vector3 r = f ^ u;
-
+    e = glGetError();
 	renderAxis();
+    e = glGetError();
 	rtScene->render();
+  static int i=0;
+  //if (i<1)
+  {
 	kernelMng->step(TRAVERSE,
 					Vector3(x, y, z),
 					f,
 					u,
 					r,
 					nearPlane);
-	kernelMng->renderKernelOutput(TRAVERSE, 0);
+  i++;
+  }
+	kernelMng->renderKernelOutput(TRAVERSE, 2);
 
 	
 	
@@ -83,10 +89,10 @@ void renderAxis(){
 }
 
 void init(int argc, char *argv[]){
-	
+	  
 
 	camAlpha = 0.0;
-	camBeta = 45.0;
+	camBeta = 40.0;
 	camR = 1000.0;
 	lastMousePosX = 0;
 	lastMousePosY = 0;
@@ -97,6 +103,7 @@ void init(int argc, char *argv[]){
 
 
 	glutInit(&argc, argv);
+  GLenum e = glGetError();
 
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 	glutInitWindowSize(APP_WIDTH,APP_HEIGHT);
@@ -120,15 +127,17 @@ void init(int argc, char *argv[]){
 	glEnable(GL_BLEND);
 	glEnable(GL_TEXTURE);
 	glEnable(GL_TEXTURE_2D);
+  glEnable(GL_TEXTURE_1D);
 
 
 
 	rtScene = new RTScene("./resources/scenes/cavalo.rt4");
 	rtScene->configure();
-
+    e = glGetError();
 	float nearPlaneHeight = 2.0f * tanf(DEG_TO_RAD(fov/2.0f)) * nearPlane;
 	float nearPlaneWidth = nearPlaneHeight * ((GLfloat)APP_WIDTH/(GLfloat)APP_HEIGHT);
 	kernelMng = new KernelMng(APP_WIDTH, APP_HEIGHT, rtScene, nearPlaneWidth, nearPlaneHeight);
+    e = glGetError();
 
 }
 

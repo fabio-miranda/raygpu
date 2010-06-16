@@ -45,7 +45,8 @@ void main()
       {
          ///Set Ray State to Shading
          rDir.w = float(ACTIVE_SHADING);
-         gl_FragData[0] = rDir;
+//         gl_FragData[0] = rDir;
+         gl_FragData[0] = vec4(1., 0., 0., 1.);
 
          vec3 fragPos = rPos.xyz+rDir.xyz*lastHit.r;
          vec4 triangleInfo = vec4(fragPos, lastHit.b);
@@ -55,7 +56,8 @@ void main()
    }
 
    ///Discard Pixel
-   gl_FragData[0] = rDir;
+   gl_FragData[0] = vec4(0., 1., 0., 1.);
+//   gl_FragData[0] = rDir;
    gl_FragData[1] = vec4(-1, -1, -1, -1);
 }
 

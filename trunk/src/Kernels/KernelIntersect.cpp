@@ -17,11 +17,11 @@ KernelIntersect::KernelIntersect(int width, int height, GLuint texIdRayPos, GLui
 
 	//Input
 	m_shader->setActive(true);
-    addInputTexture("rayPos", texIdRayPos);
-    addInputTexture("rayDir", texIdRayDir);
-    addInputTexture("grid", texIdGrid);
-    addInputTexture("triangleList", texIdTriangleList);
-    addInputTexture("vertexes", texIdvertexes);
+    addInputTexture(GL_TEXTURE_2D, "rayPos", texIdRayPos);
+    addInputTexture(GL_TEXTURE_2D, "rayDir", texIdRayDir);
+    addInputTexture(GL_TEXTURE_1D, "grid", texIdGrid);
+    addInputTexture(GL_TEXTURE_1D, "triangleList", texIdTriangleList);
+    addInputTexture(GL_TEXTURE_1D, "vertexes", texIdvertexes);
 
     addInputFloat("gridSize", gridTexSize);
     addInputFloat("triangleListSize", triangleListTexSize);

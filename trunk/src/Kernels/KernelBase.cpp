@@ -16,13 +16,13 @@ KernelBase::~KernelBase(){
 
 }
 
-GLuint KernelBase::addInputTexture(char* name, GLuint id){
+GLuint KernelBase::addInputTexture(GLenum textureDimension, char* name, GLuint id){
 
-	GLuint loc = m_shader->getUniformLocation(name);
-	glUniform1iARB(loc, m_inputTextures.size());
-	m_inputTextures.push_back(id);
+  GLuint loc = m_shader->getUniformLocation(name);
+  glUniform1iARB(loc, m_inputTextures.size());
+  m_inputTextures.push_back(std::pair<GLenum, GLuint>(textureDimension, id));
 
-	return loc;
+  return loc;
 }
 
 GLuint KernelBase::addInputVec3(char* name, Vector3 value){
@@ -53,18 +53,22 @@ GLuint KernelBase::getOutputTexture(int index){
 }
 
 void KernelBase::activateTextures(){
-	for(int i=0; i<m_inputTextures.size(); i++){
+	
+  GLenum e = glGetError();
+  for(int i=0; i<m_inputTextures.size(); i++){
 		glActiveTextureARB(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D,m_inputTextures.at(i));
+		glBindTexture(m_inputTextures.at(i).first, m_inputTextures.at(i).second);
 	}
+
+  e = glGetError();
 }
 
 void KernelBase::renderQuad(){
   glBegin(GL_QUADS);
-    glVertex3f(0,0,0); glTexCoord2f(0,0);
-    glVertex3f(1,0,0); glTexCoord2f(1,0);
-    glVertex3f(1,1,0); glTexCoord2f(1,1);
-    glVertex3f(0,1,0); glTexCoord2f(0,1);
+    glTexCoord2f(0,0);glVertex3f(0,0,0); 
+    glTexCoord2f(1,0);glVertex3f(1,0,0); 
+    glTexCoord2f(1,1);glVertex3f(1,1,0); 
+    glTexCoord2f(0,1);glVertex3f(0,1,0); 
   glEnd();
 }
 

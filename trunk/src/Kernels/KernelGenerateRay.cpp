@@ -54,3 +54,13 @@ void KernelGenerateRay::step(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vect
 
 GLuint KernelGenerateRay::getTexIdRayPos(){return m_texIdRayPos;}
 GLuint KernelGenerateRay::getTexIdRayDir(){return m_texIdRayDir;}
+
+GLuint KernelGenerateRay::getTexIdIntersectionMax()
+{
+  return m_texIdIntersectionMax;
+}
+
+GLuint KernelGenerateRay::getTexIdIntersectionMin()
+{
+  return m_texIdIntersectionMin;
+}

@@ -68,12 +68,13 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 			}
 		}
 	}
+  
 
-
-	m_gridArraySize = (int)(p_numVoxels.x * p_numVoxels.y * p_numVoxels.z) * 3;
+	m_gridArraySize = (int)(p_numVoxels.x * p_numVoxels.y * p_numVoxels.z) * 4;
 	m_gridArray = new GLfloat[m_gridArraySize];
-	memset(m_gridArray, 0, sizeof(GLfloat) * m_gridArraySize);
+	memset(m_gridArray, -1, sizeof(GLfloat) * m_gridArraySize);
 
+  size += p_numVoxels.x * p_numVoxels.y * p_numVoxels.z;
 	m_triangleListArraySize = size;
 	m_triangleListArray = new GLfloat[m_triangleListArraySize];
 	memset(m_triangleListArray, -1, sizeof(GLfloat) * m_triangleListArraySize);
@@ -101,6 +102,7 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
  
 	unsigned int gridCount = 0;
 	int cont = 0;
+  int gridIndexCont = 0;
 	for(int x=0; x<p_numVoxels.x; x++){
 		for(int y=0; y<p_numVoxels.y; y++){
 			for(int z=0; z<p_numVoxels.z; z++){
@@ -135,17 +137,22 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 					m_triangleDiffuseArray[triangleIndex+1] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mDiffuse.g;
 					m_triangleDiffuseArray[triangleIndex+2] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mDiffuse.b;
 				}
-				m_gridArray[cont] = x;
-				m_gridArray[cont+1] = y;
-				m_gridArray[cont+2] = z;
-				m_gridArray[cont+3] = gridCount;
+				m_gridArray[gridIndexCont++] = x;
+				m_gridArray[gridIndexCont++] = y;
+				m_gridArray[gridIndexCont++] = z;
+				m_gridArray[gridIndexCont++] = aux_grid[cont].size();
+        //m_gridArray[gridIndexCont++] = -1;
 				
-				gridCount+=aux_grid[cont].size();
+				gridCount += aux_grid[cont].size()+1;
 
 				cont++;
 			}
 		}
 	}
+  for(int i=0; i<m_gridArraySize; i+=4)
+  {
+    printf("%f %f %f %f\n",m_gridArray[i],m_gridArray[i+1],m_gridArray[i+2],m_gridArray[i+3] );
+  }
 
 
 	delete [] aux_grid;
