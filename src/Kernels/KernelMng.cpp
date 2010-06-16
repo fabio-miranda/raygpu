@@ -5,16 +5,18 @@ KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth,
 
 
 	UniformGrid* uniformGrid = scene->GetUniformGrid();
-
+  GLenum e = glGetError();
 	m_kernelGenerateRay = new KernelGenerateRay(width, height, uniformGrid->getNumVoxels(), uniformGrid->getVoxelSize(), uniformGrid->getBBMin(), uniformGrid->getBBMax(), nearPlaneWidth, nearPlaneHeight);
 
 
-	m_kernelTraverse = new KernelTraverse(width, height, uniformGrid->getVoxelSize(),
+	m_kernelTraverse = new KernelTraverse( width, height, uniformGrid->getVoxelSize(),
 											scene->getGridTexId(),
 											scene->getGridTexSize(),
 											uniformGrid->getNumVoxels(),
 											m_kernelGenerateRay->getTexIdRayPos(),
-											m_kernelGenerateRay->getTexIdRayDir());
+											m_kernelGenerateRay->getTexIdRayDir(),
+                      m_kernelGenerateRay->getTexIdIntersectionMax(),
+                      m_kernelGenerateRay->getTexIdIntersectionMin());
 
 
 	m_kernelIntersect = new KernelIntersect(width, height, m_kernelGenerateRay->getTexIdRayPos(),
@@ -31,7 +33,7 @@ KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth,
 	
 	m_currentState = GENERATERAY;
 	//m_uniformGrid = uniformGrid;
-
+e = glGetError();
 
 }
 
@@ -47,7 +49,7 @@ GLuint KernelMng::getTextureColorId(){
 
 void KernelMng::update(KernelMngState stateToStop){
 	
-	KernelMngState newState;
+	KernelMngState newState = m_currentState;
 
 	if(m_currentState == stateToStop)
 		return;
@@ -57,16 +59,17 @@ void KernelMng::update(KernelMngState stateToStop){
 	}
 	else if(m_currentState == INTERSECT || m_currentState == TRAVERSE){
 
-		if(countActiveRays() > 0){
+		//if(countActiveRays() > 0){
 			newState = oracle();
-		}
-		else
-			newState = SHADE;
+		//}
+		//else
+		//	newState = SHADE;
 	}
+  m_currentState = newState; 
 }
 
 void KernelMng::render(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane){
-
+    GLenum e = glGetError();
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
@@ -74,7 +77,7 @@ void KernelMng::render(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 ey
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
-	
+	  e = glGetError();
 	switch(m_currentState){
 		case GENERATERAY:
 			m_kernelGenerateRay->step(eyePos, eyeDir, eyeUp, eyeRight, nearPlane);
@@ -89,12 +92,12 @@ void KernelMng::render(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 ey
 			m_kernelShade->step(eyePos);
 			break;
 	}
-
+   e = glGetError();
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
-
+  
 	
 	
 }
@@ -110,6 +113,33 @@ void KernelMng::renderKernelOutput(KernelMngState stateToRender, int outputNum){
 		textureId = m_kernelIntersect->getOutputTexture(outputNum);
 	else if(stateToRender == SHADE)
 		textureId = m_kernelShade->getOutputTexture(outputNum);
+/*
+
+
+  glActiveTextureARB(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, textureId);
+  GLfloat* pixels = new GLfloat[800 * 600 * 4];
+  glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, pixels);
+  glBindTexture(GL_TEXTURE_2D, 0);
+
+  int contIf = 0;
+  int contElse = 0;
+  int contElseEles = 0;
+  for(int i=0; i<800*600*4; i+=4){
+    if(pixels[i]>0 && pixels[i+1]>0 && pixels[i+2]>0 && pixels[i+3]>0)
+      contIf++;
+    //std::cout << pixels[i] << "," << pixels[i+1] << ", " << pixels[i+2] << ", " << pixels[i+3] << "\n";
+    //std::cout << "a" << "\n";
+    else if(pixels[i]<0 && pixels[i+1]<0 && pixels[i+2]<0 && pixels[i+3]<0)
+      //std::cout << "b" << "\n";
+      contElse++;
+    else contElseEles++;
+  }
+  std::cout << "If: " << contIf << ", Else:" << contElse << ", ElseE:" << contElseEles <<"\n";
+
+*/
+
+
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -120,14 +150,14 @@ void KernelMng::renderKernelOutput(KernelMngState stateToRender, int outputNum){
 	glLoadIdentity();
 
   //glEnable(GL_TEXTURE_2D);
-	
+	glActiveTextureARB(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureId);
 	glColor3f(1,1,1);
 	glBegin(GL_QUADS);
-		glVertex3f(0,0,0); glTexCoord2f(0,0);// glColor3f(1, 1, 0);
-		glVertex3f(1,0,0); glTexCoord2f(1,0);// glColor3f(1, 0, 0);
-		glVertex3f(1,1,0); glTexCoord2f(1,1);// glColor3f(1, 0, 0);
-		glVertex3f(0,1,0); glTexCoord2f(0,1);// glColor3f(1, 0, 0);
+		glTexCoord2f(0,0);glVertex3f(0,0,0); // glColor3f(1, 1, 0);
+		glTexCoord2f(1,0);glVertex3f(1,0,0);// glColor3f(1, 0, 0);
+		glTexCoord2f(1,1);glVertex3f(1,1,0); // glColor3f(1, 0, 0);
+		glTexCoord2f(0,1);glVertex3f(0,1,0); // glColor3f(1, 0, 0);
 	glEnd();
 	glBindTexture(GL_TEXTURE_2D, 0);
 	

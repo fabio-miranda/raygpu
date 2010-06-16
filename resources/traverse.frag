@@ -26,28 +26,33 @@ void main(){
 
 	vec4 rayDir = texture2D(samplerRayDir, gl_TexCoord[0].st);
 	vec4 rayPos = texture2D(samplerRayPos, gl_TexCoord[0].st);
-	vec4 gridIndex = floor(texture1D(samplerGrid, floor(rayPos.w+.5)/gridArraySize) + .5);
+	vec4 gridIndex = texture1D(samplerGrid, floor(rayPos.w+.5)/gridArraySize);
 	vec4 gridIntersectionMax = texture2D(samplerGridIntersectionMax, gl_TexCoord[0].st);
 	vec4 gridIntersectionMin = texture2D(samplerGridIntersectionMin, gl_TexCoord[0].st);
-	
+
 	float rayLength = length(gridIntersectionMax.xyz - gridIntersectionMin.xyz);
 
-	if(gridIndex.x > gridSize.x || gridIndex.y > gridSize.y || gridIndex.z > gridSize.z) discard;
+//	if(gridIndex.x > gridSize.x || gridIndex.y > gridSize.y || gridIndex.z > gridSize.z)
+//   {
+//      gl_FragData[0] = vec4(0,1,0,1);
+//      return;
+//      discard;
+//   }
 
-	if(gridIndex.a > 0){
+	if(gridIndex.a > 0.0){
 		rayDir.a = ACTIVE_INTERSECT;
 	}
 	else{
 		rayDir.a = ACTIVE_TRAVERSE;
 	}
 
-	if(rayPos.a == ACTIVE_TRAVERSE){
+	if(rayDir.a == ACTIVE_TRAVERSE){
 
 		vec3 delta = abs(rayLength / rayDir.xyz);
 		vec3 step = vec3(1.0, 1.0, 1.0);
-		if(rayDir.x < 0) step.x = -1.0;
-		if(rayDir.y < 0) step.y = -1.0;
-		if(rayDir.z < 0) step.z = -1.0;
+		if(rayDir.x < 0.0) step.x = -1.0;
+		if(rayDir.y < 0.0) step.y = -1.0;
+		if(rayDir.z < 0.0) step.z = -1.0;
 
 		if(rayPos.x < rayPos.y && rayPos.x < rayPos.z){
 			gridIndex.x += 1.0;
@@ -61,20 +66,20 @@ void main(){
 			gridIndex.y += 1.0;
 			rayPos.y += delta.y;
 		}
-
-		if(rayDir.a = ACTIVE_INTERSECT);
-
 	}
 
-	
-	gl_FragData[0] = vec4(rayPos.xyz, findVoxelLinearArray(gridIndex.xyz));
+
+	if(gridIndex.a > 0.0){
+		rayDir.a = ACTIVE_INTERSECT;
+		gl_FragData[2] = vec4(1.0, 0.0, 1.0, .5);
+	}
+	else{
+		rayDir.a = ACTIVE_TRAVERSE;
+		gl_FragData[2] = vec4(0.0, 0.0, 1.0, 0.5);
+	}
+//   gl_FragData[0] = rayPos;
+   gl_FragData[0] = vec4(rayPos.xyz, findVoxelLinearArray(gridIndex.xyz));
+//   gl_FragData[0] = vec4(rayPos.xyz, 0.8);
 	gl_FragData[1] = rayDir;
-	gl_FragData[2] = gridIndex;
-	
-	
-	
-	
-
-	
-
+//	gl_FragData[2] = rayDir;
 }

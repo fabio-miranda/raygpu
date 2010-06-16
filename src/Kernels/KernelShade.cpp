@@ -16,12 +16,12 @@ KernelShade::KernelShade(int width, int height, GLuint texIdRayDir, GLuint texId
 
       //Input
       m_shader->setActive(true);
-        addInputTexture("triangleInfo", texIdTriangleHitInfo);
-        addInputTexture("vertexes", texIdvertexes);
-        addInputTexture("normals", texIdNormals);
-        addInputTexture("diffuseTex", texIdDiffuseTex);
-        addInputTexture("especularTex", texIdSpecularTex);
-        addInputTexture("lights", texIdLights);
+        addInputTexture(GL_TEXTURE_1D, "triangleInfo", texIdTriangleHitInfo);
+        addInputTexture(GL_TEXTURE_1D, "vertexes", texIdvertexes);
+        addInputTexture(GL_TEXTURE_1D, "normals", texIdNormals);
+        addInputTexture(GL_TEXTURE_1D, "diffuseTex", texIdDiffuseTex);
+        addInputTexture(GL_TEXTURE_1D, "especularTex", texIdSpecularTex);
+        addInputTexture(GL_TEXTURE_1D, "lights", texIdLights);
 
         addInputFloat("normalsSize", normalsTexSize);
         addInputFloat("vertexesSize", vertexesTexSize);

@@ -198,7 +198,7 @@ void RTScene::calcTextures()
   int lightArrayAbsoluteSize = mLights.size()*sizeof(struct lightStruct)/(sizeof(GLfloat));
 
 
-  GLfloat* data[] = {   mGrid->getGridArray()/*A*/,
+  GLfloat* data[] = {   mGrid->getGridArray()/*RGBA*/,
                         mGrid->getTriangleVertexArray()/*RGB*/, mGrid->getTriangleAmbientArray()/*RGB*/,
                         mGrid->getTriangleDiffuseArray()/*RGB*/, mGrid->getTriangleSpecularArray()/*RGBA*/,
                         mGrid->getTriangleListArray()/*A*/, mGrid->getTriangleNormalsArray()/*RGB*/,
