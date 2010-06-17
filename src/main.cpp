@@ -9,6 +9,7 @@ int lastMousePosX;
 int lastMousePosY;
 int mouseState;
 int mouseButton;
+bool step;
 float camAlpha;
 float camBeta;
 float camR;
@@ -32,7 +33,8 @@ int main(int argc, char *argv[]){
 
 
 void render(){
-	  GLenum e = glGetError();
+
+	if(step == false) return;
 	
 	glClearColor(1.0,1.0,1.0,1.0);
 	
@@ -54,28 +56,22 @@ void render(){
 	Vector3 s = f ^ up;
 	Vector3 u = s ^ f;
 	Vector3 r = f ^ u;
-    e = glGetError();
 	renderAxis();
-    e = glGetError();
 	rtScene->render();
-  static int i=0;
-  //if (i<1)
-  {
+
+
 	kernelMng->step(TRAVERSE,
 					Vector3(x, y, z),
 					f,
 					u,
 					r,
 					nearPlane);
-  i++;
-  }
 	kernelMng->renderKernelOutput(TRAVERSE, 2);
 
 	
-	
-	glFlush();
-
 	glutSwapBuffers();
+
+	step = false;
 
 }
 
@@ -100,6 +96,7 @@ void init(int argc, char *argv[]){
 	mouseButton = GLUT_RIGHT_BUTTON;
 	nearPlane = 0.1f;
 	fov = 60.0f;
+	step = false;
 
 
 	glutInit(&argc, argv);
@@ -157,9 +154,12 @@ void keyboardSpecial(int key, int x, int y){
 	else if( key == GLUT_KEY_UP ) angleX+=ANGLE_STEP;
 	else if( key == GLUT_KEY_DOWN ) angleX-=ANGLE_STEP;
 	*/
+	if( key == GLUT_KEY_HOME)
+		step = true;
 }
 
 void keyboard(unsigned char key, int x, int y){
+
 }
 
 void mouseButtons(int button, int state, int x, int y){
