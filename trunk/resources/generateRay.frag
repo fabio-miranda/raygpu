@@ -186,8 +186,8 @@ void main(){
 //	gl_FragData[0] = vec4(normalize(vec3(intersectionMin)), 1.5);
 	//gl_FragData[0] = vec4(vec3(breakpoint), 0.5);
 //	gl_FragData[0] = vec4(normalize(rayPos.xyz + intersectionMax * rayDir.xyz;), 0.5);
-	gl_FragData[0] = vec4(vec3(rayPos.w/(gridSize.x * gridSize.y * gridSize.z)), 1.0);
-	//gl_FragData[0] = vec4(voxelIndex.xyz / gridSize.xyz, 0.5);
+	//gl_FragData[0] = vec4(vec3(rayPos.w/(gridSize.x * gridSize.y * gridSize.z)), 1.0);
+	gl_FragData[0] = vec4(voxelIndex.xyz / gridSize.xyz, 0.5);
 	//gl_FragData[0] = vec4(normalize(rayPos.xyz), 0.5);
 	/**/
 	//gl_FragData[0] = rayPos;
