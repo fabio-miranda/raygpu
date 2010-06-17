@@ -32,49 +32,6 @@ int main(int argc, char *argv[]){
 
 
 
-void render(){
-
-	if(step == false) return;
-	
-	glClearColor(1.0,1.0,1.0,1.0);
-	
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	glLoadIdentity();
-
-	float x = camR*sin(DEG_TO_RAD(camBeta))*cos(DEG_TO_RAD(camAlpha));
-	float y = camR*sin(DEG_TO_RAD(camAlpha));
-	float z = camR*cos(DEG_TO_RAD(camBeta))*cos(DEG_TO_RAD(camAlpha));
-
-	gluLookAt(x,y,z, 0, 0, 0, 1, 0, 0);
-
-	//TODO: get the values from the current MODELVIEW matrix
-	////GLfloat* lookAtMatrix;
-	//glGetFloatv(GL_MODELVIEW_MATRIX, lookAtMatrix);
-	Vector3 f = (Vector3(0,0,0) - Vector3(x,y,z)).unitary();
-	Vector3 up = Vector3(1, 0, 0).unitary();
-	Vector3 s = f ^ up;
-	Vector3 u = s ^ f;
-	Vector3 r = f ^ u;
-	renderAxis();
-	rtScene->render();
-
-
-	kernelMng->step(TRAVERSE,
-					Vector3(x, y, z),
-					f,
-					u,
-					r,
-					nearPlane);
-	kernelMng->renderKernelOutput(TRAVERSE, 2);
-
-	
-	glutSwapBuffers();
-
-	step = false;
-
-}
-
 void renderAxis(){
 	glBegin(GL_LINES);
 	glColor3f(0, 0, 1); glVertex3f(0, 0, 0); glColor3f(0, 0, 1); glVertex3f(0, 0, 1000);
@@ -89,7 +46,7 @@ void init(int argc, char *argv[]){
 
 	camAlpha = 0.0;
 	camBeta = 40.0;
-	camR = 1000.0;
+	camR = 100;
 	lastMousePosX = 0;
 	lastMousePosY = 0;
 	mouseState = GLUT_UP;
@@ -192,3 +149,47 @@ void mouseActive(int x, int y){
 
 
 
+
+
+void render(){
+
+  //if(step == false) return;
+
+  glClearColor(1.0,1.0,1.0,1.0);
+
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  glLoadIdentity();
+
+  float x = camR*sin(DEG_TO_RAD(camBeta))*cos(DEG_TO_RAD(camAlpha));
+  float y = camR*sin(DEG_TO_RAD(camAlpha));
+  float z = camR*cos(DEG_TO_RAD(camBeta))*cos(DEG_TO_RAD(camAlpha));
+
+  gluLookAt(x,y,z, 0, 0, 0, 1, 0, 0);
+
+  //TODO: get the values from the current MODELVIEW matrix
+  ////GLfloat* lookAtMatrix;
+  //glGetFloatv(GL_MODELVIEW_MATRIX, lookAtMatrix);
+  Vector3 f = (Vector3(0,0,0) - Vector3(x,y,z)).unitary();
+  Vector3 up = Vector3(1, 0, 0).unitary();
+  Vector3 s = f ^ up;
+  Vector3 u = s ^ f;
+  Vector3 r = f ^ u;
+  renderAxis();
+  rtScene->render();
+
+
+  kernelMng->step(GENERATERAY,
+    Vector3(x, y, z),
+    f,
+    u,
+    r,
+    nearPlane);
+  kernelMng->renderKernelOutput(GENERATERAY, 0);
+
+
+  glutSwapBuffers();
+
+  step = false;
+
+}
