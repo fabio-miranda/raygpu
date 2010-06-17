@@ -6,6 +6,6 @@ MATERIAL 180. 180.   0.    255.  255.  255.   40.   0.  0.  1. null
 MATERIAL 180. 180.   0.    255.  255.  255.   40.   0.  0.  1. null
 MATERIAL 0. 0.   0.    255.  255.  255.   40.   1.  0.  0. null
 LIGHT 40. 120. 0.     50. 50. 50.
-MESH 0  -20. 0. -20     20.  30.0  30.0  resources/Models/cavalo.um
+MESH 0  0. 0. 0.     20.  30.0  30.0  resources/Models/cavalo.um
 BOX 1   -80. -50.  -50.   50. -45.  50.
 BOX 2   -80. -50.  -60.   50. 50.  -50.
