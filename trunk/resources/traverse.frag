@@ -68,18 +68,19 @@ void main(){
 		}
 	}
 
-
 	if(gridIndex.a > 0.0){
 		rayDir.a = ACTIVE_INTERSECT;
-		gl_FragData[2] = vec4(1.0, 0.0, 1.0, .5);
+		gl_FragData[2] = vec4(1.0, 0.0, 0.0, .5);
 	}
 	else{
 		rayDir.a = ACTIVE_TRAVERSE;
 		gl_FragData[2] = vec4(0.0, 0.0, 1.0, 0.5);
 	}
+
 //   gl_FragData[0] = rayPos;
-   gl_FragData[0] = vec4(rayPos.xyz, findVoxelLinearArray(gridIndex.xyz));
+	gl_FragData[0] = vec4(rayPos.xyz, findVoxelLinearArray(gridIndex.xyz));
 //   gl_FragData[0] = vec4(rayPos.xyz, 0.8);
 	gl_FragData[1] = rayDir;
 //	gl_FragData[2] = rayDir;
+
 }
