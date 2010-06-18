@@ -28,17 +28,16 @@ void main(){
 	vec4 rayPos = texture2D(samplerRayPos, gl_TexCoord[0].st);
 	vec4 gridIndex = texture1D(samplerGrid, floor(rayPos.w+.5)/gridArraySize);
 	vec4 gridIntersectionMax = texture2D(samplerGridIntersectionMax, gl_TexCoord[0].st);
-	vec4 gridIntersectionMin = texture2D(samplerGridIntersectionMin, gl_TexCoord[0].st);
+	float intersectionMin = texture2D(samplerGridIntersectionMin, gl_TexCoord[0].st).x;
 
-	//float rayLength = length(gridIntersectionMax.xyz - gridIntersectionMin.xyz);
+	//float rayLength = length(gridIntersectionMax.xyz - rayPos.xyz + intersectionMin * rayDir.xyz);
 	float rayLength = length(gridIntersectionMax.xyz - rayPos.xyz);
 
-//	if(gridIndex.x > gridSize.x || gridIndex.y > gridSize.y || gridIndex.z > gridSize.z)
-//   {
-//      gl_FragData[0] = vec4(0,1,0,1);
-//      return;
-//      discard;
-//   }
+	if(gridIndex.x > gridSize.x || gridIndex.y > gridSize.y || gridIndex.z > gridSize.z)
+	{
+		gl_FragData[0] = vec4(0,1,0,1);
+		discard;
+	}
 
 	if(gridIndex.a > 0.0){
 		rayDir.a = ACTIVE_INTERSECT;
@@ -71,7 +70,7 @@ void main(){
 
 	if(gridIndex.a > 0.0){
 		rayDir.a = ACTIVE_INTERSECT;
-		gl_FragData[2] = vec4(1.0, 0.0, 0.0, .5);
+		gl_FragData[2] = vec4(1.0, 0.0, 0.0, 0);
 	}
 	else{
 		rayDir.a = ACTIVE_TRAVERSE;

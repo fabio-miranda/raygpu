@@ -5,7 +5,7 @@ KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth,
 
 
 	UniformGrid* uniformGrid = scene->GetUniformGrid();
-  GLenum e = glGetError();
+
 	m_kernelGenerateRay = new KernelGenerateRay(width, height, uniformGrid->getNumVoxels(), uniformGrid->getVoxelSize(), uniformGrid->getBBMin(), uniformGrid->getBBMax(), nearPlaneWidth, nearPlaneHeight);
 
 
@@ -33,7 +33,6 @@ KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth,
 	
 	m_currentState = GENERATERAY;
 	//m_uniformGrid = uniformGrid;
-e = glGetError();
 
 }
 
@@ -49,23 +48,26 @@ GLuint KernelMng::getTextureColorId(){
 
 void KernelMng::update(KernelMngState stateToStop){
 	
-	KernelMngState newState = m_currentState;
 
-	if(m_currentState == stateToStop)
+	if(m_currentState == stateToStop){
+		//m_currentState = GENERATERAY;	
 		return;
-
-	if(m_currentState == GENERATERAY){
-			newState = TRAVERSE;
+	}
+	else if(m_currentState == GENERATERAY){
+		m_currentState = TRAVERSE;
 	}
 	else if(m_currentState == INTERSECT || m_currentState == TRAVERSE){
 
 		//if(countActiveRays() > 0){
-			newState = oracle();
+			m_currentState = oracle();
 		//}
 		//else
 		//	newState = SHADE;
 	}
-  m_currentState = newState; 
+}
+
+void KernelMng::generateRay(){
+	m_currentState = GENERATERAY;
 }
 
 void KernelMng::render(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane){
@@ -77,7 +79,7 @@ void KernelMng::render(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 ey
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
-	  e = glGetError();
+
 	switch(m_currentState){
 		case GENERATERAY:
 			m_kernelGenerateRay->step(eyePos, eyeDir, eyeUp, eyeRight, nearPlane);
@@ -92,7 +94,6 @@ void KernelMng::render(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 ey
 			m_kernelShade->step(eyePos);
 			break;
 	}
-   e = glGetError();
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);

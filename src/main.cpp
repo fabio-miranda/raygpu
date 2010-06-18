@@ -44,9 +44,9 @@ void renderAxis(){
 void init(int argc, char *argv[]){
 	  
 
-	camAlpha = 0.0;
-	camBeta = 40.0;
-	camR = 100;
+	camAlpha = 190.0;
+	camBeta = 0.0;
+	camR = 500;
 	lastMousePosX = 0;
 	lastMousePosY = 0;
 	mouseState = GLUT_UP;
@@ -57,7 +57,6 @@ void init(int argc, char *argv[]){
 
 
 	glutInit(&argc, argv);
-  GLenum e = glGetError();
 
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 	glutInitWindowSize(APP_WIDTH,APP_HEIGHT);
@@ -87,11 +86,9 @@ void init(int argc, char *argv[]){
 
 	rtScene = new RTScene("./resources/scenes/cavalo.rt4");
 	rtScene->configure();
-    e = glGetError();
 	float nearPlaneHeight = 2.0f * tanf(DEG_TO_RAD(fov/2.0f)) * nearPlane;
 	float nearPlaneWidth = nearPlaneHeight * ((GLfloat)APP_WIDTH/(GLfloat)APP_HEIGHT);
 	kernelMng = new KernelMng(APP_WIDTH, APP_HEIGHT, rtScene, nearPlaneWidth, nearPlaneHeight);
-    e = glGetError();
 
 }
 
@@ -113,10 +110,12 @@ void keyboardSpecial(int key, int x, int y){
 	*/
 	if( key == GLUT_KEY_HOME)
 		step = true;
+	
 }
 
 void keyboard(unsigned char key, int x, int y){
-
+	if( key == 32)
+		kernelMng->generateRay();
 }
 
 void mouseButtons(int button, int state, int x, int y){
@@ -153,43 +152,43 @@ void mouseActive(int x, int y){
 
 void render(){
 
-  //if(step == false) return;
+	//if(step == false) return;
 
-  glClearColor(1.0,1.0,1.0,1.0);
+	glClearColor(1.0,1.0,1.0,1.0);
 
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  glLoadIdentity();
+	glLoadIdentity();
 
-  float x = camR*sin(DEG_TO_RAD(camBeta))*cos(DEG_TO_RAD(camAlpha));
-  float y = camR*sin(DEG_TO_RAD(camAlpha));
-  float z = camR*cos(DEG_TO_RAD(camBeta))*cos(DEG_TO_RAD(camAlpha));
+	float x = camR*sin(DEG_TO_RAD(camBeta))*cos(DEG_TO_RAD(camAlpha));
+	float y = camR*sin(DEG_TO_RAD(camAlpha));
+	float z = camR*cos(DEG_TO_RAD(camBeta))*cos(DEG_TO_RAD(camAlpha));
 
-  gluLookAt(x,y,z, 0, 0, 0, 1, 0, 0);
+	gluLookAt(x,y,z, 0, 0, 0, 1, 0, 0);
 
-  //TODO: get the values from the current MODELVIEW matrix
-  ////GLfloat* lookAtMatrix;
-  //glGetFloatv(GL_MODELVIEW_MATRIX, lookAtMatrix);
-  Vector3 f = (Vector3(0,0,0) - Vector3(x,y,z)).unitary();
-  Vector3 up = Vector3(1, 0, 0).unitary();
-  Vector3 s = f ^ up;
-  Vector3 u = s ^ f;
-  Vector3 r = f ^ u;
-  renderAxis();
-  rtScene->render();
-
-
-  kernelMng->step(GENERATERAY,
-    Vector3(x, y, z),
-    f,
-    u,
-    r,
-    nearPlane);
-  kernelMng->renderKernelOutput(GENERATERAY, 0);
+	//TODO: get the values from the current MODELVIEW matrix
+	////GLfloat* lookAtMatrix;
+	//glGetFloatv(GL_MODELVIEW_MATRIX, lookAtMatrix);
+	Vector3 f = (Vector3(0,0,0) - Vector3(x,y,z)).unitary();
+	Vector3 up = Vector3(1, 0, 0).unitary();
+	Vector3 s = f ^ up;
+	Vector3 u = s ^ f;
+	Vector3 r = f ^ u;
+	renderAxis();
+	rtScene->render();
 
 
-  glutSwapBuffers();
+	kernelMng->step(TRAVERSE,
+	Vector3(x, y, z),
+			f,
+			u,
+			r,
+			nearPlane);
+	kernelMng->renderKernelOutput(TRAVERSE, 2);
 
-  step = false;
+
+	glutSwapBuffers();
+
+	step = false;
 
 }

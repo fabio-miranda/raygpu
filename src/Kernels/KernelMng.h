@@ -21,6 +21,7 @@ public:
 	void step(KernelMngState stateToStop, Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane);
 	GLuint getTextureColorId();
 	void renderKernelOutput(KernelMngState stateToRender, int outputNum);
+	void generateRay();
 
 private:
 	KernelMngState oracle();

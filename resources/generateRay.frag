@@ -164,7 +164,8 @@ void main(){
 	else{
 
 		//Check if the ray hits the grid
-		if(hitGrid(rayPos.xyz, rayDir.xyz, intersectionMin, intersectionMax)){
+		bool hit = hitGrid(rayPos.xyz, rayDir.xyz, intersectionMin, intersectionMax);
+		if(hit && intersectionMin > 0.0){
 			rayDir.w = ACTIVE_TRAVERSE;
 			rayPos.xyz = rayPos.xyz + intersectionMin * rayDir.xyz;
 			voxelIndex = findVoxel(rayPos.xyz);
@@ -174,7 +175,7 @@ void main(){
 			breakpoint = 1.0;
 		}
 		else{
-		   intersectionMin = 0.0;
+			intersectionMin = 0.0;
 			rayPos = vec4(0.0, 0.0 ,0.0, -1.0);
 			rayDir.a = INACTIVE;
 			breakpoint = -1.0;
@@ -190,7 +191,7 @@ void main(){
 	//gl_FragData[0] = vec4(voxelIndex.xyz / gridSize.xyz, 0.5);
 	//gl_FragData[0] = vec4(normalize(rayPos.xyz), 0.5);
 	/**/
-	//gl_FragData[0] = rayPos;
+	gl_FragData[0] = rayPos;
 	gl_FragData[1] = rayDir;
 	gl_FragData[2] = vec4(intersectionMin);
 	gl_FragData[3] = vec4(posIntersectionOut, 1.0);
