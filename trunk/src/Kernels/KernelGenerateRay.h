@@ -18,8 +18,8 @@ public:
 	void step(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane);
 	GLuint getTexIdRayPos();
 	GLuint getTexIdRayDir();
-  GLuint getTexIdIntersectionMax();
-  GLuint getTexIdIntersectionMin();
+	GLuint getTexIdIntersectionMax();
+	GLuint getTexIdIntersectionMin();
   
 
 	GLuint m_locEyePos;
