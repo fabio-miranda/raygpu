@@ -49,14 +49,18 @@ GLuint KernelMng::getTextureColorId(){
 void KernelMng::update(KernelMngState stateToStop){
 	
 
-	//if(m_currentState == stateToStop){
-	//	//m_currentState = GENERATERAY;	
-	//	return;
-	//}
-	//else 
+	if(m_currentState == stateToStop){
+		//m_currentState = GENERATERAY;	
+		return;
+	}
+	else 
   if(m_currentState == GENERATERAY){
 		m_currentState = TRAVERSE;
 	}
+  else
+  if(m_currentState == INTERSECT){
+    m_currentState = SHADE;
+  }
 	else if(m_currentState == INTERSECT || m_currentState == TRAVERSE){
 
 		//if(countActiveRays() > 0){
