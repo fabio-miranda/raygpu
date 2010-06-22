@@ -13,9 +13,11 @@ KernelShade::KernelShade(int width, int height, GLuint texIdRayDir, GLuint texId
       //Output
       addOutput(0, texIdRayDir);    
       m_texIdColor = addOutput(1);
+      GLuint aux = addOutput(2);
 
       //Input
       m_shader->setActive(true);
+        addInputTexture(GL_TEXTURE_2D, "rayDir", texIdRayDir);  
         addInputTexture(GL_TEXTURE_1D, "triangleInfo", texIdTriangleHitInfo);
         //addInputTexture(GL_TEXTURE_2D, "vertexes", texIdvertexes);
         addInputTexture(GL_TEXTURE_1D, "normals", texIdNormals);
@@ -40,6 +42,7 @@ void KernelShade::step(Vector3 eyePos){
 
   m_fbo->setActive(true);
   m_shader->setActive(true);
+  activateTextures();
     glUniform3f(m_locEyePos, eyePos.x, eyePos.y, eyePos.z);
     renderQuad();
   m_shader->setActive(false);

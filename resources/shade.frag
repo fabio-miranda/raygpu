@@ -73,25 +73,25 @@ void main()
       fragPos = triangleInfos.rgb;
       float triangleIndex = floor(triangleInfos.a + .5);
 
-      vec3 normal = texture1D(normals, triangleIndex/normalsSize).xyz;
+      vec3 normal = texture1D(normals, (triangleIndex + .5)/normalsSize).xyz;
       ambient = defaultAmbientMaterial;
       diffuse = vec3(0, 0, 0);
 
-      vec4 matInfo = texture1D(diffuseTex, triangleIndex/diffuseSize);
+      vec4 matInfo = texture1D(diffuseTex, (triangleIndex + .5)/diffuseSize);
       specular = vec3(0, 0, 0);
       eyeDir = eyePos - fragPos;
 
-      fragMaterial.specular = texture1D(diffuseTex, triangleIndex/diffuseSize).rgb;
+      fragMaterial.specular = texture1D(diffuseTex, (triangleIndex + .5)/diffuseSize).rgb;
       fragMaterial.diffuse = matInfo.rgb;
       fragMaterial.shininess = matInfo.a;
 
       float numLights = lightsSize/4.0;
       for(float i = 0.0; i<numLights; i += 1.0)
       {
-         lightSpecular = texture1D(lights, (i*4.0 + 1.0)/lightsSize);
+         lightSpecular = texture1D(lights, (i*4.0 + 1.0 + .5)/lightsSize);
          if(floor(lightSpecular.a + .5) != 0.0) //Is Light Enabled?
          {
-            lightPosition = texture1D(lights, (i*4.0 + 2.0)/lightsSize);
+            lightPosition = texture1D(lights, (i*4.0 + 2.0 + .5)/lightsSize);
             float lightType = floor(lightPosition.w+.5);
             if(lightType == 0.0) //Directional Light
             {
@@ -116,12 +116,15 @@ void main()
 
       vec3 intensity = ambient + diffuse;
       gl_FragData[1] = vec4(intensity + specular, 1.0);
+      gl_FragData[2] = vec4(intensity + specular, 1.0);
    }else
    {
       ///Discard Pixel
       gl_FragData[0] = rDir;
       gl_FragData[1] = vec4(-1, -1, -1, -1);
+      gl_FragData[2] = vec4(1,1,1,1);
    }
+   /**/
 }
 
 void calcDirLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular)
@@ -132,7 +135,7 @@ void calcDirLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout
    float NdotL = max(0.0, dot(N, L));
    if ( NdotL > 0.0 )
    {
-      vec3 lightDiffuse = texture1D(lights, (i*4.0)/lightsSize).rgb;
+      vec3 lightDiffuse = texture1D(lights, (i*4.0 + .5)/lightsSize).rgb;
       float att = 1.0; //future work
       float NdotH = max(0.0, dot(N, H));
 
@@ -151,7 +154,7 @@ void calcPointLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, ino
    float NdotL = max(0.0, dot(N, L));
    if ( NdotL > 0.0 )
    {
-      vec3 lightDiffuse = texture1D(lights, (i*4.0)/lightsSize).rgb;
+      vec3 lightDiffuse = texture1D(lights, (i*4.0 + .5)/lightsSize).rgb;
       float att = 1.0; //future work
       float NdotH = max(0.0, dot(N, H));
 
@@ -170,14 +173,14 @@ void calcSpotLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inou
    float NdotL = max(0.0, dot(N, L));
    if ( NdotL > 0.0 )
    {
-      vec4 lightSpotInfo = texture1D(lights, (i*4.0 + 3.0)/lightsSize);
+      vec4 lightSpotInfo = texture1D(lights, (i*4.0 + 3.0 + .5)/lightsSize);
       vec3 lightSpotDir = lightSpotInfo.rgb;
       float lightSpotAngle = lightSpotInfo.a;
 
       float spotEffect = dot(normalize(lightSpotDir),-L);
       if (spotEffect > lightSpotAngle)
       {
-         vec4 lightDiffuse = texture1D(lights, (i*4.0)/lightsSize);
+         vec4 lightDiffuse = texture1D(lights, (i*4.0 + .5)/lightsSize);
          float att = 1.0; //future work
          float NdotH = max(0.0, dot(N, H));
 

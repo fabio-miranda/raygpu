@@ -47,7 +47,7 @@ void init(int argc, char *argv[]){
 
 	camAlpha = 190.0;
 	camBeta = 0.0;
-	camR = 500;
+	camR = 300;
   camInc = 5;
 	lastMousePosX = 0;
 	lastMousePosY = 0;
@@ -193,7 +193,8 @@ void render(){
 
 	//kernelMng->step(GENERATERAY,
   //kernelMng->step(TRAVERSE,
-  kernelMng->step(INTERSECT,
+  //kernelMng->step(INTERSECT,
+  kernelMng->step(SHADE,
 	Vector3(x, y, z),
 			f,
 			u,
@@ -201,7 +202,8 @@ void render(){
 			nearPlane);
 	//kernelMng->renderKernelOutput(GENERATERAY, 0);
   //kernelMng->renderKernelOutput(TRAVERSE, 2);
-  kernelMng->renderKernelOutput(INTERSECT, 2);
+  //kernelMng->renderKernelOutput(INTERSECT, 0);
+  kernelMng->renderKernelOutput(SHADE, 2);
 
 
 	glutSwapBuffers();
