@@ -14,15 +14,21 @@ KernelIntersect::KernelIntersect(int width, int height, GLuint texIdRayPos, GLui
 	//Output
 	addOutput(0, texIdRayDir);
 	m_texIdTriangleHitInfo = addOutput(1);
+  GLuint aux = addOutput(2);
+
+  GLint max_tex_size = 0;
+  glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
 
 	//Input
 	m_shader->setActive(true);
     addInputTexture(GL_TEXTURE_2D, "rayPos", texIdRayPos);
     addInputTexture(GL_TEXTURE_2D, "rayDir", texIdRayDir);
     addInputTexture(GL_TEXTURE_1D, "grid", texIdGrid);
+    addInputTexture(GL_TEXTURE_2D, "vertexes", texIdvertexes);
+    //addInputTexture(GL_TEXTURE_1D, "vertexes", texIdvertexes);
     addInputTexture(GL_TEXTURE_1D, "triangleList", texIdTriangleList);
-    addInputTexture(GL_TEXTURE_1D, "vertexes", texIdvertexes);
 
+    addInputFloat("maxTextureSize", max_tex_size);
     addInputFloat("gridSize", gridTexSize);
     addInputFloat("triangleListSize", triangleListTexSize);
     addInputFloat("vertexesSize", vertexesTexSize);

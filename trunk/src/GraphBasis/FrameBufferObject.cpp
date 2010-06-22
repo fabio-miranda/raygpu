@@ -45,9 +45,22 @@ FrameBufferObject::FrameBufferObject(int width, int height)
       cout << "Video card does NOT support GL_EXT_framebuffer_object." << endl;
    }
 
+
+
+   //GLuint rboId;
+   //glGenRenderbuffersEXT(1, &rboId);
+   //glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, rboId);
+   //glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT,
+   //  mWidth, mHeight);
+   //glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, 0);
+
    assert(mSupported);
    glGenFramebuffersEXT(1, &mfboId);
    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, mfboId);
+
+   // attach the renderbuffer to depth attachment point
+   /*glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,
+     GL_RENDERBUFFER_EXT, rboId);*/
 
 
    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
@@ -59,14 +72,16 @@ FrameBufferObject::FrameBufferObject(int width, int height)
    mStencilBuffer.textureTarget = GL_STENCIL_ATTACHMENT_EXT;
 
    m_numBuffers = 0;
-   m_drawBuffers = NULL;
 }
 
 FrameBufferObject :: ~FrameBufferObject()
 {
-   mRenderBuffers.clear();
-   if(mSupported)
-      glDeleteFramebuffersEXT(1, &mfboId);
+  vector<RenderBufferObject*> :: iterator  rbIt;
+  for(rbIt = mRenderBuffers.begin();rbIt!=mRenderBuffers.end();++rbIt)
+    delete *rbIt;
+  mRenderBuffers.clear();
+  if(mSupported)
+    glDeleteFramebuffersEXT(1, &mfboId);
 }
 
 
@@ -116,14 +131,7 @@ GLuint FrameBufferObject :: attachToColorBuffer(BufferType::BindType bt, int ind
    assert(mSupported);
 
 
-   m_numBuffers++;
-   //Fill m_drawBuffers
-   if(m_drawBuffers != NULL) delete [] m_drawBuffers;
-   m_drawBuffers = new GLenum[m_numBuffers];
-   for(int i=0; i<m_numBuffers; i++){
-	   m_drawBuffers[i] = GL_COLOR_ATTACHMENT0_EXT + i;
-   }
-
+  m_drawBuffers[m_numBuffers++] = mCollorBuffers[index].textureTarget;
 
    return id;
 }
@@ -147,11 +155,11 @@ GLuint FrameBufferObject :: attachToDepthBuffer(BufferType::BindType bt, GLuint 
       }
    }
 
-   mStencilBuffer.bindType = bt;
-   mStencilBuffer.id = id;
+   mDephtBuffer.bindType = bt;
+   mDephtBuffer.id = id;
 
    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, mfboId);
-   mStencilBuffer.bind();
+   mDephtBuffer.bind();
    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 
    //    check FBO status
@@ -159,6 +167,8 @@ GLuint FrameBufferObject :: attachToDepthBuffer(BufferType::BindType bt, GLuint 
    if(!checkFramebufferStatus())
       mSupported = false;
    assert(mSupported);
+
+   //m_drawBuffers[m_numBuffers++] = mDephtBuffer.textureTarget;
 
    return id;
 }
@@ -173,7 +183,9 @@ GLuint FrameBufferObject :: attachToStencilBuffer(BufferType::BindType bt, GLuin
             id = createTextureToRender(mWidth, mHeight);
          break;
          case BufferType::RenderBufferObject:
+            //glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, mfboId);
             id = createRenderFrameObjectToRender(mWidth, mHeight);
+            //glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
          break;
 
          case BufferType::NotBind:
@@ -182,10 +194,10 @@ GLuint FrameBufferObject :: attachToStencilBuffer(BufferType::BindType bt, GLuin
       }
    }
 
-   mDephtBuffer.bindType = bt;
-   mDephtBuffer.id = id;
+   mStencilBuffer.bindType = bt;
+   mStencilBuffer.id = id;
    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, mfboId);
-   mDephtBuffer.bind();
+   mStencilBuffer.bind();
    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 
    //    check FBO status
@@ -194,9 +206,10 @@ GLuint FrameBufferObject :: attachToStencilBuffer(BufferType::BindType bt, GLuin
       mSupported = false;
    assert(mSupported);
 
+   //m_drawBuffers[m_numBuffers++] = mStencilBuffer.textureTarget;
+
    return id;
 }
-
 
 void FrameBufferObject::setActive(bool active)
 {
@@ -206,8 +219,10 @@ void FrameBufferObject::setActive(bool active)
       glPushAttrib(GL_ENABLE_BIT);
       glDisable(GL_ALPHA_TEST);
       glDisable(GL_BLEND);
+
       glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, mfboId);
-	    glDrawBuffers(m_numBuffers, m_drawBuffers);
+
+      glDrawBuffers(m_numBuffers, m_drawBuffers);
    }
    else
    {
@@ -240,6 +255,7 @@ GLuint FrameBufferObject::createTextureToRender(int width, int height)
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE); // automatic mipmap generation included in OpenGL v1.4
+   //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F_ARB, width, height, 0, GL_RGBA, GL_FLOAT, 0);
    glBindTexture(GL_TEXTURE_2D, 0);
    return textureId;
@@ -247,9 +263,9 @@ GLuint FrameBufferObject::createTextureToRender(int width, int height)
 
 GLuint FrameBufferObject::createRenderFrameObjectToRender(int width, int height)
 {
-   RenderBufferObject r = RenderBufferObject(width, height);
+   RenderBufferObject *r = new RenderBufferObject(width, height);
    mRenderBuffers.push_back(r);
-   return r.getId();
+   return r->getId();
 }
 
 bool FrameBufferObject::checkFramebufferStatus()

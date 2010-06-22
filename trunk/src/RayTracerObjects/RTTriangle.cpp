@@ -15,8 +15,7 @@ unsigned int RTTriangle :: sTriangleNum = 0;
 //////////////////
 RTTriangle :: RTTriangle()
 {
-  sTriangleNum++;
-  mMyTriangleNum = sTriangleNum;
+  mMyTriangleNum = sTriangleNum++;
 }
 
 RTTriangle :: RTTriangle(unsigned int MATERIALINDEX, Vector3 V1, Vector3 V2, Vector3 V3)
@@ -25,8 +24,7 @@ RTTriangle :: RTTriangle(unsigned int MATERIALINDEX, Vector3 V1, Vector3 V2, Vec
 ,v2(V2)
 ,v3(V3)
 {
-  sTriangleNum++;
-  mMyTriangleNum = sTriangleNum;
+  mMyTriangleNum = sTriangleNum++;
 }
 
 vector<RTTriangle> RTTriangle :: readFromFile(unsigned int materialIndex, string fileName)
@@ -43,7 +41,8 @@ vector<RTTriangle> RTTriangle :: readFromFile(unsigned int materialIndex, string
    Vector3 * vList = new Vector3[numVertex];
 
    for(int i = 0; i < numVertex; ++i)
-      fscanf(file, "%f %f %f\n", &vList[i].x, &vList[i].y, &vList[i].z);
+      fscanf(file, "%f %f %f\n", &vList[i].z, &vList[i].y, &vList[i].x);
+   //fscanf(file, "%f %f %f\n", &vList[i].x, &vList[i].y, &vList[i].z);
 
    fscanf(file, "\n%d\n", &numRTTriangles);
    printf("Reading %d RTTriangles...\n", numRTTriangles);

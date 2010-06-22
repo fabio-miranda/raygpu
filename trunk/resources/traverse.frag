@@ -26,7 +26,8 @@ void main(){
 
 	vec4 rayDir = texture2D(samplerRayDir, gl_TexCoord[0].st);
 	vec4 rayPos = texture2D(samplerRayPos, gl_TexCoord[0].st);
-	vec4 gridIndex = texture1D(samplerGrid, floor(rayPos.w+.5)/gridArraySize);
+
+	vec4 gridIndex = texture1D(samplerGrid, (floor(rayPos.w+.5)+.5)/gridArraySize);
 	vec4 gridIntersectionMax = texture2D(samplerGridIntersectionMax, gl_TexCoord[0].st);
 	float intersectionMin = texture2D(samplerGridIntersectionMin, gl_TexCoord[0].st).x;
 

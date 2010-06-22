@@ -101,9 +101,9 @@ vec3 findVoxel(vec3 rayPos){
 	vec3 index = vec3(-1.0, -1.0, -1.0);
 
 	index = (rayPos - bbMin) / gridVoxelSize;
-	index.x = int(index.x);
-	index.y = int(index.y);
-	index.z = int(index.z);
+	index.x = float(int(index.x));
+	index.y = float(int(index.y));
+	index.z = float(int(index.z));
 
 	return index;
 
