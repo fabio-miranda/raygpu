@@ -189,30 +189,32 @@ unsigned int RTScene::getSceneNumTriangles()
 
 void RTScene::calcTextures()
 {
+  GLint max_tex_size = 0;
+  glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
+
   GLenum sizeType [] = {0,GL_ALPHA, 2 ,GL_RGB, GL_RGBA};
   
   GLfloat* lData = new GLfloat[mLights.size()*sizeof(struct lightStruct)];
   for( unsigned int i = 0; i < mLights.size(); ++i)
-    memcpy(&lData[i*sizeof(struct lightStruct)], mLights[i].getLightStruct(), sizeof(struct lightStruct));
+    memcpy(&lData[i*sizeof(struct lightStruct)/sizeof(GLfloat)], mLights[i].getLightStruct(), sizeof(struct lightStruct));
   int lightArraySize = mLights.size()*sizeof(struct lightStruct)/(4*sizeof(GLfloat));
   int lightArrayAbsoluteSize = mLights.size()*sizeof(struct lightStruct)/(sizeof(GLfloat));
 
 
   GLfloat* data[] = {   mGrid->getGridArray()/*RGBA*/,
-                        mGrid->getTriangleVertexArray()/*RGB*/, mGrid->getTriangleAmbientArray()/*RGB*/,
+                        mGrid->getTriangleAmbientArray()/*RGB*/,
                         mGrid->getTriangleDiffuseArray()/*RGB*/, mGrid->getTriangleSpecularArray()/*RGBA*/,
                         mGrid->getTriangleListArray()/*A*/, mGrid->getTriangleNormalsArray()/*RGB*/,
                         lData/*RGBA*/};
   
   
   unsigned int size[] = {   mGrid->getGridArraySize(),
-                            mGrid->getTriangleVertexArraySize(), mGrid->getTriangleAmbientArraySize(),
+                            mGrid->getTriangleAmbientArraySize(),
                             mGrid->getTriangleDiffuseArraySize(), mGrid->getTriangleSpecularArraySize(),
                             mGrid->getTriangleListArraySize(), mGrid->getTriangleNormalsArraySize(),
                             lightArraySize };
   
   int sizeIndex [] = {  mGrid->getGridArrayAbsoluteSize()/mGrid->getGridArraySize(),
-                        mGrid->getTriangleVertexArrayAbsoluteSize()/mGrid->getTriangleVertexArraySize(), 
                         mGrid->getTriangleAmbientArrayAbsoluteSize()/mGrid->getTriangleAmbientArraySize(),
                         mGrid->getTriangleDiffuseArrayAbsoluteSize()/mGrid->getTriangleDiffuseArraySize(), 
                         mGrid->getTriangleSpecularArrayAbsoluteSize()/mGrid->getTriangleSpecularArraySize(),
@@ -230,21 +232,69 @@ void RTScene::calcTextures()
   //  printf("%d %s\n",sizeIndex[i], sizeTypeStr[sizeIndex[i]]);
   //}
 
+
   glGenTextures(numTextures, id);
   for(int i=0; i<numTextures; ++i)
   {
-    glBindTexture(GL_TEXTURE_1D, id[i]);
-    //   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA32F_ARB, size[i], 0, sizeType[sizeIndex[i]], GL_FLOAT, data[i]);
-    glBindTexture(GL_TEXTURE_1D, 0);
+    GLenum e = glGetError();
+    if(size[i]<max_tex_size)
+    {
+      glBindTexture(GL_TEXTURE_1D, id[i]);
+      //   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+      glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+      glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+      glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+      glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA32F_ARB, size[i], 0, sizeType[sizeIndex[i]], GL_FLOAT, data[i]);
+      glBindTexture(GL_TEXTURE_1D, 0);
+      e = glGetError();
+    }else 
+    {
+      printf("Texture 1D too big!");
+      assert(false);
+    }
   }
+
+  /////2D
+  /////2D
+  /////2D
+  /////2D
+
+  GLfloat* data2D[] = {  mGrid->getTriangleVertexArray()/*RGB*/};
+
+  unsigned int size2D[] = { mGrid->getTriangleVertexArraySize()};
+
+  int sizeIndex2D[] = { mGrid->getTriangleVertexArrayAbsoluteSize()/mGrid->getTriangleVertexArraySize()  };
+
+  int numTextures2D = sizeof(data2D)/sizeof(GLfloat*);
+  GLuint *id2D = new GLuint[numTextures2D];
+
+
+  glGenTextures(numTextures2D, id2D);
+  for(int i=0; i<numTextures2D; ++i)
+  {
+    GLenum e = glGetError();
+  
+    if (size2D[i]<max_tex_size*max_tex_size)
+    {
+      glBindTexture(GL_TEXTURE_2D, id2D[i]);
+      //   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F_ARB, max_tex_size, (size2D[i]/max_tex_size)+1, 0, sizeType[sizeIndex2D[i]], GL_FLOAT, data2D[i]);
+      glBindTexture(GL_TEXTURE_2D, 0);
+      e = glGetError();
+    }else 
+    {
+      printf("Texture 2D is too big!");
+      assert(false);
+    }
+  }
+
   
   int i = 0;
   mGridTexId = id[i++];
-  mVertexesTexId = id[i++];
   mAmbientTexId = id[i++];
   mDiffuseTexId = id[i++];
   mSpecularTexId = id[i++];
@@ -252,7 +302,11 @@ void RTScene::calcTextures()
   mNormalsTexId = id[i++];
   mLightsTexId = id[i++];
   
+  i = 0;
+  mVertexesTexId = id2D[i++];
+  
   delete[] id;
+  delete[] id2D;
 }
 
 GLuint RTScene::getGridTexId()

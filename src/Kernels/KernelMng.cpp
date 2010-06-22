@@ -49,11 +49,12 @@ GLuint KernelMng::getTextureColorId(){
 void KernelMng::update(KernelMngState stateToStop){
 	
 
-	if(m_currentState == stateToStop){
-		//m_currentState = GENERATERAY;	
-		return;
-	}
-	else if(m_currentState == GENERATERAY){
+	//if(m_currentState == stateToStop){
+	//	//m_currentState = GENERATERAY;	
+	//	return;
+	//}
+	//else 
+  if(m_currentState == GENERATERAY){
 		m_currentState = TRAVERSE;
 	}
 	else if(m_currentState == INTERSECT || m_currentState == TRAVERSE){
@@ -71,7 +72,7 @@ void KernelMng::generateRay(){
 }
 
 void KernelMng::render(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane){
-    GLenum e = glGetError();
+
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
@@ -98,9 +99,6 @@ void KernelMng::render(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 ey
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
-  
-	
-	
 }
 
 void KernelMng::renderKernelOutput(KernelMngState stateToRender, int outputNum){
@@ -114,33 +112,6 @@ void KernelMng::renderKernelOutput(KernelMngState stateToRender, int outputNum){
 		textureId = m_kernelIntersect->getOutputTexture(outputNum);
 	else if(stateToRender == SHADE)
 		textureId = m_kernelShade->getOutputTexture(outputNum);
-/*
-
-
-  glActiveTextureARB(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, textureId);
-  GLfloat* pixels = new GLfloat[800 * 600 * 4];
-  glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, pixels);
-  glBindTexture(GL_TEXTURE_2D, 0);
-
-  int contIf = 0;
-  int contElse = 0;
-  int contElseEles = 0;
-  for(int i=0; i<800*600*4; i+=4){
-    if(pixels[i]>0 && pixels[i+1]>0 && pixels[i+2]>0 && pixels[i+3]>0)
-      contIf++;
-    //std::cout << pixels[i] << "," << pixels[i+1] << ", " << pixels[i+2] << ", " << pixels[i+3] << "\n";
-    //std::cout << "a" << "\n";
-    else if(pixels[i]<0 && pixels[i+1]<0 && pixels[i+2]<0 && pixels[i+3]<0)
-      //std::cout << "b" << "\n";
-      contElse++;
-    else contElseEles++;
-  }
-  std::cout << "If: " << contIf << ", Else:" << contElse << ", ElseE:" << contElseEles <<"\n";
-
-*/
-
-
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();

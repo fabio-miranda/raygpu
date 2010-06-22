@@ -1,20 +1,30 @@
 uniform sampler2D rayDir;
 uniform sampler2D triangleInfo;
 
-uniform sampler1D vertexes;
+//uniform sampler2D vertexes;
 uniform sampler1D normals;
 uniform sampler1D diffuseTex;
 uniform sampler1D especularTex;
 uniform sampler1D lights;
 
+//uniform float vertexesSize;
 uniform float normalsSize;
-uniform float vertexesSize;
 uniform float diffuseSize;
 uniform float especularSize;
 uniform float lightsSize;
 
 uniform vec3 eyePos;
 
+
+vec2 index1Dto2D(float index, float width, float size)
+{
+   float height = float(int(size/width))+1.0;
+   vec2 r = vec2(float(mod(index,width)), float(int(index/width)));
+   r.x = (r.x+.5)/width;
+   r.y = (r.y+.5)/height;
+
+   return r;
+}
 
 void calcDirLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular);
 void calcPointLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular);

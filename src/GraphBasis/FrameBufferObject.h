@@ -60,9 +60,9 @@ class FrameBufferObject
    BufferType mDephtBuffer;
    BufferType mStencilBuffer;
 
-   vector<RenderBufferObject> mRenderBuffers;
+   vector<RenderBufferObject*> mRenderBuffers;
 public:
-	FrameBufferObject();
+   FrameBufferObject();
    FrameBufferObject(int width, int height);
    ~FrameBufferObject();
 
@@ -73,7 +73,7 @@ public:
    void setActive(bool);
    bool isActive();
 
-   GLenum* m_drawBuffers;
+   GLenum m_drawBuffers [GL_MAX_COLOR_ATTACHMENTS_EXT+2];
 
 private:
    GLuint createTextureToRender(int width, int height);

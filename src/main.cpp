@@ -13,6 +13,7 @@ bool step;
 float camAlpha;
 float camBeta;
 float camR;
+float camInc;
 
 float nearPlane;
 float fov;
@@ -47,6 +48,7 @@ void init(int argc, char *argv[]){
 	camAlpha = 190.0;
 	camBeta = 0.0;
 	camR = 500;
+  camInc = 5;
 	lastMousePosX = 0;
 	lastMousePosY = 0;
 	mouseState = GLUT_UP;
@@ -83,7 +85,6 @@ void init(int argc, char *argv[]){
   glEnable(GL_TEXTURE_1D);
 
 
-
 	rtScene = new RTScene("./resources/scenes/cavalo.rt4");
 	rtScene->configure();
 	float nearPlaneHeight = 2.0f * tanf(DEG_TO_RAD(fov/2.0f)) * nearPlane;
@@ -114,7 +115,14 @@ void keyboardSpecial(int key, int x, int y){
 }
 
 void keyboard(unsigned char key, int x, int y){
-	if( key == 32)
+  switch(key)
+  {
+    case 27://ESC
+      exit(42);
+      break;
+  }
+  //cout << (int)key<<endl;
+  if( key == 32)
 		kernelMng->generateRay();
 }
 
@@ -128,21 +136,19 @@ void mouseButtons(int button, int state, int x, int y){
 }
 
 void mouseActive(int x, int y){
-	if(mouseButton == GLUT_LEFT_BUTTON && mouseState == GLUT_DOWN){
-		float angleX = (x - lastMousePosX);
-		float angleY = (y - lastMousePosY);
+  if(mouseButton == GLUT_LEFT_BUTTON && mouseState == GLUT_DOWN){
+    float angleX = (x - lastMousePosX)*.5;
+    float angleY = (y - lastMousePosY)*.5;
 
 
-		camAlpha = ((int)(camAlpha + angleX))%360;
-		camBeta = ((int)(camBeta + angleY))%360;
-	}
-	else if(mouseButton == GLUT_RIGHT_BUTTON && mouseState == GLUT_DOWN){
-		camR += (y - lastMousePosY)/50.0;
-	}
-	
-
-	lastMousePosX = x;
-	lastMousePosY = y;
+    camAlpha = ((int)(camAlpha + angleY))%360;
+    camBeta = ((int)(camBeta + angleX))%360;
+  }
+  else if(mouseButton == GLUT_RIGHT_BUTTON && mouseState == GLUT_DOWN){
+    camR += (y - lastMousePosY)/2.0;
+  }
+  lastMousePosX = x;
+  lastMousePosY = y;
 
 }
 
@@ -164,13 +170,20 @@ void render(){
 	float y = camR*sin(DEG_TO_RAD(camAlpha));
 	float z = camR*cos(DEG_TO_RAD(camBeta))*cos(DEG_TO_RAD(camAlpha));
 
-	gluLookAt(x,y,z, 0, 0, 0, 1, 0, 0);
+
+  float nextAlpha =  min(camAlpha + camInc,360.0f);
+
+  float ux = sin(DEG_TO_RAD(camBeta))*cos(DEG_TO_RAD(nextAlpha)) - x;
+  float uy = sin(DEG_TO_RAD(nextAlpha)) - y;
+  float uz = cos(DEG_TO_RAD(camBeta))*cos(DEG_TO_RAD(nextAlpha)) - z;
+
+	gluLookAt(x,y,z, 0, 0, 0, ux, uy, uz);
 
 	//TODO: get the values from the current MODELVIEW matrix
 	////GLfloat* lookAtMatrix;
 	//glGetFloatv(GL_MODELVIEW_MATRIX, lookAtMatrix);
 	Vector3 f = (Vector3(0,0,0) - Vector3(x,y,z)).unitary();
-	Vector3 up = Vector3(1, 0, 0).unitary();
+	Vector3 up = Vector3(ux, uy, uz).unitary();
 	Vector3 s = f ^ up;
 	Vector3 u = s ^ f;
 	Vector3 r = f ^ u;
@@ -178,13 +191,17 @@ void render(){
 	rtScene->render();
 
 
-	kernelMng->step(TRAVERSE,
+	//kernelMng->step(GENERATERAY,
+  //kernelMng->step(TRAVERSE,
+  kernelMng->step(INTERSECT,
 	Vector3(x, y, z),
 			f,
 			u,
 			r,
 			nearPlane);
-	kernelMng->renderKernelOutput(TRAVERSE, 2);
+	//kernelMng->renderKernelOutput(GENERATERAY, 0);
+  //kernelMng->renderKernelOutput(TRAVERSE, 2);
+  kernelMng->renderKernelOutput(INTERSECT, 2);
 
 
 	glutSwapBuffers();

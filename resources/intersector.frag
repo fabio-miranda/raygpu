@@ -2,8 +2,12 @@ uniform sampler2D rayPos;
 uniform sampler2D rayDir;
 
 uniform sampler1D grid;
+uniform sampler2D vertexes;
 uniform sampler1D triangleList;
-uniform sampler1D vertexes;
+
+
+
+uniform float maxTextureSize;
 
 uniform float gridSize;
 uniform float triangleListSize;
@@ -16,6 +20,16 @@ uniform float vertexesSize;
 #define DONE 4
 #define OVERFLOW 5
 
+vec2 index1Dto2D(float index, float width, float size)
+{
+   float height = float(int(size/width))+1.0;
+   vec2 r = vec2(float(mod(index,width)), float(int(index/width)));
+   r.x = (r.x+.5)/width;
+   r.y = (r.y+.5)/height;
+
+   return r;
+}
+
 const float infinity = 9.99999999999999999999999999e37;
 
 vec3 intersect(float vertexIndex, vec4 rPos, vec4 rDir, vec3 lastHit, float triangleIndex);
@@ -25,20 +39,28 @@ void main()
    vec4 rDir = texture2D(rayDir, gl_TexCoord[0].st);
    vec4 rPos = texture2D(rayPos, gl_TexCoord[0].st);
 
+   gl_FragData[0] = rDir; //debug
+   gl_FragData[1] = rPos; //debug
+
+
    int triangleFlag = int(floor(rDir.w+.5));
    float gridIndex =  floor(rPos.w+.5);
 
+
+   gl_FragData[2] = vec4(0., 1., 1., .5); //DEBUG
    if(triangleFlag == ACTIVE_INTERSECT)
    {
-      float triangleIndex = floor(texture1D(grid, gridIndex/gridSize).a + .5);
-      float vertexIndex = floor(texture1D(triangleList, triangleIndex/triangleListSize).r + .5);
+      float triangleIndex = floor(texture1D(grid, (gridIndex + .5)/gridSize).a + .5);
+      float vertexIndex = floor(texture1D(triangleList, (triangleIndex + .5)/triangleListSize).a + .5);
       vec3 lastHit = vec3(infinity, vertexIndex, triangleIndex);
+
+      gl_FragData[2] = vec4(1., 0., 0., .5);//DEBUG
 
       while(vertexIndex != -1.0)
       {
          lastHit = intersect(vertexIndex, rPos, rDir, lastHit, triangleIndex);
          triangleIndex++;
-         vertexIndex = floor(texture1D(triangleList, triangleIndex/triangleListSize).r + .5);
+         vertexIndex = floor(texture1D(triangleList, (triangleIndex + .5)/triangleListSize).a + .5);
       }
 
       if(lastHit.r != infinity)
@@ -46,27 +68,36 @@ void main()
          ///Set Ray State to Shading
          rDir.w = float(ACTIVE_SHADING);
 //         gl_FragData[0] = rDir;
-         gl_FragData[0] = vec4(1., 0., 0., 1.);
+//         gl_FragData[0] = vec4(1., 0., 0., 1.);
+         gl_FragData[2] = vec4(0., 0., 1., .5);//DEBUG
 
          vec3 fragPos = rPos.xyz+rDir.xyz*lastHit.r;
          vec4 triangleInfo = vec4(fragPos, lastHit.b);
-         gl_FragData[1] = triangleInfo;
+//         gl_FragData[1] = triangleInfo;
          return;
       }
+
    }
 
+/*
    ///Discard Pixel
-   gl_FragData[0] = vec4(0., 1., 0., 1.);
+   gl_FragData[0] = vec4(0., 1., 0., 1.);//DEBUG
 //   gl_FragData[0] = rDir;
    gl_FragData[1] = vec4(-1, -1, -1, -1);
+  /**/
 }
 
 
 vec3 intersect(float vertexIndex, vec4 rPos, vec4 rDir, vec3 lastHit, float triangleIndex)
 {
-   vec3 v0 = texture1D(vertexes, (vertexIndex*3.)/vertexesSize).xyz;
-   vec3 v1 = texture1D(vertexes, (vertexIndex*3.+1.)/vertexesSize).xyz;
-   vec3 v2 = texture1D(vertexes, (vertexIndex*3.+2.)/vertexesSize).xyz;
+   vec2 coord2D;
+
+   coord2D = index1Dto2D(vertexIndex*3., maxTextureSize, vertexesSize);
+   vec3 v0 = texture2D(vertexes, coord2D).xyz;
+   coord2D = index1Dto2D(vertexIndex*3. + 1.0, maxTextureSize, vertexesSize);
+   vec3 v1 = texture2D(vertexes, coord2D).xyz;
+   coord2D = index1Dto2D(vertexIndex*3. + 2.0, maxTextureSize, vertexesSize);
+   vec3 v2 = texture2D(vertexes, coord2D).xyz;
 
    vec3 edge1 = v1 - v0;
    vec3 edge2 = v2 - v0;
@@ -94,7 +125,6 @@ vec3 intersect(float vertexIndex, vec4 rPos, vec4 rDir, vec3 lastHit, float tria
    u = dot(tvec, pvec);
    if(u < 0.0 || u > det)
       return lastHit;
-
    //prepare to test V param
    qvec = cross(tvec, edge1);
 
@@ -106,7 +136,7 @@ vec3 intersect(float vertexIndex, vec4 rPos, vec4 rDir, vec3 lastHit, float tria
    //calculate t, scale params, ray intersect triangle
    t = dot(edge2, qvec);
    inv_det = 1.0 / det;
-   t*=inv_det;
+   t *= inv_det;
    //u*=inv_det;
    //v*=inv_det;
 
@@ -116,3 +146,4 @@ vec3 intersect(float vertexIndex, vec4 rPos, vec4 rDir, vec3 lastHit, float tria
       return lastHit;
 }
 
+/**/
