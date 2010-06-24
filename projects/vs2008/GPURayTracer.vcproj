@@ -232,11 +232,19 @@
 				Name="Light"
 				>
 				<File
+					RelativePath="..\..\src\Light\DirectionalLight.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\Light\Light.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\..\src\Light\PointLight.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\Light\SpotLight.cpp"
 					>
 				</File>
 			</Filter>
@@ -366,11 +374,19 @@
 				Name="Light"
 				>
 				<File
+					RelativePath="..\..\src\Light\DirectionalLight.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\Light\Light.h"
 					>
 				</File>
 				<File
 					RelativePath="..\..\src\Light\PointLight.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\Light\SpotLight.h"
 					>
 				</File>
 			</Filter>
