@@ -202,8 +202,8 @@ void render(){
 						u,
 						r,
 						nearPlane);
+	//kernelMng->renderKernelOutput(GENERATERAY, 3);
 	kernelMng->renderKernelOutput(TRAVERSE, 3);
-	//kernelMng->renderKernelOutput(TRAVERSE, 3);
 	//kernelMng->renderKernelOutput(INTERSECT, 2);
 	//kernelMng->renderKernelOutput(SHADE, 2);
 
