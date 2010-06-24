@@ -52,7 +52,7 @@ void main(){
 	{
 		gl_FragData[0] = vec4(0,0,0,1);
 		gl_FragData[3] = vec4(0, 0, 0, 1);
-		return;
+		//return;
 		//discard;
 	}
 	/*
@@ -82,20 +82,24 @@ void main(){
 			if(rayDir.y < 0.0) step.y = -1.0;
 			if(rayDir.z < 0.0) step.z = -1.0;
 
-			if(gridIntersectionMax.x < gridIntersectionMax.y && gridIntersectionMax.x < gridIntersectionMax.z){
-				gridIndex.x += step.x;
+			bool cmpXY = gridIntersectionMax.x - gridIntersectionMax.y < 0.1;
+			bool cmpXZ = gridIntersectionMax.x - gridIntersectionMax.z < 0.1;
+			bool cmpYZ = gridIntersectionMax.y - gridIntersectionMax.z < 0.1;
+
+			if(cmpXY && cmpXZ){
+				gridIndex.x = floor(gridIndex.x + step.x + 0.5);
 				gridIntersectionMax.x += delta.x;
 			}
-			else if((gridIntersectionMax.x < gridIntersectionMax.y && gridIntersectionMax.x > gridIntersectionMax.z) || (gridIntersectionMax.x > gridIntersectionMax.y && gridIntersectionMax.y > gridIntersectionMax.z)){
-				gridIndex.z += step.z;
+			else if((cmpXY && !cmpXZ) || (!cmpXY && !cmpYZ)){
+				gridIndex.z = floor(gridIndex.z + step.z + 0.5);
 				gridIntersectionMax.z += delta.z;
 			}
-			else if(gridIntersectionMax.x > gridIntersectionMax.y && gridIntersectionMax.y < gridIntersectionMax.z){
-				gridIndex.y += step.y;
+			else if(!cmpXY && cmpYZ){
+				gridIndex.y = floor(gridIndex.y + step.y + 0.5);
 				gridIntersectionMax.y += delta.y;
 			}
 
-			if(gridIndex.x >= gridSize.x || gridIndex.y >= gridSize.y || gridIndex.z >= gridSize.z)
+			if(gridIndex.x - gridSize.x >= -0.1 || gridIndex.y - gridSize.y >= -0.1 || gridIndex.z - gridSize.z >= -0.1)
 			{
 				rayDir.a = INACTIVE;
 				rayPos.a = findVoxelLinearArray(gridIndex.xyz);
