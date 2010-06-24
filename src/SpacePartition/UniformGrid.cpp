@@ -248,26 +248,40 @@ void UniformGrid::setMinMax(Vector3 vertex){
 
 void UniformGrid::render(){
 
-	glBegin(GL_LINES);
-		
-		glVertex3f(m_min.x, m_min.y, m_min.z); glVertex3f(m_min.x, m_min.y, m_max.z);
-		glVertex3f(m_min.x, m_min.y, m_min.z); glVertex3f(m_min.x, m_max.y, m_min.z);
-		glVertex3f(m_min.x, m_min.y, m_min.z); glVertex3f(m_max.x, m_min.y, m_min.z);
+	
+	for(int i=0; i<m_numVoxels.x; i++){
+		for(int j=0; j<m_numVoxels.y; j++){
+			for(int k=0; k<m_numVoxels.z; k++){
+				
+				
+				//if(m_gridArray[getVoxelAt(Vector3(i, j, k))] > 0){
+					glPushMatrix();
+					glTranslatef(m_min.x + i * m_voxelSize.x, m_min.y + j * m_voxelSize.y, m_min.z + k * m_voxelSize.z);
+					glBegin(GL_LINES);
+						glVertex3f(0, 0, 0); glVertex3f(0, 0, m_voxelSize.z);
+						glVertex3f(0, 0, 0); glVertex3f(0, m_voxelSize.y, 0);
+						glVertex3f(0, 0, 0); glVertex3f(m_voxelSize.x, 0, 0);
 
-		glVertex3f(m_max.x, m_max.y, m_max.z); glVertex3f(m_max.x, m_max.y, m_min.z);
-		glVertex3f(m_max.x, m_max.y, m_max.z); glVertex3f(m_max.x, m_min.y, m_max.z);
-		glVertex3f(m_max.x, m_max.y, m_max.z); glVertex3f(m_min.x, m_max.y, m_max.z);
-		
-		glVertex3f(m_max.x, m_min.y, m_max.z); glVertex3f(m_max.x, m_min.y, m_min.z);
-		glVertex3f(m_min.x, m_max.y, m_max.z); glVertex3f(m_min.x, m_max.y, m_min.z);
-		
-		glVertex3f(m_max.x, m_min.y, m_max.z); glVertex3f(m_min.x, m_min.y, m_max.z);
-		glVertex3f(m_min.x, m_max.y, m_min.z); glVertex3f(m_max.x, m_max.y, m_min.z);
-		
+						glVertex3f(m_voxelSize.x, m_voxelSize.y, m_voxelSize.z); glVertex3f(m_voxelSize.x, m_voxelSize.y, 0);
+						glVertex3f(m_voxelSize.x, m_voxelSize.y, m_voxelSize.z); glVertex3f(m_voxelSize.x, 0, m_voxelSize.z);
+						glVertex3f(m_voxelSize.x, m_voxelSize.y, m_voxelSize.z); glVertex3f(0, m_voxelSize.y, m_voxelSize.z);
+						
+						glVertex3f(m_voxelSize.x, 0, m_voxelSize.z); glVertex3f(m_voxelSize.x, 0, 0);
+						glVertex3f(0, m_voxelSize.y, m_voxelSize.z); glVertex3f(0, m_voxelSize.y, 0);
+						
+						glVertex3f(m_voxelSize.x, 0, m_voxelSize.z); glVertex3f(0, 0, m_voxelSize.z);
+						glVertex3f(0, m_voxelSize.y, 0); glVertex3f(m_voxelSize.x, m_voxelSize.y, 0);
+						
 
-		glVertex3f(m_min.x, m_min.y, m_max.z); glVertex3f(m_min.x, m_max.y, m_max.z);
-		glVertex3f(m_max.x, m_min.y, m_min.z); glVertex3f(m_max.x, m_max.y, m_min.z);
-	glEnd();
+						glVertex3f(0, 0, m_voxelSize.z); glVertex3f(0, m_voxelSize.y, m_voxelSize.z);
+						glVertex3f(m_voxelSize.x, 0, 0); glVertex3f(m_voxelSize.x, m_voxelSize.y, 0);
+					glEnd();
+					glPopMatrix();
+				//}
+			}
+		}
+	}
+	
 
 }
 

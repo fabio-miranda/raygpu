@@ -101,9 +101,9 @@ vec3 findVoxel(vec3 rayPos){
 	vec3 index = vec3(-1.0, -1.0, -1.0);
 
 	index = (rayPos - bbMin) / gridVoxelSize;
-	index.x = float(int(index.x));
-	index.y = float(int(index.y));
-	index.z = float(int(index.z));
+	index.x = floor(index.x+0.5);
+	index.y = floor(index.y+0.5);
+	index.z = floor(index.z+0.5);
 
 	return index;
 
@@ -119,23 +119,23 @@ vec3 findVoxelPosition(vec3 voxelIndex){
 	return voxelIndex * gridVoxelSize + bbMin;
 }
 
-vec3 findIntersectionOut(vec3 rayPos, vec3 rayDir, vec3 voxelIndex){
+vec3 findIntersectionOutVoxel(vec3 rayPos, vec3 rayDir, vec3 voxelIndex){
 
 	vec3 intersectionOut = vec3(0.0, 0.0, 0.0);
 
 	if(rayDir.x < 0.0)
 		intersectionOut.x = (findVoxelPosition(voxelIndex).x - rayPos.x) / rayDir.x;
-	else if(rayDir.x > 0.0)
+	if(rayDir.x > 0.0)
 		intersectionOut.x = (findVoxelPosition(voxelIndex + vec3(1, 0, 0)).x - rayPos.x) / rayDir.x;
 
 	if(rayDir.y < 0.0)
 		intersectionOut.y = (findVoxelPosition(voxelIndex).y - rayPos.y) / rayDir.y;
-	else if(rayDir.y > 0.0)
+	if(rayDir.y > 0.0)
 		intersectionOut.y = (findVoxelPosition(voxelIndex + vec3(0, 1, 0)).y - rayPos.y) / rayDir.y;
 
 	if(rayDir.z < 0.0)
 		intersectionOut.z = (findVoxelPosition(voxelIndex).z - rayPos.z) / rayDir.z;
-	else if(rayDir.z > 0.0)
+	if(rayDir.z > 0.0)
 		intersectionOut.z = (findVoxelPosition(voxelIndex + vec3(0, 0, 1)).z - rayPos.z) / rayDir.z;
 
 	return intersectionOut;
@@ -148,7 +148,7 @@ void main(){
 	vec4 rayDir = vec4(getRay(gl_TexCoord[0].xy), 1.0);
 	vec4 rayPos = vec4(eyePos, -1.0);
 	vec3 voxelIndex = vec3(0, 0, 0);
-	vec3 posIntersectionOut = vec3(0,0,0);
+	vec3 intersectionOut = vec3(0,0,0);
 
 
 	float intersectionMin = 0.0;
@@ -164,13 +164,18 @@ void main(){
 	else{
 
 		//Check if the ray hits the grid
+		//P1 = P0 + t*dir
+		//intersectionMin is the minimum distance from the eye to the bounding box
+		//intersectionMax is the maximum distance from the eye to the bounding box
 		bool hit = hitGrid(rayPos.xyz, rayDir.xyz, intersectionMin, intersectionMax);
 		if(hit && intersectionMin > 0.0){
-			rayDir.w = ACTIVE_TRAVERSE;
+			rayDir.a = ACTIVE_TRAVERSE;
 			rayPos.xyz = rayPos.xyz + intersectionMin * rayDir.xyz;
 			voxelIndex = findVoxel(rayPos.xyz);
-			rayPos.w = findVoxelLinearArray(voxelIndex.xyz);
-			posIntersectionOut = findIntersectionOut(rayPos.xyz, rayDir.xyz, voxelIndex.xyz);
+			rayPos.a = findVoxelLinearArray(voxelIndex.xyz);
+
+			intersectionOut = findIntersectionOutVoxel(rayPos.xyz, rayDir.xyz, voxelIndex.xyz);
+			//posIntersectionOut = rayPos.xyz + posIntersectionOut * rayDir.xyz;
 
 			breakpoint = 1.0;
 		}
@@ -188,12 +193,14 @@ void main(){
 	//gl_FragData[0] = vec4(vec3(breakpoint), 0.5);
 //	gl_FragData[0] = vec4(normalize(rayPos.xyz + intersectionMax * rayDir.xyz;), 0.5);
 	//gl_FragData[0] = vec4(vec3(rayPos.w/(gridSize.x * gridSize.y * gridSize.z)), 1.0);
-	//gl_FragData[0] = vec4(voxelIndex.xyz / gridSize.xyz, 0.5);
-	//gl_FragData[0] = vec4(normalize(rayPos.xyz), 0.5);
+	//gl_FragData[0] = vec4(normalize(voxelIndex.xyz), 1.0);
+	//gl_FragData[0] = vec4((normalize(rayDir.xyz) + 1.0)/2.0, 0.5);
 	/**/
 	gl_FragData[0] = rayPos;
 	gl_FragData[1] = rayDir;
 	gl_FragData[2] = vec4(intersectionMin);
-	gl_FragData[3] = vec4(posIntersectionOut, 1.0);
+	//gl_FragData[3] = vec4((normalize(findVoxelPosition(voxelIndex)) + 1.0)/2.0, 1.0);
+	//gl_FragData[3] = vec4((normalize(posIntersectionOut.xyz) + 1.0) / 2.0, 1.0);
+	gl_FragData[3] = vec4(intersectionOut, 1.0);
 
 }

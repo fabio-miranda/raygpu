@@ -47,14 +47,14 @@ void main()
    float gridIndex =  floor(rPos.w+.5);
 
 
-//   gl_FragData[2] = vec4(0., 1., 1., .5); //DEBUG
+   gl_FragData[2] = vec4(0., 1., 1., .5); //DEBUG
    if(triangleFlag == ACTIVE_INTERSECT)
    {
       float triangleIndex = floor(texture1D(grid, (gridIndex + .5)/gridSize).a + .5);
       float vertexIndex = floor(texture1D(triangleList, (triangleIndex + .5)/triangleListSize).a + .5);
       vec3 lastHit = vec3(infinity, vertexIndex, triangleIndex);
 
-//      gl_FragData[2] = vec4(1., 0., 0., .5);//DEBUG
+      gl_FragData[2] = vec4(1., 0., 0., .5);//DEBUG
 
       while(vertexIndex != -1.0)
       {
@@ -68,7 +68,7 @@ void main()
          ///Set Ray State to Shading
          rDir.w = float(ACTIVE_SHADING);
          gl_FragData[0] = rDir;
-//         gl_FragData[2] = vec4(0., 0., 1., 1.5);//DEBUG
+         gl_FragData[2] = vec4(0., 0., 1., 1.5);//DEBUG
 
          vec3 fragPos = rPos.xyz + rDir.xyz*lastHit.r;
          vec4 triangleInfo = vec4(fragPos, lastHit.b);

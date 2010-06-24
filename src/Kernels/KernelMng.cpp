@@ -10,13 +10,15 @@ KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth,
 
 
 	m_kernelTraverse = new KernelTraverse( width, height, uniformGrid->getVoxelSize(),
+											uniformGrid->getBBMin(),
+											uniformGrid->getBBMax(),
 											scene->getGridTexId(),
 											scene->getGridTexSize(),
 											uniformGrid->getNumVoxels(),
 											m_kernelGenerateRay->getTexIdRayPos(),
 											m_kernelGenerateRay->getTexIdRayDir(),
-                      m_kernelGenerateRay->getTexIdIntersectionMax(),
-                      m_kernelGenerateRay->getTexIdIntersectionMin());
+											m_kernelGenerateRay->getTexIdIntersectionMax(),
+											m_kernelGenerateRay->getTexIdIntersectionMin());
 
 
 	m_kernelIntersect = new KernelIntersect(width, height, m_kernelGenerateRay->getTexIdRayPos(),
@@ -53,14 +55,17 @@ void KernelMng::update(KernelMngState stateToStop){
 		//m_currentState = GENERATERAY;	
 		return;
 	}
-	else 
-  if(m_currentState == GENERATERAY){
+	else if(m_currentState == GENERATERAY){
 		m_currentState = TRAVERSE;
 	}
-  else
-  if(m_currentState == INTERSECT){
-    m_currentState = SHADE;
-  }
+	/*
+	else if(m_currentState == INTERSECT){
+		m_currentState = SHADE;
+	}
+	else if(m_currentState == SHADE){
+		m_currentState = TRAVERSE;
+	}
+	*/
 	else if(m_currentState == INTERSECT || m_currentState == TRAVERSE){
 
 		//if(countActiveRays() > 0){

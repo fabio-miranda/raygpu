@@ -45,10 +45,10 @@ void renderAxis(){
 void init(int argc, char *argv[]){
 	  
 
-	camAlpha = 190.0;
+	camAlpha = 270.0;
 	camBeta = 0.0;
 	camR = 300;
-  camInc = 5;
+	camInc = 5;
 	lastMousePosX = 0;
 	lastMousePosY = 0;
 	mouseState = GLUT_UP;
@@ -158,7 +158,9 @@ void mouseActive(int x, int y){
 
 void render(){
 
-	//if(step == false) return;
+	if(step == false) return;
+
+	//std::cout << camBeta << ", " << camAlpha << ", " << camInc << "\n";
 
 	glClearColor(1.0,1.0,1.0,1.0);
 
@@ -171,11 +173,11 @@ void render(){
 	float z = camR*cos(DEG_TO_RAD(camBeta))*cos(DEG_TO_RAD(camAlpha));
 
 
-  float nextAlpha =  min(camAlpha + camInc,360.0f);
+	float nextAlpha =  min(camAlpha + camInc,360.0f);
 
-  float ux = sin(DEG_TO_RAD(camBeta))*cos(DEG_TO_RAD(nextAlpha)) - x;
-  float uy = sin(DEG_TO_RAD(nextAlpha)) - y;
-  float uz = cos(DEG_TO_RAD(camBeta))*cos(DEG_TO_RAD(nextAlpha)) - z;
+	float ux = sin(DEG_TO_RAD(camBeta))*cos(DEG_TO_RAD(nextAlpha)) - x;
+	float uy = sin(DEG_TO_RAD(nextAlpha)) - y;
+	float uz = cos(DEG_TO_RAD(camBeta))*cos(DEG_TO_RAD(nextAlpha)) - z;
 
 	gluLookAt(x,y,z, 0, 0, 0, ux, uy, uz);
 
@@ -194,16 +196,16 @@ void render(){
 	//kernelMng->step(GENERATERAY,
   //kernelMng->step(TRAVERSE,
   //kernelMng->step(INTERSECT,
-  kernelMng->step(SHADE,
-	Vector3(x, y, z),
-			f,
-			u,
-			r,
-			nearPlane);
-	//kernelMng->renderKernelOutput(GENERATERAY, 0);
-  //kernelMng->renderKernelOutput(TRAVERSE, 2);
-  //kernelMng->renderKernelOutput(INTERSECT, 0);
-  kernelMng->renderKernelOutput(SHADE, 2);
+	kernelMng->step(TRAVERSE,
+					Vector3(x, y, z),
+						f,
+						u,
+						r,
+						nearPlane);
+	kernelMng->renderKernelOutput(TRAVERSE, 3);
+	//kernelMng->renderKernelOutput(TRAVERSE, 3);
+	//kernelMng->renderKernelOutput(INTERSECT, 2);
+	//kernelMng->renderKernelOutput(SHADE, 2);
 
 
 	glutSwapBuffers();

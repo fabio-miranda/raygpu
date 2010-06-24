@@ -5,7 +5,10 @@ uniform sampler2D samplerGridIntersectionMin;
 uniform sampler1D samplerGrid;
 
 uniform vec3 gridSize;
+uniform vec3 gridVoxelSize;
 uniform float gridArraySize;
+uniform vec3 bbMin;
+uniform vec3 bbMax;
 
 //Ray states (stored on rayDir.a)
 #define INACTIVE 0.0
@@ -21,67 +24,113 @@ float findVoxelLinearArray(vec3 voxelIndex){
 
 }
 
+vec3 findVoxel(vec3 rayPos){
+
+	vec3 index = vec3(-1.0, -1.0, -1.0);
+
+	index = (rayPos - bbMin) / gridVoxelSize;
+	index.x = float(int(index.x));
+	index.y = float(int(index.y));
+	index.z = float(int(index.z));
+
+	return index;
+
+}
+
 
 void main(){
 
 	vec4 rayDir = texture2D(samplerRayDir, gl_TexCoord[0].st);
 	vec4 rayPos = texture2D(samplerRayPos, gl_TexCoord[0].st);
 
-	vec4 gridIndex = texture1D(samplerGrid, (floor(rayPos.w+.5)+.5)/gridArraySize);
+	//vec4 gridIndex = texture1D(samplerGrid, findVoxelLinearArray(findVoxel(rayPos.xyz))/gridArraySize);
+	vec4 gridIndex = texture1D(samplerGrid, floor(rayPos.a+.5)/gridArraySize);
 	vec4 gridIntersectionMax = texture2D(samplerGridIntersectionMax, gl_TexCoord[0].st);
-	float intersectionMin = texture2D(samplerGridIntersectionMin, gl_TexCoord[0].st).x;
 
-	//float rayLength = length(gridIntersectionMax.xyz - rayPos.xyz + intersectionMin * rayDir.xyz);
-	float rayLength = length(gridIntersectionMax.xyz - rayPos.xyz);
-
-	if(gridIndex.x > gridSize.x || gridIndex.y > gridSize.y || gridIndex.z > gridSize.z)
+	if(gridIndex.x > gridSize.x || gridIndex.y > gridSize.y || gridIndex.z > gridSize.z
+		|| gridIndex.x < 0 || gridIndex.y < 0 || gridIndex.z < 0)
 	{
-		gl_FragData[0] = vec4(0,1,0,1);
+		gl_FragData[0] = vec4(0,0,0,1);
 		discard;
 	}
-
-	if(gridIndex.a > 0.0){
-		rayDir.a = ACTIVE_INTERSECT;
+	/*
+	if(floor(gridIndex.a+0.5) > 0 && floor(rayDir.a+0.5) == ACTIVE_TRAVERSE){
+		gl_FragData[3] = vec4(0.0, 1.0, 0.0, 0.8);
 	}
-	else{
-		rayDir.a = ACTIVE_TRAVERSE;
+	else if(floor(rayDir.a+0.5) == ACTIVE_TRAVERSE){
+		gl_FragData[3] = vec4(0.0, 0.0, 1.0, 0.8);
 	}
+	*/
+	
+	if(floor(rayDir.a + 0.5) == ACTIVE_INTERSECT){
+		gl_FragData[3] = vec4(1.0, 0.0, 0.0, 0.8);
+	}
+	else if(floor(rayDir.a + 0.5) == ACTIVE_TRAVERSE){
 
-	if(rayDir.a == ACTIVE_TRAVERSE){
-
-		vec3 delta = abs(rayLength / rayDir.xyz);
-		vec3 step = vec3(1.0, 1.0, 1.0);
-		if(rayDir.x < 0.0) step.x = -1.0;
-		if(rayDir.y < 0.0) step.y = -1.0;
-		if(rayDir.z < 0.0) step.z = -1.0;
-
-		if(rayPos.x < rayPos.y && rayPos.x < rayPos.z){
-			gridIndex.x += 1.0;
-			rayPos.x += delta.x;
+		if(floor(gridIndex.a+0.5) > 0.0){
+			rayDir.a = ACTIVE_INTERSECT;
+			gl_FragData[3] = vec4(0.0, 1.0, 0.0, 0.8);
 		}
-		else if((rayPos.x < rayPos.y && rayPos.x > rayPos.z) || (rayPos.x > rayPos.y && rayPos.y > rayPos.z)){
-			gridIndex.z += 1.0;
-			rayPos.z += delta.z;
-		}
-		else if(rayPos.x > rayPos.y && rayPos.y < rayPos.z){
-			gridIndex.y += 1.0;
-			rayPos.y += delta.y;
-		}
-	}
+		else{ //Traverse
+			
+			//rayPos.xyz = gridIntersectionMax.xyz;
+			vec3 delta = abs(gridVoxelSize.xyz / rayDir.xyz);
+			vec3 step = vec3(1.0, 1.0, 1.0);
+			if(rayDir.x < 0.0) step.x = -1.0;
+			if(rayDir.y < 0.0) step.y = -1.0;
+			if(rayDir.z < 0.0) step.z = -1.0;
 
-	if(gridIndex.a > 0.0){
-		rayDir.a = ACTIVE_INTERSECT;
-		gl_FragData[2] = vec4(1.0, 0.0, 0.0, 0);
+			if(gridIntersectionMax.x < gridIntersectionMax.y && gridIntersectionMax.x < gridIntersectionMax.z){
+				gridIndex.x += step.x;
+				gridIntersectionMax.x += delta.x;
+			}
+			else if((gridIntersectionMax.x < gridIntersectionMax.y && gridIntersectionMax.x > gridIntersectionMax.z) || (gridIntersectionMax.x > gridIntersectionMax.y && gridIntersectionMax.y > gridIntersectionMax.z)){
+				gridIndex.z += step.z;
+				gridIntersectionMax.z += delta.z;
+			}
+			else if(gridIntersectionMax.x > gridIntersectionMax.y && gridIntersectionMax.y < gridIntersectionMax.z){
+				gridIndex.y += step.y;
+				gridIntersectionMax.y += delta.y;
+			}
+
+			if(gridIndex.x >= gridSize.x || gridIndex.y >= gridSize.y || gridIndex.z >= gridSize.z)
+			{
+				rayDir.a = INACTIVE;
+				rayPos.a = findVoxelLinearArray(gridIndex.xyz);
+				gl_FragData[3] = vec4(1, 1, 1, 0.8);
+			}
+			else if(gridIndex.x < 0 || gridIndex.y < 0 || gridIndex.z < 0){
+				rayDir.a = INACTIVE;
+				rayPos.a = findVoxelLinearArray(gridIndex.xyz);
+				gl_FragData[3] = vec4(0.5, 0.5, 0.5, 0.8);
+			}
+			else{
+
+				//Keep traversing
+				float gridLinearIndex = findVoxelLinearArray(gridIndex.xyz);
+				gridIndex = floor(texture1D(samplerGrid, floor((gridLinearIndex+.5))/gridArraySize) + 0.5);
+
+				rayDir.a = ACTIVE_TRAVERSE;
+				gl_FragData[3] = vec4(1, 0, 1, 0.8);
+				rayPos.a = gridLinearIndex;
+				
+
+				//gl_FragData[3] = vec4(vec3(gridLinearIndex/1000.0), 1.0);
+				//gl_FragData[3] = vec4(normalize(gridIndex.xyz), 1.0);
+				//gl_FragData[3] = vec4((normalize(rayPos.xyz)+1.0)/2.0, 1.0);
+			}
+		}
 	}
-	else{
-		rayDir.a = ACTIVE_TRAVERSE;
-		gl_FragData[2] = vec4(0.0, 0.0, 1.0, 0.5);
-	}
+	
+	
+	
 
 //   gl_FragData[0] = rayPos;
-	gl_FragData[0] = vec4(rayPos.xyz, findVoxelLinearArray(gridIndex.xyz));
-	//gl_FragData[0] = vec4(rayPos.xyz, 0.8);
-	gl_FragData[1] = rayDir;
-//	gl_FragData[2] = rayDir;
+	gl_FragData[0] = rayPos; //untouched, except for rayPos.a
+	//gl_FragData[0] = vec4(normalize(rayPos.xyz), 0.8);
+	gl_FragData[1] = rayDir; //untouched, except for rayDir.a
+	gl_FragData[2] = gridIntersectionMax;
+	//gl_FragData[3] = vec4(normalize(gridIndex.xyz), 0.9);
+	
 
 }
