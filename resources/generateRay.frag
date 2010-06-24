@@ -196,11 +196,13 @@ void main(){
 	//gl_FragData[0] = vec4(normalize(voxelIndex.xyz), 1.0);
 	//gl_FragData[0] = vec4((normalize(rayDir.xyz) + 1.0)/2.0, 0.5);
 	/**/
+	//gl_FragData[0] = vec4(normalize(rayPos.xyz), 1.0);
 	gl_FragData[0] = rayPos;
+	//gl_FragData[1] = vec4(normalize(rayDir.xyz), 1.0);
 	gl_FragData[1] = rayDir;
+	//gl_FragData[2] = vec4(vec3(intersectionMin),1.0);
 	gl_FragData[2] = vec4(intersectionMin);
-	//gl_FragData[3] = vec4((normalize(findVoxelPosition(voxelIndex)) + 1.0)/2.0, 1.0);
-	//gl_FragData[3] = vec4((normalize(posIntersectionOut.xyz) + 1.0) / 2.0, 1.0);
+	//gl_FragData[3] = vec4(normalize(intersectionOut), 1.0);
 	gl_FragData[3] = vec4(intersectionOut, 1.0);
 
 }
