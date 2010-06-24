@@ -95,7 +95,7 @@ void main()
             float lightType = floor(lightPosition.w+.5);
             if(lightType == 0.0) //Directional Light
             {
-               lightDir = - lightPosition.xyz;
+               lightDir =  lightPosition.xyz;
                calcDirLight(i, normal, ambient, diffuse, specular);
             }
             else if(lightType == 2.0) //Spot Light
@@ -141,26 +141,26 @@ void calcDirLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout
 
       diffuse += fragMaterial.diffuse * lightDiffuse * NdotL;
 
-		specular += fragMaterial.specular * lightSpecular.rgb * NdotL * pow(NdotH, fragMaterial.shininess);
+		specular += fragMaterial.specular * lightSpecular.rgb * pow(NdotH, fragMaterial.shininess);
 	}
 }
 
 
 void calcPointLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular)
 {
-   vec3 L = normalize(lightDir);
-   vec3 H = normalize(L + normalize(eyeDir));
+  vec3 L = normalize(lightDir);
+  vec3 H = normalize(L + normalize(eyeDir));
 
-   float NdotL = max(0.0, dot(N, L));
-   if ( NdotL > 0.0 )
-   {
-      vec3 lightDiffuse = texture1D(lights, (i*4.0 + .5)/lightsSize).rgb;
-      float att = 1.0; //future work
-      float NdotH = max(0.0, dot(N, H));
+  float NdotL = max(0.0, dot(N, L));
+  if ( NdotL > 0.0 )
+  {
+    vec3 lightDiffuse = texture1D(lights, (i*4.0 + .5)/lightsSize).rgb;
+    float att = 1.0; //future work
+    float NdotH = max(0.0, dot(N, H));
 
-      diffuse += fragMaterial.diffuse * lightDiffuse * NdotL;
+    diffuse += fragMaterial.diffuse * lightDiffuse * NdotL;
 
-		specular += fragMaterial.specular * lightSpecular.rgb * NdotL * pow(NdotH, fragMaterial.shininess);
+		specular += fragMaterial.specular * lightSpecular.rgb * pow(NdotH, fragMaterial.shininess);
 	}
 }
 
@@ -175,7 +175,7 @@ void calcSpotLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inou
    {
       vec4 lightSpotInfo = texture1D(lights, (i*4.0 + 3.0 + .5)/lightsSize);
       vec3 lightSpotDir = lightSpotInfo.rgb;
-      float lightSpotAngle = lightSpotInfo.a;
+      float lightSpotAngle = cos(lightSpotInfo.a);
 
       float spotEffect = dot(normalize(lightSpotDir),-L);
       if (spotEffect > lightSpotAngle)
@@ -187,7 +187,7 @@ void calcSpotLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inou
          spotEffect = pow(spotEffect, lightDiffuse.a);
          diffuse += fragMaterial.diffuse * lightDiffuse.rgb * NdotL * spotEffect;
 
-         specular += fragMaterial.specular * lightSpecular.rgb * NdotL * pow(NdotH, fragMaterial.shininess)*spotEffect;
+         specular += fragMaterial.specular * lightSpecular.rgb * pow(NdotH, fragMaterial.shininess)*spotEffect;
       }
 	}
 }

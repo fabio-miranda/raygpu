@@ -26,7 +26,7 @@ KernelTraverse::KernelTraverse(int width, int height, Vector3 voxelSize, Vector3
 		addInputVec3("bbMax", bbMax);
 		addInputVec3("gridVoxelSize", voxelSize);
 		addInputVec3("gridSize", gridSize);
-		addInputFloat("gridArraySize", gridArraySize);
+		addInputFloat("gridArraySize", (float)gridArraySize);
 	m_shader->setActive(false);
 
 }
