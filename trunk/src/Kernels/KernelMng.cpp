@@ -50,24 +50,29 @@ GLuint KernelMng::getTextureColorId(){
 
 void KernelMng::update(KernelMngState stateToStop){
 	
-
+  static int cont = 0;
 	if(m_currentState == stateToStop){
 		//m_currentState = GENERATERAY;	
 		return;
 	}
 	else if(m_currentState == GENERATERAY){
+    cont = 0;
 		m_currentState = TRAVERSE;
 	}
-	/*
+	
 	else if(m_currentState == INTERSECT){
 		m_currentState = SHADE;
 	}
 	else if(m_currentState == SHADE){
 		m_currentState = TRAVERSE;
 	}
-	*/
-	else if(m_currentState == INTERSECT || m_currentState == TRAVERSE){
 
+  else if(m_currentState == INTERSECT || m_currentState == TRAVERSE){
+
+  if( m_currentState == TRAVERSE)
+    cont ++;
+  else cont = 0;
+  if(cont==15)
 		//if(countActiveRays() > 0){
 			m_currentState = oracle();
 		//}

@@ -41,8 +41,17 @@ vector<RTTriangle> RTTriangle :: readFromFile(unsigned int materialIndex, string
    Vector3 * vList = new Vector3[numVertex];
 
    for(int i = 0; i < numVertex; ++i)
-      fscanf(file, "%f %f %f\n", &vList[i].z, &vList[i].y, &vList[i].x);
-   //fscanf(file, "%f %f %f\n", &vList[i].x, &vList[i].y, &vList[i].z);
+   {
+     Vector3 a;
+      //fscanf(file, "%f %f %f\n", &vList[i].z, &vList[i].y, &vList[i].x);
+    fscanf(file, "%f %f %f\n", &vList[i].x, &vList[i].y, &vList[i].z); 
+    //fscanf(file, "%f %f %f\n", &(a.y), &(a.x), &(a.z)); 
+    //vList[i].y = a.y;
+    //vList[i].x = a.x;
+    //vList[i].z = a.z;
+
+    //fscanf(file, "%f %f %f\n", &(vList[i].y), &(vList[i].x), &(vList[i].z)); 
+   }
 
    fscanf(file, "\n%d\n", &numRTTriangles);
    printf("Reading %d RTTriangles...\n", numRTTriangles);

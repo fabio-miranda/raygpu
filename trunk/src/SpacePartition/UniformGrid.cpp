@@ -83,7 +83,11 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 	//memset(m_triangleListArray, -1.0f, sizeof(GLfloat) * m_triangleListArraySize);//Do not work for floats different then 0 
 
 	m_triangleVertexArraySize = p_numTriangles * 3 * 3;
-	m_triangleVertexArray = new GLfloat[m_triangleVertexArraySize];
+  GLint max_tex_size = 0;
+  glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
+  int texture2DnumLines = (int)((m_triangleVertexArraySize/3)/max_tex_size) + (int)(m_triangleVertexArraySize%max_tex_size != 0);
+ 
+	m_triangleVertexArray = new GLfloat[texture2DnumLines*max_tex_size*3];
 	//memset(m_triangleVertexArray, 1, sizeof(GLfloat) * m_triangleVertexArraySize);
   for(int i = 0; i < m_triangleVertexArraySize; ++i) m_triangleVertexArray[i] = 1.0f;
   
@@ -115,6 +119,7 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
         unsigned int prevGridCountPlusOne = gridCountPlusOne;
 				for(int j=0; j<aux_grid[cont].size(); j++){
 					unsigned int triangleIndex = aux_grid[cont].at(j)->getGlobalIndex();
+          //int k = aux_grid[cont].size();
           //printf("Voxel:%d, %dº trgl do voxel, NumTrgl:%d\n", cont, j, triangleIndex);
 
           m_triangleListArray[gridCountPlusOne+j] = triangleIndex;
@@ -214,9 +219,9 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 Vector3 UniformGrid::getVertexGridIndex(Vector3 vertex){
 
 	Vector3 index;
-	index.x = (int)(((vertex.x - m_min.x)/m_gridSize.x) * m_numVoxels.x);
-	index.y = (int)(((vertex.y - m_min.y)/m_gridSize.y) * m_numVoxels.y);
-	index.z = (int)(((vertex.z - m_min.z)/m_gridSize.z) * m_numVoxels.z);
+	index.x = (int)(((vertex.x - m_min.x-0.0001)/m_gridSize.x) * m_numVoxels.x);
+	index.y = (int)(((vertex.y - m_min.y-0.0001)/m_gridSize.y) * m_numVoxels.y);
+	index.z = (int)(((vertex.z - m_min.z-0.0001)/m_gridSize.z) * m_numVoxels.z);
 
 
 	return index;
@@ -250,11 +255,14 @@ void UniformGrid::render(){
 
 	
 	for(int i=0; i<m_numVoxels.x; i++){
-		for(int j=0; j<m_numVoxels.y; j++){
-			for(int k=0; k<m_numVoxels.z; k++){
+		//for(int j=0; j<1; j++){
+      for(int j=0; j<m_numVoxels.y; j++){
+			//for(int k=0; k<1; k++){
+        for(int k=0; k<m_numVoxels.z; k++){
 				
 				
-				//if(m_gridArray[getVoxelAt(Vector3(i, j, k))] > 0){
+				//if(m_gridArray[getVoxelAt(Vector3(i, j, k))] > 0)
+        {
 					glPushMatrix();
 					glTranslatef(m_min.x + i * m_voxelSize.x, m_min.y + j * m_voxelSize.y, m_min.z + k * m_voxelSize.z);
 					glBegin(GL_LINES);
@@ -277,7 +285,7 @@ void UniformGrid::render(){
 						glVertex3f(m_voxelSize.x, 0, 0); glVertex3f(m_voxelSize.x, m_voxelSize.y, 0);
 					glEnd();
 					glPopMatrix();
-				//}
+				}
 			}
 		}
 	}

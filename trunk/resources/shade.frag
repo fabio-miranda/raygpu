@@ -67,6 +67,9 @@ void main()
    vec4 rDir = texture2D(rayDir, gl_TexCoord[0].st);
    int triangleFlag = int(floor(rDir.w+.5));
 
+   gl_FragData[0] = rDir; //DEBUG
+   gl_FragData[1] = texture2D(triangleInfo, gl_TexCoord[0].st);//DEBUG
+gl_FragData[2] = vec4(0,0,0, 1.0);
    if(triangleFlag == ACTIVE_SHADING)
    {
       vec4 triangleInfos = texture2D(triangleInfo, gl_TexCoord[0].st);
@@ -76,7 +79,8 @@ void main()
       vec3 normal = texture1D(normals, (triangleIndex + .5)/normalsSize).xyz;
       ambient = defaultAmbientMaterial;
       diffuse = vec3(0, 0, 0);
-
+gl_FragData[2] = vec4(triangleIndex, 1.0);
+/*
       vec4 matInfo = texture1D(diffuseTex, (triangleIndex + .5)/diffuseSize);
       specular = vec3(0, 0, 0);
       eyeDir = eyePos - fragPos;
@@ -97,26 +101,30 @@ void main()
             {
                lightDir =  lightPosition.xyz;
                calcDirLight(i, normal, ambient, diffuse, specular);
+               gl_FragData[2] = vec4(0,0,1, 1.0);
             }
             else if(lightType == 2.0) //Spot Light
             {
                lightDir = lightPosition.xyz - fragPos;
                calcSpotLight(i, normal, ambient, diffuse, specular);
+               gl_FragData[2] = vec4(0,1,0, 1.0);
             }
             else //Point Light
             {
                lightDir = lightPosition.xyz - fragPos;
                calcPointLight(i, normal, ambient, diffuse, specular);
+               gl_FragData[2] = vec4(1,0,0, 1.0);
             }
          }
       }
+      */
       ///Set Ray State to Done
       rDir.w = float(DONE);
-      gl_FragData[0] = rDir;
+//      gl_FragData[0] = rDir;
 
       vec3 intensity = ambient + diffuse;
-      gl_FragData[1] = vec4(intensity + specular, 1.0);
-      gl_FragData[2] = vec4(intensity + specular, 1.0);
+//      gl_FragData[1] = vec4(intensity + specular, 1.0);
+//      gl_FragData[2] = vec4(intensity + specular, 1.0);
    }else
    {
       ///Discard Pixel
