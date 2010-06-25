@@ -137,7 +137,7 @@ void RTScene :: configure()
   {
     if(mGrid)
       delete mGrid;
-    mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, Vector3(10, 10, 10));
+    mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, Vector3(2, 2, 2));
     calcTextures();
     mCalculed = true;
   }
@@ -158,6 +158,12 @@ void RTScene :: configure()
 void RTScene :: render()
 {
    glPushAttrib(GL_LIGHTING_BIT);
+   
+   
+   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  glCullFace(GL_BACK);
+   glEnable(GL_CULL_FACE);
+
       vector<RTLight> :: iterator lightIt;
       for( lightIt = mLights.begin(); lightIt!=mLights.end(); ++lightIt)
          lightIt->render();
@@ -170,9 +176,11 @@ void RTScene :: render()
             meshIt->render();
          glPopAttrib();
       }
+         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+           glCullFace(GL_BACK);
    glPopAttrib();
 
-   mGrid->render();
+   //mGrid->render();
 }
 
 UniformGrid* RTScene ::GetUniformGrid() const 
@@ -282,6 +290,7 @@ void RTScene::calcTextures()
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+      int r = (size2D[i]/max_tex_size)+1;
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F_ARB, max_tex_size, (size2D[i]/max_tex_size)+1, 0, sizeType[sizeIndex2D[i]], GL_FLOAT, data2D[i]);
       glBindTexture(GL_TEXTURE_2D, 0);
       e = glGetError();

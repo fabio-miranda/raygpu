@@ -47,7 +47,7 @@ void init(int argc, char *argv[]){
 
 	camAlpha = 270.0;
 	camBeta = 0.0;
-	camR = 300;
+	camR = 250;
 	camInc = 5;
 	lastMousePosX = 0;
 	lastMousePosY = 0;
@@ -83,6 +83,8 @@ void init(int argc, char *argv[]){
 	glEnable(GL_TEXTURE);
 	glEnable(GL_TEXTURE_2D);
   glEnable(GL_TEXTURE_1D);
+
+  //glPolygonMode(GL_FRONT, GL_LINE);
 
 
 	rtScene = new RTScene("./resources/scenes/cavalo.rt4");
@@ -158,7 +160,7 @@ void mouseActive(int x, int y){
 
 void render(){
 
-	if(step == false) return;
+	//if(step == false) return;
 
 	//std::cout << camBeta << ", " << camAlpha << ", " << camInc << "\n";
 
@@ -194,20 +196,20 @@ void render(){
 
 	
 	//kernelMng->step(GENERATERAY,
-  //kernelMng->step(TRAVERSE,
-  //kernelMng->step(INTERSECT,
-	kernelMng->step(TRAVERSE,
+  ////kernelMng->step(TRAVERSE,
+  kernelMng->step(INTERSECT,
+	//kernelMng->step(SHADE,
 					Vector3(x, y, z),
 						f,
 						u,
 						r,
 						nearPlane);
 	//kernelMng->renderKernelOutput(GENERATERAY, 3);
-	kernelMng->renderKernelOutput(TRAVERSE, 3);
-	//kernelMng->renderKernelOutput(INTERSECT, 2);
+	//kernelMng->renderKernelOutput(TRAVERSE, 3);
+	kernelMng->renderKernelOutput(INTERSECT, 2);
 	//kernelMng->renderKernelOutput(SHADE, 2);
 	
-
+ 
 	glutSwapBuffers();
 
 	step = false;
