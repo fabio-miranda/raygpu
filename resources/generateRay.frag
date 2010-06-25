@@ -100,17 +100,15 @@ vec3 findVoxel(vec3 rayPos){
 
 	vec3 index = vec3(-1.0, -1.0, -1.0);
 
-	index = (rayPos - bbMin) / gridVoxelSize;
-	index.x = floor(index.x+0.5);
-	index.y = floor(index.y+0.5);
-	index.z = floor(index.z+0.5);
+	index = (floor(rayPos+0.5) - bbMin) / gridVoxelSize;
+	index = trunc(index);
 
 	return index;
 
 }
 
 float findVoxelLinearArray(vec3 voxelIndex){
-	return clamp(voxelIndex.x*gridSize.y*gridSize.z + voxelIndex.y*gridSize.z + voxelIndex.z,0.,1000.);
+	return voxelIndex.x*gridSize.y*gridSize.z + voxelIndex.y*gridSize.z + voxelIndex.z;
 
 }
 
@@ -203,6 +201,9 @@ void main(){
 	gl_FragData[2] = vec4(intersectionMin);
 	//gl_FragData[3] = vec4(normalize(intersectionOut), 1.0);
 	gl_FragData[3] = vec4(intersectionOut, 1.0);
-	gl_FragData[3] = vec4(normalize(voxelIndex.xyz), 1.0);
+	//gl_FragData[3] = vec4(normalize(voxelIndex.xyz), 0.8);
+
+	//gl_FragData[3] = vec4(vec3(normalize(voxelIndex.xyz)), 1.0);
+	//gl_FragData[3] = vec4(vec3(rayPos.a/1000.0), 1.0);
 
 }
