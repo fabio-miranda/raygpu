@@ -192,7 +192,7 @@ void render(){
 	renderAxis();
 	rtScene->render();
 
-
+	
 	//kernelMng->step(GENERATERAY,
   //kernelMng->step(TRAVERSE,
   //kernelMng->step(INTERSECT,
@@ -206,7 +206,7 @@ void render(){
 	kernelMng->renderKernelOutput(TRAVERSE, 3);
 	//kernelMng->renderKernelOutput(INTERSECT, 2);
 	//kernelMng->renderKernelOutput(SHADE, 2);
-
+	
 
 	glutSwapBuffers();
 
