@@ -67,19 +67,51 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 				aux_grid[getVoxelAt(voxelIndex_vertex3)].push_back(currentTriangle);
 				size++;
 			}
+
+			
+			//Test triangle / box intersections
+			for(float x=0; x<m_numVoxels.x; x++){
+				for(float y=0; y<m_numVoxels.y; y++){
+					for(float z=0; z<m_numVoxels.z; z++){
+						Vector3 bbMin = m_min + Vector3(x * m_voxelSize.x, y * m_voxelSize.y, z * m_voxelSize.z);
+						Vector3 bbMax = bbMin + m_voxelSize;
+						
+
+						float bbCenter [] = {bbMin.x + ((bbMax.x - bbMin.x) / 2.0f),
+											(bbMin.y + (bbMax.y - bbMin.y) / 2.0f),
+											(bbMin.z + (bbMax.z - bbMin.z) / 2.0f)};
+
+						float bbHalfSize [] = {((m_voxelSize).x / 2.0f),
+												((m_voxelSize).y / 2.0f),
+												((m_voxelSize).z / 2.0f)};
+
+						float triangle [][3] = {{currentTriangle->v1.x, currentTriangle->v1.y, currentTriangle->v1.z},
+												 {currentTriangle->v2.x, currentTriangle->v2.y, currentTriangle->v2.z},
+												 {currentTriangle->v3.x, currentTriangle->v3.y, currentTriangle->v3.z}};
+
+						bool hit = triBoxOverlap(bbCenter, bbHalfSize, triangle);
+						//std::cout << triBoxOverlap(bbCenter, bbHalfSize, triangle) << "\n";
+
+						if(hit){
+							aux_grid[getVoxelAt(Vector3(x,y,z))].push_back(currentTriangle);
+							size++;
+						}
+					}
+				}
+			}
 		}
 	}
   
 
 	m_gridArraySize = (int)(p_numVoxels.x * p_numVoxels.y * p_numVoxels.z) * 4;
 	m_gridArray = new GLfloat[m_gridArraySize];
-  for(int i = 0; i < m_gridArraySize; ++i) m_gridArray[i] = -1.0f;
+	for(int i = 0; i < m_gridArraySize; ++i) m_gridArray[i] = -1.0f;
 	//memset(m_gridArray, -1.0f, sizeof(GLfloat) * m_gridArraySize);//Do not work for floats different then 0 
 
-  size += p_numVoxels.x * p_numVoxels.y * p_numVoxels.z;
+	size += p_numVoxels.x * p_numVoxels.y * p_numVoxels.z;
 	m_triangleListArraySize = size;
 	m_triangleListArray = new GLfloat[m_triangleListArraySize];
-  for(int i = 0; i < m_triangleListArraySize; ++i) m_triangleListArray[i] = -1.0f;
+	for(int i = 0; i < m_triangleListArraySize; ++i) m_triangleListArray[i] = -1.0f;
 	//memset(m_triangleListArray, -1.0f, sizeof(GLfloat) * m_triangleListArraySize);//Do not work for floats different then 0 
 
 	m_triangleVertexArraySize = p_numTriangles * 3 * 3;
@@ -89,7 +121,7 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
  
 	m_triangleVertexArray = new GLfloat[texture2DnumLines*max_tex_size*3];
 	//memset(m_triangleVertexArray, 1, sizeof(GLfloat) * m_triangleVertexArraySize);
-  for(int i = 0; i < m_triangleVertexArraySize; ++i) m_triangleVertexArray[i] = 1.0f;
+	for(int i = 0; i < m_triangleVertexArraySize; ++i) m_triangleVertexArray[i] = 1.0f;
   
 
 	m_triangleNormalsArraySize = p_numTriangles * 3;
@@ -110,19 +142,19 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 
  
 	unsigned int gridCount = 0;
-  unsigned int gridCountPlusOne = 0;
+	unsigned int gridCountPlusOne = 0;
 	int cont = 0;
-  int gridIndexCont = 0;
+	int gridIndexCont = 0;
 	for(int x=0; x<p_numVoxels.x; x++){
 		for(int y=0; y<p_numVoxels.y; y++){
 			for(int z=0; z<p_numVoxels.z; z++){
-        unsigned int prevGridCountPlusOne = gridCountPlusOne;
+				unsigned int prevGridCountPlusOne = gridCountPlusOne;
 				for(int j=0; j<aux_grid[cont].size(); j++){
 					unsigned int triangleIndex = aux_grid[cont].at(j)->getGlobalIndex();
           //int k = aux_grid[cont].size();
           //printf("Voxel:%d, %dº trgl do voxel, NumTrgl:%d\n", cont, j, triangleIndex);
 
-          m_triangleListArray[gridCountPlusOne+j] = triangleIndex;
+					m_triangleListArray[gridCountPlusOne+j] = triangleIndex;
 					m_triangleVertexArray[triangleIndex*3*3] = aux_grid[cont].at(j)->v1.x;
 					m_triangleVertexArray[triangleIndex*3*3+1] = aux_grid[cont].at(j)->v1.y;
 					m_triangleVertexArray[triangleIndex*3*3+2] = aux_grid[cont].at(j)->v1.z;
@@ -147,7 +179,7 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 					m_triangleSpecularArray[triangleIndex*4+2] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mSpecular.b;
 					m_triangleSpecularArray[triangleIndex*4+3] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mSpecularExp;
 
-          m_triangleDiffuseArray[triangleIndex*3] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mDiffuse.r;
+					m_triangleDiffuseArray[triangleIndex*3] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mDiffuse.r;
 					m_triangleDiffuseArray[triangleIndex*3+1] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mDiffuse.g;
 					m_triangleDiffuseArray[triangleIndex*3+2] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mDiffuse.b;
           /**/
@@ -155,11 +187,11 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 				m_gridArray[gridIndexCont++] = x;
 				m_gridArray[gridIndexCont++] = y;
 				m_gridArray[gridIndexCont++] = z;
-        m_gridArray[gridIndexCont++] = aux_grid[cont].size() != 0 ? (float)prevGridCountPlusOne : -1.0;
-        //m_gridArray[gridIndexCont++] = -1;
+				m_gridArray[gridIndexCont++] = aux_grid[cont].size() != 0 ? (float)prevGridCountPlusOne : -1.0;
+				//m_gridArray[gridIndexCont++] = -1;
 				
-        gridCountPlusOne += aux_grid[cont].size()+1;
-        gridCount += aux_grid[cont].size();
+				gridCountPlusOne += aux_grid[cont].size()+1;
+				gridCount += aux_grid[cont].size();
 
 				cont++;
 			}
@@ -292,6 +324,7 @@ void UniformGrid::render(){
 	
 
 }
+
 
 Vector3 UniformGrid::getBBMin(){
 	return m_min;

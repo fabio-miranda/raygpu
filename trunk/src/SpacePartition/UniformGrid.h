@@ -6,9 +6,11 @@
 #include <limits>
 
 #include "GraphBasis/Vector3.h"
+#include "GraphBasis/TriangleBoxCollisionTest.h"
 #include "RayTracerObjects/RTTriangle.h"
 #include "RayTracerObjects/RTMesh.h"
 #include "RayTracerObjects/RTMaterial.h"
+
 
 class UniformGrid {
 
@@ -68,7 +70,7 @@ private:
 	GLfloat* m_gridArray;
 	GLfloat* m_triangleListArray;
 	GLfloat* m_triangleVertexArray;
-  GLfloat* m_triangleNormalsArray;
+	GLfloat* m_triangleNormalsArray;
 	GLfloat* m_triangleAmbientArray;
 	GLfloat* m_triangleDiffuseArray;
 	GLfloat* m_triangleSpecularArray;
@@ -77,7 +79,7 @@ private:
 	int m_triangleVertexArraySize;
 	int m_triangleListArraySize;
 	int m_triangleNormalsArraySize;
-  int m_triangleAmbientArraySize;
+	int m_triangleAmbientArraySize;
 	int m_triangleDiffuseArraySize;
 	int m_triangleSpecularArraySize;
 };
