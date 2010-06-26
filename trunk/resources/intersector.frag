@@ -62,7 +62,7 @@ void main()
       lastHit = intersect(vertexIndex, rPos, rDir, lastHit, triangleIndex);
       triangleIndex++;
       vec2 coord2D = index1Dto2D(triangleIndex, maxTextureSize, triangleListSize);
-      vertexIndex = floor(texture1D(triangleList, coord2D).a + .5);
+      vertexIndex = floor(texture2D(triangleList, coord2D).a + .5);
     }
 
     if(lastHit.r < infinity)
