@@ -137,7 +137,7 @@ void RTScene :: configure()
   {
     if(mGrid)
       delete mGrid;
-    mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, Vector3(10, 10, 10));
+    mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, Vector3(1, 1, 1));
     calcTextures();
     mCalculed = true;
   }
@@ -273,7 +273,7 @@ void RTScene::calcTextures()
   unsigned int size2D[] = { mGrid->getTriangleVertexArraySize(),
 							mGrid->getTriangleListArraySize()};
 
-  int sizeIndex2D[] = { mGrid->getTriangleVertexArrayAbsoluteSize()/mGrid->getTriangleVertexArraySize()  
+  int sizeIndex2D[] = { mGrid->getTriangleVertexArrayAbsoluteSize()/mGrid->getTriangleVertexArraySize(),
 						mGrid->getTriangleListArrayAbsoluteSize()/mGrid->getTriangleListArraySize()};
 
   int numTextures2D = sizeof(data2D)/sizeof(GLfloat*);
@@ -317,6 +317,11 @@ void RTScene::calcTextures()
   
   delete[] id;
   delete[] id2D;
+	/*
+	int texture2DnumLines = (int)((mGrid->getTriangleListArraySize())/max_tex_size) + (int)(mGrid->getTriangleListArraySize()%max_tex_size != 0);
+	for(int i = 0; i < texture2DnumLines*max_tex_size; ++i)
+		std::cout << mGrid->getTriangleListArray()[i] << " ";
+	*/
 }
 
 GLuint RTScene::getGridTexId()

@@ -50,7 +50,7 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 	unsigned int size = 0;
 	for(unsigned int i=0; i<p_mesh->size(); i++){
 		std::vector<RTTriangle>* trianglesArray = p_mesh->at(i).getTriangles();
-		for(unsigned int j=0; j<trianglesArray->size(); j++){
+		for(unsigned int j=trianglesArray->size()-1; j<trianglesArray->size(); j++){
 			RTTriangle* currentTriangle = &(trianglesArray->at(j));
 
 			Vector3 voxelIndex_vertex1 = getVertexGridIndex(currentTriangle->v1);
@@ -92,8 +92,10 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 						bool hit = triBoxOverlap(bbCenter, bbHalfSize, triangle);
 						//std::cout << triBoxOverlap(bbCenter, bbHalfSize, triangle) << "\n";
 
-						if(hit){
-							aux_grid[getVoxelAt(Vector3(x,y,z))].push_back(currentTriangle);
+						Vector3 voxel = Vector3(x,y,z);
+						if(hit == true && (voxel == voxelIndex_vertex1) == false
+							&& (voxel == voxelIndex_vertex2) == false && (voxel == voxelIndex_vertex3) == false){
+							aux_grid[getVoxelAt(voxel)].push_back(currentTriangle);
 							size++;
 						}
 					}
@@ -246,7 +248,8 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
   //    m_triangleVertexArray[i+j++]
   //  );
   //}
-
+	for(int i=0; i<m_gridArraySize; i++)
+		std::cout << m_gridArray[i] << " ";
 
 	delete [] aux_grid;
 }

@@ -160,7 +160,7 @@ void mouseActive(int x, int y){
 
 void render(){
 
-	//if(step == false) return;
+	if(step == false) return;
 
 	//std::cout << camBeta << ", " << camAlpha << ", " << camInc << "\n";
 
@@ -197,7 +197,7 @@ void render(){
 	
 	//kernelMng->step(GENERATERAY,
   ////kernelMng->step(TRAVERSE,
-  kernelMng->step(INTERSECT,
+	kernelMng->step(INTERSECT,
 	//kernelMng->step(SHADE,
 					Vector3(x, y, z),
 						f,

@@ -52,17 +52,21 @@ void main()
   {
     float triangleIndex = floor(texture1D(grid, (gridIndex + .5)/gridSize).a + .5);
     vec2 coord2D = index1Dto2D(triangleIndex, maxTextureSize, triangleListSize);
+	//vec2 coord2D = vec2(.5/maxTextureSize, .5/1);
     float vertexIndex = floor(texture2D(triangleList, coord2D).a + .5);
     vec3 lastHit = vec3(infinity, vertexIndex, triangleIndex);
 
     gl_FragData[2] = vec4(7., 0., 0., 0.5);//DEBUG
 
-    while(vertexIndex != -1.0)
+	int cont = 0;
+    while(cont <= 50000 && vertexIndex != -1.0)
     {
       lastHit = intersect(vertexIndex, rPos, rDir, lastHit, triangleIndex);
       triangleIndex++;
       vec2 coord2D = index1Dto2D(triangleIndex, maxTextureSize, triangleListSize);
+	  //vec2 coord2D = vec2(1.5/maxTextureSize, .5/1);
       vertexIndex = floor(texture2D(triangleList, coord2D).a + .5);
+	  cont++;
     }
 
     if(lastHit.r < infinity)
