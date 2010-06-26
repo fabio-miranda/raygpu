@@ -79,7 +79,7 @@ gl_FragData[2] = vec4(0,0,0, 1.0);
       vec3 normal = texture1D(normals, (triangleIndex + .5)/normalsSize).xyz;
       ambient = defaultAmbientMaterial;
       diffuse = vec3(0, 0, 0);
-gl_FragData[2] = vec4(triangleIndex, 1.0);
+	  gl_FragData[2] = vec4(vec3(triangleIndex), 1.0);
 /*
       vec4 matInfo = texture1D(diffuseTex, (triangleIndex + .5)/diffuseSize);
       specular = vec3(0, 0, 0);
