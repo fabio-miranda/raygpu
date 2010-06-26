@@ -115,6 +115,7 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 	size += p_numVoxels.x * p_numVoxels.y * p_numVoxels.z;
 	m_triangleListArraySize = size;
   texture2DnumLines = (int)((m_triangleListArraySize)/max_tex_size) + (int)(m_triangleListArraySize%max_tex_size != 0);
+  printf("TriangleListSize: 2DTexture:(%d, %d)  MemorySize:%d\n",max_tex_size,  texture2DnumLines,m_triangleListArraySize );
 	m_triangleListArray = new GLfloat[texture2DnumLines*max_tex_size];
 	for(int i = 0; i < texture2DnumLines*max_tex_size; ++i) m_triangleListArray[i] = -1.0f;
 	//memset(m_triangleListArray, -1.0f, sizeof(GLfloat) * m_triangleListArraySize);//Do not work for floats different then 0 

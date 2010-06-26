@@ -283,7 +283,7 @@ void RTScene::calcTextures()
   glGenTextures(numTextures2D, id2D);
   for(int i=0; i<numTextures2D; ++i)
   {
-      if (size2D[i]<max_tex_size*max_tex_size)
+    if (size2D[i]<max_tex_size*max_tex_size)
     {
       glBindTexture(GL_TEXTURE_2D, id2D[i]);
       //   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -292,6 +292,7 @@ void RTScene::calcTextures()
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
       int r = (size2D[i]/max_tex_size)+1;
+      printf("Texture2D %d) SIZE:%dx%d \n", i, max_tex_size, r);
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F_ARB, max_tex_size, (size2D[i]/max_tex_size)+1, 0, sizeType[sizeIndex2D[i]], GL_FLOAT, data2D[i]);
       glBindTexture(GL_TEXTURE_2D, 0);
     }else 
