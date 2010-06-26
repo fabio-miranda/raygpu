@@ -102,7 +102,11 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 		}
 	}
   
+  GLint max_tex_size = 0;
+  glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
+  int texture2DnumLines;
 
+  
 	m_gridArraySize = (int)(p_numVoxels.x * p_numVoxels.y * p_numVoxels.z) * 4;
 	m_gridArray = new GLfloat[m_gridArraySize];
 	for(int i = 0; i < m_gridArraySize; ++i) m_gridArray[i] = -1.0f;
@@ -110,16 +114,14 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 
 	size += p_numVoxels.x * p_numVoxels.y * p_numVoxels.z;
 	m_triangleListArraySize = size;
-	m_triangleListArray = new GLfloat[m_triangleListArraySize];
+  texture2DnumLines = (int)((m_triangleListArraySize)/max_tex_size) + (int)(m_triangleListArraySize%max_tex_size != 0);
+	m_triangleListArray = new GLfloat[texture2DnumLines*max_tex_size];
 	for(int i = 0; i < m_triangleListArraySize; ++i) m_triangleListArray[i] = -1.0f;
 	//memset(m_triangleListArray, -1.0f, sizeof(GLfloat) * m_triangleListArraySize);//Do not work for floats different then 0 
 
 	m_triangleVertexArraySize = p_numTriangles * 3 * 3;
-  GLint max_tex_size = 0;
-  glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
-  int texture2DnumLines = (int)((m_triangleVertexArraySize/3)/max_tex_size) + (int)(m_triangleVertexArraySize%max_tex_size != 0);
- 
-	m_triangleVertexArray = new GLfloat[texture2DnumLines*max_tex_size*3];
+  texture2DnumLines = (int)((m_triangleVertexArraySize/3)/max_tex_size) + (int)(m_triangleVertexArraySize%max_tex_size != 0);
+ 	m_triangleVertexArray = new GLfloat[texture2DnumLines*max_tex_size*3];
 	//memset(m_triangleVertexArray, 1, sizeof(GLfloat) * m_triangleVertexArraySize);
 	for(int i = 0; i < m_triangleVertexArraySize; ++i) m_triangleVertexArray[i] = 1.0f;
   
