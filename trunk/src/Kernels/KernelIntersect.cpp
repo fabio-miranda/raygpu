@@ -26,7 +26,7 @@ KernelIntersect::KernelIntersect(int width, int height, GLuint texIdRayPos, GLui
     addInputTexture(GL_TEXTURE_1D, "grid", texIdGrid);
     addInputTexture(GL_TEXTURE_2D, "vertexes", texIdvertexes);
     //addInputTexture(GL_TEXTURE_1D, "vertexes", texIdvertexes);
-    addInputTexture(GL_TEXTURE_1D, "triangleList", texIdTriangleList);
+    addInputTexture(GL_TEXTURE_2D, "triangleList", texIdTriangleList);
 
     addInputFloat("maxTextureSize", max_tex_size);
     addInputFloat("gridSize", gridTexSize);
