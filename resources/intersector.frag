@@ -3,7 +3,7 @@ uniform sampler2D rayDir;
 
 uniform sampler1D grid;
 uniform sampler2D vertexes;
-uniform sampler1D triangleList;
+uniform sampler2D triangleList;
 
 
 
@@ -51,7 +51,8 @@ void main()
   if(triangleFlag == ACTIVE_INTERSECT)
   {
     float triangleIndex = floor(texture1D(grid, (gridIndex + .5)/gridSize).a + .5);
-    float vertexIndex = floor(texture1D(triangleList, (triangleIndex + .5)/triangleListSize).a + .5);
+    vec2 coord2D = index1Dto2D(triangleIndex, maxTextureSize, triangleListSize);
+    float vertexIndex = floor(texture2D(triangleList, coord2D).a + .5);
     vec3 lastHit = vec3(infinity, vertexIndex, triangleIndex);
 
     gl_FragData[2] = vec4(7., 0., 0., 0.5);//DEBUG
@@ -60,7 +61,8 @@ void main()
     {
       lastHit = intersect(vertexIndex, rPos, rDir, lastHit, triangleIndex);
       triangleIndex++;
-      vertexIndex = floor(texture1D(triangleList, (triangleIndex + .5)/triangleListSize).a + .5);
+      vec2 coord2D = index1Dto2D(triangleIndex, maxTextureSize, triangleListSize);
+      vertexIndex = floor(texture1D(triangleList, coord2D).a + .5);
     }
 
     if(lastHit.r < infinity)
