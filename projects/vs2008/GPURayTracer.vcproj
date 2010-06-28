@@ -220,6 +220,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\GraphBasis\TriangleBoxCollisionTest.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\GraphBasis\Vector3.cpp"
 					>
 				</File>
@@ -359,6 +363,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\GraphBasis\textfile.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\GraphBasis\TriangleBoxCollisionTest.h"
 					>
 				</File>
 				<File

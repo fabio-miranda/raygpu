@@ -137,7 +137,7 @@ void RTScene :: configure()
   {
     if(mGrid)
       delete mGrid;
-    mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, Vector3(1, 1, 1));
+    mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, Vector3(2,2,2));
     calcTextures();
     mCalculed = true;
   }
@@ -194,13 +194,13 @@ unsigned int RTScene::getSceneNumTriangles()
 }
 
 
-
+extern GLenum e;
 
 void RTScene::calcTextures()
 {
   GLint max_tex_size = 0;
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
-
+   e =glGetError();
   GLenum sizeType [] = {0,GL_ALPHA, 2 ,GL_RGB, GL_RGBA};
   
   GLfloat* lData = new GLfloat[mLights.size()*sizeof(struct lightStruct)];
@@ -244,17 +244,16 @@ void RTScene::calcTextures()
   glGenTextures(numTextures, id);
   for(int i=0; i<numTextures; ++i)
   {
-    GLenum e = glGetError();
     if(size[i]<max_tex_size)
     {
       glBindTexture(GL_TEXTURE_1D, id[i]);
       //   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
       glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
       glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	  glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	    glTexParameterf(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
       glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA32F_ARB, size[i], 0, sizeType[sizeIndex[i]], GL_FLOAT, data[i]);
       glBindTexture(GL_TEXTURE_1D, 0);
-      e = glGetError();
+
     }else 
     {
       printf("Texture 1D too big!");
@@ -278,7 +277,6 @@ void RTScene::calcTextures()
 
   int numTextures2D = sizeof(data2D)/sizeof(GLfloat*);
   GLuint *id2D = new GLuint[numTextures2D];
-
 
   glGenTextures(numTextures2D, id2D);
   for(int i=0; i<numTextures2D; ++i)
@@ -308,12 +306,12 @@ void RTScene::calcTextures()
   mAmbientTexId = id[i++];
   mDiffuseTexId = id[i++];
   mSpecularTexId = id[i++];
-  mTrianglesTexId = id[i++];
   mNormalsTexId = id[i++];
   mLightsTexId = id[i++];
   
   i = 0;
   mVertexesTexId = id2D[i++];
+  mTrianglesTexId = id2D[i++];
   
   delete[] id;
   delete[] id2D;

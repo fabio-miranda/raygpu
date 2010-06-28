@@ -50,21 +50,25 @@ void main()
   gl_FragData[2] = vec4(0., 1., 1., 0.5); //DEBUG
   if(triangleFlag == ACTIVE_INTERSECT)
   {
-    float triangleIndex = floor(texture1D(grid, (gridIndex + .5)/gridSize).a + .5);
+//    float triangleIndex = floor(texture1D(grid, (gridIndex + .5)/gridSize).a + .5);
+    vec4 triangleIndexV = texture1D(grid, (gridIndex + .5)/gridSize);
+    float triangleIndex = floor(triangleIndexV.a+.5);
     vec2 coord2D = index1Dto2D(triangleIndex, maxTextureSize, triangleListSize);
-	//vec2 coord2D = vec2(.5/maxTextureSize, .5/1);
+
     float vertexIndex = floor(texture2D(triangleList, coord2D).a + .5);
+
+
     vec3 lastHit = vec3(infinity, vertexIndex, triangleIndex);
 
-    gl_FragData[2] = vec4(7., 0., 0., 0.5);//DEBUG
+//    gl_FragData[2] = vec4(1., 0., 0., 1.5);//DEBUG
+    gl_FragData[2] = vec4(triangleIndexV.xyz, 1.5);//DEBUG
 
 	int cont = 0;
-    while(cont <= 50000 && vertexIndex != -1.0)
+    while(vertexIndex != -1.0)
     {
       lastHit = intersect(vertexIndex, rPos, rDir, lastHit, triangleIndex);
       triangleIndex++;
       vec2 coord2D = index1Dto2D(triangleIndex, maxTextureSize, triangleListSize);
-	  //vec2 coord2D = vec2(1.5/maxTextureSize, .5/1);
       vertexIndex = floor(texture2D(triangleList, coord2D).a + .5);
 	  cont++;
     }
@@ -74,13 +78,14 @@ void main()
       ///Set Ray State to Shading
       rDir.w = float(ACTIVE_SHADING);
 //      gl_FragData[0] = rDir;
-      gl_FragData[2] = vec4(0., 0., lastHit.b, 0.5);//DEBUG
+      gl_FragData[2] = vec4(0., 0., 1.0, .5);//DEBUG
 
       vec3 fragPos = rPos.xyz + rDir.xyz*lastHit.r;
       vec4 triangleInfo = vec4(fragPos, lastHit.b);
 //      gl_FragData[1] = triangleInfo;
       return;
     }
+/**/
   }
 
   ///Discard Pixel
