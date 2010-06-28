@@ -25,5 +25,9 @@ public:
    static unsigned int getMaxNumTriangles();
 
    static vector<RTTriangle> readFromFile(unsigned int materialIndex, string fileName);
+protected:
+    static vector<RTTriangle> readUmFile(unsigned int materialIndex, string fileName);
+    static vector<RTTriangle> readMshFile(unsigned int materialIndex, string fileName);
+
 };
 

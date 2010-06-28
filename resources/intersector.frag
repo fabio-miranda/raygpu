@@ -39,50 +39,47 @@ void main()
   vec4 rDir = texture2D(rayDir, gl_TexCoord[0].st);
   vec4 rPos = texture2D(rayPos, gl_TexCoord[0].st);
 
-  gl_FragData[0] = rDir; //debug
-  gl_FragData[1] = rPos; //debug
+//  gl_FragData[0] = rDir; //debug
+//  gl_FragData[1] = rPos; //debug
   //
 
   int triangleFlag = int(floor(rDir.w+.5));
   float gridIndex =  floor(rPos.w+.5);
 
 
-  gl_FragData[2] = vec4(0., 1., 1., 0.5); //DEBUG
+//  gl_FragData[2] = vec4(0., 1., 1., 0.5); //DEBUG
   if(triangleFlag == ACTIVE_INTERSECT)
   {
-//    float triangleIndex = floor(texture1D(grid, (gridIndex + .5)/gridSize).a + .5);
-    vec4 triangleIndexV = texture1D(grid, (gridIndex + .5)/gridSize);
-    float triangleIndex = floor(triangleIndexV.a+.5);
+    float triangleIndex = floor(texture1D(grid, (gridIndex + .5)/gridSize).a + .5);
+//    vec4 triangleIndexV = texture1D(grid, (gridIndex + .5)/gridSize); //Debug
+//    float triangleIndex = floor(triangleIndexV.a+.5); //Debug
     vec2 coord2D = index1Dto2D(triangleIndex, maxTextureSize, triangleListSize);
-
     float vertexIndex = floor(texture2D(triangleList, coord2D).a + .5);
 
 
     vec3 lastHit = vec3(infinity, vertexIndex, triangleIndex);
 
 //    gl_FragData[2] = vec4(1., 0., 0., 1.5);//DEBUG
-    gl_FragData[2] = vec4(triangleIndexV.xyz, 1.5);//DEBUG
+//    gl_FragData[2] = vec4(triangleIndexV.xyz, 1.5);//DEBUG
 
-	int cont = 0;
     while(vertexIndex != -1.0)
     {
       lastHit = intersect(vertexIndex, rPos, rDir, lastHit, triangleIndex);
       triangleIndex++;
       vec2 coord2D = index1Dto2D(triangleIndex, maxTextureSize, triangleListSize);
       vertexIndex = floor(texture2D(triangleList, coord2D).a + .5);
-	  cont++;
     }
 
     if(lastHit.r < infinity)
     {
       ///Set Ray State to Shading
       rDir.w = float(ACTIVE_SHADING);
-//      gl_FragData[0] = rDir;
-      gl_FragData[2] = vec4(0., 0., 1.0, .5);//DEBUG
+      gl_FragData[0] = rDir;
+//      gl_FragData[2] = vec4(0., 0., 1.0, .5);//DEBUG
 
       vec3 fragPos = rPos.xyz + rDir.xyz*lastHit.r;
-      vec4 triangleInfo = vec4(fragPos, lastHit.b);
-//      gl_FragData[1] = triangleInfo;
+      vec4 triangleInfo = vec4(fragPos, lastHit.g);
+      gl_FragData[1] = triangleInfo;
       return;
     }
 /**/
@@ -90,8 +87,8 @@ void main()
 
   ///Discard Pixel
   //   gl_FragData[0] = vec4(0., 1., 0., 1.);//DEBUG
-//  gl_FragData[0] = rDir;
-//  gl_FragData[1] = vec4(-1, -1, -1, -1);
+  gl_FragData[0] = rDir;
+  gl_FragData[1] = vec4(-1, -1, -1, -1);
   /**/
 }
 

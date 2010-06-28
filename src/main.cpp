@@ -198,8 +198,8 @@ void render(){
 	
 	//kernelMng->step(GENERATERAY,
   ////kernelMng->step(TRAVERSE,
-	kernelMng->step(INTERSECT,
-	//kernelMng->step(SHADE,
+	//kernelMng->step(INTERSECT,
+	kernelMng->step(SHADE,
 					Vector3(x, y, z),
 						f,
 						u,
@@ -207,8 +207,8 @@ void render(){
 						nearPlane);
 	//kernelMng->renderKernelOutput(GENERATERAY, 3);
 	//kernelMng->renderKernelOutput(TRAVERSE, 3);
-	kernelMng->renderKernelOutput(INTERSECT, 2);
-	//kernelMng->renderKernelOutput(SHADE, 2);
+	//kernelMng->renderKernelOutput(INTERSECT, 2);
+	kernelMng->renderKernelOutput(SHADE, 2);
 	
  
 	glutSwapBuffers();
