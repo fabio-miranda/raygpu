@@ -18,12 +18,12 @@ uniform vec3 eyePos;
 
 vec2 index1Dto2D(float index, float width, float size)
 {
-   float height = float(int(size/width))+1.0;
-   vec2 r = vec2(float(mod(index,width)), float(int(index/width)));
-   r.x = (r.x+.5)/width;
-   r.y = (r.y+.5)/height;
+  float height = float(int(size/width))+1.0;
+  vec2 r = vec2(float(mod(index,width)), float(int(index/width)));
+  r.x = (r.x+.5)/width;
+  r.y = (r.y+.5)/height;
 
-   return r;
+  return r;
 }
 
 void calcDirLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular);
@@ -56,83 +56,83 @@ vec3 fragPos;
 vec3 eyeDir;
 struct material
 {
-   vec3 diffuse;
-   vec3 specular;
-   float shininess;
+  vec3 diffuse;
+  vec3 specular;
+  float shininess;
 }fragMaterial;
 
 
 void main()
 {
-   vec4 rDir = texture2D(rayDir, gl_TexCoord[0].st);
-   int triangleFlag = int(floor(rDir.w+.5));
+  vec4 rDir = texture2D(rayDir, gl_TexCoord[0].st);
+  int triangleFlag = int(floor(rDir.w+.5));
 
-   gl_FragData[0] = rDir; //DEBUG
-   gl_FragData[1] = texture2D(triangleInfo, gl_TexCoord[0].st);//DEBUG
-gl_FragData[2] = vec4(0,0,0, 1.0);
-   if(triangleFlag == ACTIVE_SHADING)
-   {
-      vec4 triangleInfos = texture2D(triangleInfo, gl_TexCoord[0].st);
-      fragPos = triangleInfos.rgb;
-      float triangleIndex = floor(triangleInfos.a + .5);
+  gl_FragData[0] = rDir; //DEBUG
+  gl_FragData[1] = texture2D(triangleInfo, gl_TexCoord[0].st);//DEBUG
 
-      vec3 normal = texture1D(normals, (triangleIndex + .5)/normalsSize).xyz;
-      ambient = defaultAmbientMaterial;
-      diffuse = vec3(0, 0, 0);
-	  gl_FragData[2] = vec4(vec3(triangleIndex), 1.0);
-/*
-      vec4 matInfo = texture1D(diffuseTex, (triangleIndex + .5)/diffuseSize);
-      specular = vec3(0, 0, 0);
-      eyeDir = eyePos - fragPos;
+  if(triangleFlag == ACTIVE_SHADING)
+  {
+    vec4 triangleInfos = texture2D(triangleInfo, gl_TexCoord[0].st);
+    fragPos = triangleInfos.rgb;
+    float triangleIndex = floor(triangleInfos.a + .5);
 
-      fragMaterial.specular = texture1D(diffuseTex, (triangleIndex + .5)/diffuseSize).rgb;
-      fragMaterial.diffuse = matInfo.rgb;
-      fragMaterial.shininess = matInfo.a;
+    vec3 normal = texture1D(normals, (triangleIndex + .5)/normalsSize).xyz;
+    ambient = defaultAmbientMaterial;
+    diffuse = vec3(0, 0, 0);
 
-      float numLights = lightsSize/4.0;
-      for(float i = 0.0; i<numLights; i += 1.0)
+    vec4 matInfo = texture1D(especularTex, (triangleIndex + .5)/especularSize);
+    specular = vec3(0, 0, 0);
+    eyeDir = eyePos - fragPos;
+
+    fragMaterial.diffuse = texture1D(diffuseTex, (triangleIndex + .5)/diffuseSize).rgb;
+    fragMaterial.specular = matInfo.rgb;
+    fragMaterial.shininess = matInfo.a;
+
+
+    float numLights = floor(lightsSize/4.0+.5);
+    for(float i = 0.0; i<numLights; i += 1.0)
+    {
+      lightSpecular = texture1D(lights, (i*4.0 + 1.0 + .5)/lightsSize);
+      if(floor(lightSpecular.a + .5) != 0.0) //Is Light Enabled?
       {
-         lightSpecular = texture1D(lights, (i*4.0 + 1.0 + .5)/lightsSize);
-         if(floor(lightSpecular.a + .5) != 0.0) //Is Light Enabled?
-         {
-            lightPosition = texture1D(lights, (i*4.0 + 2.0 + .5)/lightsSize);
-            float lightType = floor(lightPosition.w+.5);
-            if(lightType == 0.0) //Directional Light
-            {
-               lightDir =  lightPosition.xyz;
-               calcDirLight(i, normal, ambient, diffuse, specular);
-               gl_FragData[2] = vec4(0,0,1, 1.0);
-            }
-            else if(lightType == 2.0) //Spot Light
-            {
-               lightDir = lightPosition.xyz - fragPos;
-               calcSpotLight(i, normal, ambient, diffuse, specular);
-               gl_FragData[2] = vec4(0,1,0, 1.0);
-            }
-            else //Point Light
-            {
-               lightDir = lightPosition.xyz - fragPos;
-               calcPointLight(i, normal, ambient, diffuse, specular);
-               gl_FragData[2] = vec4(1,0,0, 1.0);
-            }
-         }
+        lightPosition = texture1D(lights, (i*4.0 + 2.0 + .5)/lightsSize);
+        float lightType = floor(lightPosition.w+.5);
+        if(lightType == 0.0) //Directional Light
+        {
+          lightDir =  lightPosition.xyz;
+          calcDirLight(i, normal, ambient, diffuse, specular);
+//          gl_FragData[2] = vec4(0,0,1, 1.0);
+        }
+        else if(lightType == 2.0) //Spot Light
+        {
+          lightDir = lightPosition.xyz - fragPos;
+          calcSpotLight(i, normal, ambient, diffuse, specular);
+//          gl_FragData[2] = vec4(0,1,0, 1.0);
+        }
+        else //Point Light
+        {
+          lightDir = lightPosition.xyz - fragPos;
+          calcPointLight(i, normal, ambient, diffuse, specular);
+//          gl_FragData[2] = vec4(1,0,0, 1.0);
+        }
       }
-      */
-      ///Set Ray State to Done
-      rDir.w = float(DONE);
-//      gl_FragData[0] = rDir;
+    }
+    /**/
+    ///Set Ray State to Done
+    rDir.w = float(DONE);
+    //      gl_FragData[0] = rDir;
 
-      vec3 intensity = ambient + diffuse;
-//      gl_FragData[1] = vec4(intensity + specular, 1.0);
-//      gl_FragData[2] = vec4(intensity + specular, 1.0);
-   }else
-   {
-      ///Discard Pixel
-      gl_FragData[0] = rDir;
-      gl_FragData[1] = vec4(-1, -1, -1, -1);
-      gl_FragData[2] = vec4(1,1,1,1);
-   }
-   /**/
+    vec3 intensity = ambient + diffuse;
+    //      gl_FragData[1] = vec4(intensity + specular, 1.0);
+          gl_FragData[2] = vec4(intensity + specular, 1.0);
+  }else
+  {
+    ///Discard Pixel
+//    gl_FragData[0] = rDir;
+//    gl_FragData[1] = vec4(-1, -1, -1, -1);
+//    gl_FragData[2] = vec4(0,1,1,1);
+  }
+  /**/
 }
 
 void calcDirLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular)

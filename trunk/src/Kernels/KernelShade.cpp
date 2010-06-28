@@ -18,7 +18,7 @@ KernelShade::KernelShade(int width, int height, GLuint texIdRayDir, GLuint texId
       //Input
       m_shader->setActive(true);
         addInputTexture(GL_TEXTURE_2D, "rayDir", texIdRayDir);  
-        addInputTexture(GL_TEXTURE_1D, "triangleInfo", texIdTriangleHitInfo);
+        addInputTexture(GL_TEXTURE_2D, "triangleInfo", texIdTriangleHitInfo);
         //addInputTexture(GL_TEXTURE_2D, "vertexes", texIdvertexes);
         addInputTexture(GL_TEXTURE_1D, "normals", texIdNormals);
         addInputTexture(GL_TEXTURE_1D, "diffuseTex", texIdDiffuseTex);

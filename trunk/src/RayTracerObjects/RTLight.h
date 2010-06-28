@@ -41,6 +41,7 @@ class RTLight
 {
    static int lightNum;
 
+   enum LightType {Directional = 0, Point = 1, Spot = 2 };
 
    protected:
       PointLight mPLight;
@@ -52,6 +53,10 @@ class RTLight
       Color mDiffuse;
 
       int myRTLightNum;
+      LightType mType;
+      Vector3 mSpotDir;
+      float mSpotExponent;
+      float mSpotAngle;
 
       struct lightStruct * mLightStruct;
    public:
