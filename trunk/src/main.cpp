@@ -20,6 +20,7 @@ float fov;
 RTScene* rtScene;
 KernelMng* kernelMng;
 
+GLenum e;
 
 int main(int argc, char *argv[]){
 	
@@ -160,7 +161,7 @@ void mouseActive(int x, int y){
 
 void render(){
 
-	if(step == false) return;
+	//if(step == false) return;
 
 	//std::cout << camBeta << ", " << camAlpha << ", " << camInc << "\n";
 
