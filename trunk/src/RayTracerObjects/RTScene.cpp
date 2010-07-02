@@ -137,7 +137,8 @@ void RTScene :: configure()
   {
     if(mGrid)
       delete mGrid;
-    mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, Vector3(2,2,2));
+    mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, Vector3(10,10,10));
+    //mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, Vector3(2,2,2));
     calcTextures();
     mCalculed = true;
   }
@@ -157,28 +158,28 @@ void RTScene :: configure()
 
 void RTScene :: render()
 {
-   glPushAttrib(GL_LIGHTING_BIT);
-   
-   
-   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  glPushAttrib(GL_LIGHTING_BIT);
+
+
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   glCullFace(GL_BACK);
-   glEnable(GL_CULL_FACE);
+  glEnable(GL_CULL_FACE);
 
-      vector<RTLight> :: iterator lightIt;
-      for( lightIt = mLights.begin(); lightIt!=mLights.end(); ++lightIt)
-         lightIt->render();
+  vector<RTLight> :: iterator lightIt;
+  for( lightIt = mLights.begin(); lightIt!=mLights.end(); ++lightIt)
+    lightIt->render();
 
-      vector<RTMesh> :: iterator meshIt;
-      for( meshIt = mMeshes.begin(); meshIt!=mMeshes.end(); ++meshIt)
-      {
-         glPushAttrib(GL_LIGHTING_BIT);
-            mMaterials[meshIt->getMaterialIndex()].render();
-            meshIt->render();
-         glPopAttrib();
-      }
-         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-           glCullFace(GL_BACK);
-   glPopAttrib();
+  vector<RTMesh> :: iterator meshIt;
+  for( meshIt = mMeshes.begin(); meshIt!=mMeshes.end(); ++meshIt)
+  {
+    glPushAttrib(GL_LIGHTING_BIT);
+    mMaterials[meshIt->getMaterialIndex()].render();
+    //meshIt->render();
+    glPopAttrib();
+  }
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  glCullFace(GL_BACK);
+  glPopAttrib();
 
    //mGrid->render();
 }
@@ -194,13 +195,11 @@ unsigned int RTScene::getSceneNumTriangles()
 }
 
 
-extern GLenum e;
-
 void RTScene::calcTextures()
 {
   GLint max_tex_size = 0;
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
-   e =glGetError();
+
   GLenum sizeType [] = {0,GL_ALPHA, 2 ,GL_RGB, GL_RGBA};
   
   GLfloat* lData = new GLfloat[mLights.size()*sizeof(struct lightStruct)];
@@ -211,23 +210,13 @@ void RTScene::calcTextures()
 
 
   GLfloat* data[] = {   mGrid->getGridArray()/*RGBA*/,
-                        mGrid->getTriangleAmbientArray()/*RGB*/,
-                        mGrid->getTriangleDiffuseArray()/*RGB*/, mGrid->getTriangleSpecularArray()/*RGBA*/,
-                        mGrid->getTriangleNormalsArray()/*RGB*/,
                         lData/*RGBA*/};
   
   
   unsigned int size[] = {   mGrid->getGridArraySize(),
-                            mGrid->getTriangleAmbientArraySize(),
-                            mGrid->getTriangleDiffuseArraySize(), mGrid->getTriangleSpecularArraySize(),
-                            mGrid->getTriangleNormalsArraySize(),
                             lightArraySize };
   
   int sizeIndex [] = {  mGrid->getGridArrayAbsoluteSize()/mGrid->getGridArraySize(),
-                        mGrid->getTriangleAmbientArrayAbsoluteSize()/mGrid->getTriangleAmbientArraySize(),
-                        mGrid->getTriangleDiffuseArrayAbsoluteSize()/mGrid->getTriangleDiffuseArraySize(), 
-                        mGrid->getTriangleSpecularArrayAbsoluteSize()/mGrid->getTriangleSpecularArraySize(), 
-                        mGrid->getTriangleNormalsArrayAbsoluteSize()/mGrid->getTriangleNormalsArraySize(),
                         lightArrayAbsoluteSize/lightArraySize
                         };
   
@@ -267,13 +256,28 @@ void RTScene::calcTextures()
   /////2D
 
   GLfloat* data2D[] = {  mGrid->getTriangleVertexArray()/*RGB*/,
-							mGrid->getTriangleListArray()/*A*/};
+							           mGrid->getTriangleListArray()/*A*/,
+                         mGrid->getTriangleAmbientArray()/*RGB*/,
+                         mGrid->getTriangleDiffuseArray()/*RGB*/,
+                         mGrid->getTriangleSpecularArray()/*RGBA*/,
+                         mGrid->getTriangleNormalsArray()/*RGB*/
+                        };
 
   unsigned int size2D[] = { mGrid->getTriangleVertexArraySize(),
-							mGrid->getTriangleListArraySize()};
+							              mGrid->getTriangleListArraySize(),
+                            mGrid->getTriangleAmbientArraySize(),
+                            mGrid->getTriangleDiffuseArraySize(), 
+                            mGrid->getTriangleSpecularArraySize(),
+                            mGrid->getTriangleNormalsArraySize()
+                          };
 
   int sizeIndex2D[] = { mGrid->getTriangleVertexArrayAbsoluteSize()/mGrid->getTriangleVertexArraySize(),
-						mGrid->getTriangleListArrayAbsoluteSize()/mGrid->getTriangleListArraySize()};
+						            mGrid->getTriangleListArrayAbsoluteSize()/mGrid->getTriangleListArraySize(),
+                        mGrid->getTriangleAmbientArrayAbsoluteSize()/mGrid->getTriangleAmbientArraySize(),
+                        mGrid->getTriangleDiffuseArrayAbsoluteSize()/mGrid->getTriangleDiffuseArraySize(), 
+                        mGrid->getTriangleSpecularArrayAbsoluteSize()/mGrid->getTriangleSpecularArraySize(), 
+                        mGrid->getTriangleNormalsArrayAbsoluteSize()/mGrid->getTriangleNormalsArraySize()
+                    };
 
   int numTextures2D = sizeof(data2D)/sizeof(GLfloat*);
   GLuint *id2D = new GLuint[numTextures2D];
@@ -289,8 +293,6 @@ void RTScene::calcTextures()
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-      int r = (size2D[i]/max_tex_size)+1;
-      printf("Texture2D %d) SIZE:%dx%d \n", i, max_tex_size, r);
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F_ARB, max_tex_size, (size2D[i]/max_tex_size)+1, 0, sizeType[sizeIndex2D[i]], GL_FLOAT, data2D[i]);
       glBindTexture(GL_TEXTURE_2D, 0);
     }else 
@@ -303,15 +305,15 @@ void RTScene::calcTextures()
   
   int i = 0;
   mGridTexId = id[i++];
-  mAmbientTexId = id[i++];
-  mDiffuseTexId = id[i++];
-  mSpecularTexId = id[i++];
-  mNormalsTexId = id[i++];
   mLightsTexId = id[i++];
   
   i = 0;
   mVertexesTexId = id2D[i++];
   mTrianglesTexId = id2D[i++];
+  mAmbientTexId = id2D[i++];
+  mDiffuseTexId = id2D[i++];
+  mSpecularTexId = id2D[i++];
+  mNormalsTexId = id2D[i++];
   
   delete[] id;
   delete[] id2D;

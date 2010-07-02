@@ -2,10 +2,12 @@ uniform sampler2D rayDir;
 uniform sampler2D triangleInfo;
 
 //uniform sampler2D vertexes;
-uniform sampler1D normals;
-uniform sampler1D diffuseTex;
-uniform sampler1D especularTex;
+uniform sampler2D normals;
+uniform sampler2D diffuseTex;
+uniform sampler2D especularTex;
 uniform sampler1D lights;
+
+uniform float maxTextureSize;
 
 //uniform float vertexesSize;
 uniform float normalsSize;
@@ -76,15 +78,19 @@ void main()
     fragPos = triangleInfos.rgb;
     float triangleIndex = floor(triangleInfos.a + .5);
 
-    vec3 normal = texture1D(normals, (triangleIndex + .5)/normalsSize).xyz;
+    vec2 coord2D = index1Dto2D(triangleIndex, maxTextureSize, normalsSize);
+    vec3 normal = texture2D(normals, coord2D).xyz;
     ambient = defaultAmbientMaterial;
     diffuse = vec3(0, 0, 0);
 
-    vec4 matInfo = texture1D(especularTex, (triangleIndex + .5)/especularSize);
+
+    coord2D = index1Dto2D(triangleIndex, maxTextureSize, especularSize);
+    vec4 matInfo = texture2D(especularTex, coord2D);
     specular = vec3(0, 0, 0);
     eyeDir = eyePos - fragPos;
 
-    fragMaterial.diffuse = texture1D(diffuseTex, (triangleIndex + .5)/diffuseSize).rgb;
+    coord2D = index1Dto2D(triangleIndex, maxTextureSize, diffuseSize);
+    fragMaterial.diffuse = texture2D(diffuseTex, coord2D).rgb;
     fragMaterial.specular = matInfo.rgb;
     fragMaterial.shininess = matInfo.a;
 

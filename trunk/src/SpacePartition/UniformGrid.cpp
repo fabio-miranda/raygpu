@@ -119,30 +119,31 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
   texture2DnumLines = (int)((m_triangleListArraySize)/max_tex_size) + (int)(m_triangleListArraySize%max_tex_size != 0);
 	m_triangleListArray = new GLfloat[texture2DnumLines*max_tex_size];
 	for(int i = 0; i < texture2DnumLines*max_tex_size; ++i) m_triangleListArray[i] = -1.0f;
-	//memset(m_triangleListArray, -1.0f, sizeof(GLfloat) * m_triangleListArraySize);//Do not work for floats different then 0 
 
 	m_triangleVertexArraySize = p_numTriangles * 3 * 3;
   texture2DnumLines = (int)((m_triangleVertexArraySize/3)/max_tex_size) + (int)(m_triangleVertexArraySize%max_tex_size != 0);
  	m_triangleVertexArray = new GLfloat[texture2DnumLines*max_tex_size*3];
-	//memset(m_triangleVertexArray, 1, sizeof(GLfloat) * m_triangleVertexArraySize);
 	for(int i = 0; i < texture2DnumLines*max_tex_size*3; ++i) m_triangleVertexArray[i] = 1.0f;
   
-
-	m_triangleNormalsArraySize = p_numTriangles * 3;
-	m_triangleNormalsArray = new GLfloat[m_triangleNormalsArraySize];
-	memset(m_triangleNormalsArray, 0, sizeof(GLfloat) * m_triangleNormalsArraySize);
+	m_triangleNormalsArraySize = p_numTriangles * 3 * 3;
+  texture2DnumLines = (int)((m_triangleNormalsArraySize/3)/max_tex_size) + (int)(m_triangleNormalsArraySize%max_tex_size != 0);
+	m_triangleNormalsArray = new GLfloat[texture2DnumLines*max_tex_size*3];
+	memset(m_triangleNormalsArray, 0, sizeof(GLfloat) * texture2DnumLines*max_tex_size*3);
 
 	m_triangleAmbientArraySize = p_numTriangles * 3;
-	m_triangleAmbientArray = new GLfloat[m_triangleAmbientArraySize];
-	memset(m_triangleAmbientArray, 0, sizeof(GLfloat) * m_triangleAmbientArraySize);
+  texture2DnumLines = (int)((m_triangleAmbientArraySize/3)/max_tex_size) + (int)(m_triangleAmbientArraySize%max_tex_size != 0);
+	m_triangleAmbientArray = new GLfloat[texture2DnumLines*max_tex_size*3];
+	memset(m_triangleAmbientArray, 0, sizeof(GLfloat) * texture2DnumLines*max_tex_size*3);
 
 	m_triangleDiffuseArraySize = p_numTriangles * 3;
-	m_triangleDiffuseArray = new GLfloat[m_triangleDiffuseArraySize];
-	memset(m_triangleDiffuseArray, 0, sizeof(GLfloat) * m_triangleDiffuseArraySize);
+  texture2DnumLines = (int)((m_triangleDiffuseArraySize/3)/max_tex_size) + (int)(m_triangleDiffuseArraySize%max_tex_size != 0);
+	m_triangleDiffuseArray = new GLfloat[texture2DnumLines*max_tex_size*3];
+	memset(m_triangleDiffuseArray, 0, sizeof(GLfloat) * texture2DnumLines*max_tex_size*3);
 
 	m_triangleSpecularArraySize = p_numTriangles * 4;
-	m_triangleSpecularArray = new GLfloat[m_triangleSpecularArraySize];
-	memset(m_triangleSpecularArray, 0, sizeof(GLfloat) * m_triangleSpecularArraySize);
+  texture2DnumLines = (int)((m_triangleSpecularArraySize/4)/max_tex_size) + (int)(m_triangleSpecularArraySize%max_tex_size != 0);
+	m_triangleSpecularArray = new GLfloat[texture2DnumLines*max_tex_size*4];
+	memset(m_triangleSpecularArray, 0, sizeof(GLfloat) * texture2DnumLines*max_tex_size*4);
 
  
 	unsigned int gridCount = 0;
@@ -173,9 +174,22 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 
 					Vector3 n = (aux_grid[cont].at(j)->v2 - aux_grid[cont].at(j)->v1) ^ (aux_grid[cont].at(j)->v3 - aux_grid[cont].at(j)->v2);
 					n = n.unitary();
-					m_triangleNormalsArray[triangleIndex*3] = n.x;
-					m_triangleNormalsArray[triangleIndex*3+1] = n.y;
-					m_triangleNormalsArray[triangleIndex*3+2] = n.z;
+
+          m_triangleNormalsArray[triangleIndex*3] = n.x;
+          m_triangleNormalsArray[triangleIndex*3+1] = n.y;
+          m_triangleNormalsArray[triangleIndex*3+2] = n.z;
+
+	/*				m_triangleNormalsArray[triangleIndex*3] = aux_grid[cont].at(j)->n1.x;
+					m_triangleNormalsArray[triangleIndex*3+1] = aux_grid[cont].at(j)->n1.y;
+					m_triangleNormalsArray[triangleIndex*3+2] = aux_grid[cont].at(j)->n1.z;*/
+
+         /* m_triangleNormalsArray[triangleIndex*3+3] = aux_grid[cont].at(j)->n2.x;
+          m_triangleNormalsArray[triangleIndex*3+3+1] = aux_grid[cont].at(j)->n2.y;
+          m_triangleNormalsArray[triangleIndex*3+3+2] = aux_grid[cont].at(j)->n2.z;
+
+          m_triangleNormalsArray[triangleIndex*3+3+3] = aux_grid[cont].at(j)->n3.x;
+          m_triangleNormalsArray[triangleIndex*3+3+3+1] = aux_grid[cont].at(j)->n3.y;
+          m_triangleNormalsArray[triangleIndex*3+3+3+2] = aux_grid[cont].at(j)->n3.z;*/
 
 
 					m_triangleSpecularArray[triangleIndex*4] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mSpecular.r;
