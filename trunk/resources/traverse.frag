@@ -43,7 +43,12 @@ void main(){
 	vec4 gridIntersectionMax = texture2D(samplerGridIntersectionMax, gl_TexCoord[0].st);
 
 	//vec4 gridIndex = texture1D(samplerGrid, findVoxelLinearArray(findVoxel(rayPos.xyz))/gridArraySize);
-	
+	/*
+	if(floor(rayPos.a+0.5) < 0)
+		return;
+	*/
+
+
 	float a = (floor(rayPos.a+0.5)+0.5)/(gridArraySize);
 	vec4 gridIndex = texture1D(samplerGrid, a);
 	
@@ -52,7 +57,7 @@ void main(){
 	//gl_FragData[3] = vec4(normalize(gridIndex.xyz), 1.0);
 	//gl_FragData[3] = vec4(vec3(rayPos.a/1000.0), 1.0);
 	//return;
-
+	
 	if(gridIndex.x >= gridSize.x || gridIndex.y >= gridSize.y || gridIndex.z >= gridSize.z
 		|| gridIndex.x < 0.0 || gridIndex.y < 0.0 || gridIndex.z < 0.0)
 	{
@@ -69,7 +74,6 @@ void main(){
 		gl_FragData[3] = vec4(0.0, 0.0, 1.0, 0.8);
 	}
 	*/
-	
 	if(floor(rayDir.a + 0.5) == ACTIVE_INTERSECT){
 		gl_FragData[3] = vec4(1.0, 0.0, 0.0, 0.8);
 	}
@@ -104,14 +108,17 @@ void main(){
 				gridIndex.y = floor(gridIndex.y + step.y + 0.5);
 				gridIntersectionMax.y += delta.y;
 			}
-
-			if(gridIndex.x - gridSize.x >= -0.1 || gridIndex.y - gridSize.y >= -0.1 || gridIndex.z - gridSize.z >= -0.1)
+			/*
+			if(gridIndex.x  > 0.0 || gridIndex.y > 0.0 || gridIndex.z > 0.0)
 			{
 				rayDir.a = INACTIVE;
 				rayPos.a = findVoxelLinearArray(gridIndex.xyz);
 				gl_FragData[3] = vec4(1, 1, 1, 0.8);
 			}
-			else if(gridIndex.x < 0.0 || gridIndex.y < 0.0 || gridIndex.z < 0.0){
+			*/
+			gridIndex = floor(gridIndex+0.5);
+			if(gridIndex.x >= gridSize.x || gridIndex.y >= gridSize.y || gridIndex.z >= gridSize.z
+				|| gridIndex.x < 0.0 || gridIndex.y < 0.0 || gridIndex.z < 0.0){
 				rayDir.a = INACTIVE;
 				rayPos.a = findVoxelLinearArray(gridIndex.xyz);
 				gl_FragData[3] = vec4(0.5, 0.5, 0.5, 0.8);
@@ -137,10 +144,11 @@ void main(){
 
 //   gl_FragData[0] = rayPos;
 	gl_FragData[0] = rayPos; //untouched, except for rayPos.a
-	//gl_FragData[0] = vec4(normalize(rayPos.xyz), 0.8);
+	//gl_FragData[0] = vec4(normalize(rayDir.xyz), 0.8);
 	gl_FragData[1] = rayDir; //untouched, except for rayDir.a
 	gl_FragData[2] = gridIntersectionMax;
-	//gl_FragData[3] = vec4(normalize(gridIndex.xyz), 0.9);
+	//gl_FragData[0] = vec4(vec3(gridIndex.a/gridArraySize), 0.9);
 	
+	//gl_FragData[3] = vec4(normalize(gridIntersectionMax.xyz), 0.8);
 
 }
