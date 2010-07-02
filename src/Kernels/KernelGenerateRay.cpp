@@ -4,7 +4,7 @@ KernelGenerateRay::KernelGenerateRay(){
 
 }
 
-KernelGenerateRay::KernelGenerateRay(int width, int height, Vector3 gridSize, Vector3 gridVoxelSize, Vector3 bbMin, Vector3 bbMax, float nearPlaneWidth, float nearPlaneHeight)
+KernelGenerateRay::KernelGenerateRay(int width, int height, int gridArraySize, Vector3 gridSize, Vector3 gridVoxelSize, Vector3 bbMin, Vector3 bbMax, float nearPlaneWidth, float nearPlaneHeight)
 : KernelBase("./resources/vertice.vert", "./resources/generateRay.frag", width, height){
 
 
@@ -27,6 +27,7 @@ KernelGenerateRay::KernelGenerateRay(int width, int height, Vector3 gridSize, Ve
 		addInputVec3("bbMax", bbMax);
 		addInputVec3("gridSize", gridSize);
 		addInputVec3("gridVoxelSize", gridVoxelSize);
+		addInputFloat("gridArraySize", (float)gridArraySize);
 	m_shader->setActive(false);
 
 }

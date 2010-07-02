@@ -9,6 +9,7 @@ uniform vec3 nearPlaneSize;
 uniform vec3 screenSize;
 uniform vec3 gridVoxelSize;
 uniform vec3 gridSize;
+uniform float gridArraySize;
 
 //Ray states (stored on rayDir.a)
 #define INACTIVE 0.0
@@ -100,7 +101,10 @@ vec3 findVoxel(vec3 rayPos){
 
 	vec3 index = vec3(-1.0, -1.0, -1.0);
 
-	index = (floor(rayPos+0.5) - bbMin) / gridVoxelSize;
+	//index = (floor(rayPos+0.5) - floor(bbMin+0.5)) / floor(gridVoxelSize+0.5);
+	//index = (rayPos - bbMin) / gridVoxelSize;
+	//index = (floor(rayPos+0.5) - bbMin) / gridVoxelSize;
+	index = (floor(rayPos-0.5) - bbMin) / gridVoxelSize;
 	index = trunc(index);
 
 	return index;
@@ -175,8 +179,12 @@ void main(){
 			//posIntersectionOut = rayPos.xyz + posIntersectionOut * rayDir.xyz;
 
 			breakpoint = 1.0;
+			
+			if(rayPos.a >= gridArraySize)
+				hit = false;
 		}
-		else{
+		
+		if(hit == false){
 			intersectionMin = 0.0;
 			rayPos = vec4(0.0, 0.0 ,0.0, -1.0);
 			rayDir.a = INACTIVE;
@@ -203,7 +211,11 @@ void main(){
 	gl_FragData[3] = vec4(intersectionOut, 1.0);
 	//gl_FragData[3] = vec4(normalize(voxelIndex.xyz), 0.8);
 
+	//gl_FragData[3] = vec4(normalize(rayPos.xyz), 1);
 	//gl_FragData[3] = vec4(vec3(normalize(voxelIndex.xyz)), 1.0);
 	//gl_FragData[3] = vec4(vec3(rayPos.a/1000.0), 1.0);
+	//gl_FragData[3] = vec4(vec3(intersectionMin),1.0);
+	//gl_FragData[3] = vec4(intersectionOut, 1.0);
+	//gl_FragData[3] = vec4(vec3(breakpoint), 0.5);
 
 }
