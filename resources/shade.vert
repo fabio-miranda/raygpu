@@ -1,15 +1,3 @@
-uniform sampler2D rayPos;
-uniform sampler2D rayDir;
-
-uniform sampler2D triangleInfo;
-
-uniform sampler1D vertexes;
-uniform sampler1D normals;
-uniform sampler1D diffuse;
-uniform sampler1D especular;
-uniform sampler1D lights;
-
-
 void main()
 {
    gl_TexCoord[0] = gl_MultiTexCoord0; //triangleInfo
