@@ -192,6 +192,8 @@ void main(){
 		}
 	}
 
+	
+
 //	gl_FragData[0] = vec4(normalize(rayPos.xyz), 0.5);
 //	gl_FragData[0] = vec4((vec3(length(rayPos.xyz-eyePos.xyz)/25.)), 1.5);
 //	gl_FragData[0] = vec4(normalize(vec3(intersectionMin)), 1.5);
@@ -215,7 +217,13 @@ void main(){
 	//gl_FragData[3] = vec4(vec3(normalize(voxelIndex.xyz)), 1.0);
 	//gl_FragData[3] = vec4(vec3(rayPos.a/1000.0), 1.0);
 	//gl_FragData[3] = vec4(vec3(intersectionMin),1.0);
-	//gl_FragData[3] = vec4(intersectionOut, 1.0);
+	gl_FragData[3] = vec4(intersectionOut, 1.0);
 	//gl_FragData[3] = vec4(vec3(breakpoint), 0.5);
 
+	
+	if(rayPos.a == 1)
+		gl_FragData[3] = vec4(vec3(normalize(voxelIndex.xyz)), 0.0);
+	else
+		gl_FragData[3] = vec4(vec3(normalize(voxelIndex.xyz)), 1.0);
+	
 }
