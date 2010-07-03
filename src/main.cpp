@@ -27,7 +27,7 @@ GLenum e;
 int main(int argc, char *argv[]){
 	
 	init(argc, argv);
-	glewInit();	
+
 
 	glutMainLoop();
 }
@@ -84,7 +84,7 @@ void init(int argc, char *argv[]){
 	glEnable(GL_TEXTURE);
 	glEnable(GL_TEXTURE_2D);
   glEnable(GL_TEXTURE_1D);
-
+	glewInit();	
 
 
   //glPolygonMode(GL_FRONT, GL_LINE);
@@ -182,7 +182,7 @@ void mouseActive(int x, int y){
 
 void render(){
 
-	if(step == false) return;
+	//if(step == false) return;
 
 	//std::cout << camBeta << ", " << camAlpha << ", " << camInc << "\n";
 

@@ -86,17 +86,20 @@ void main()
       triangleInfo = vec4(fragPos, lastHit.g);
       gl_FragData[2] = triangleInfo;
       return;
-    }//else gl_FragData[3] = vec4(1., 0.5, 0, .8);//DEBUG
+    }else gl_FragData[3] = vec4(1., 0.5, 0, .8);//DEBUG
 
     rDir.w = float(ACTIVE_TRAVERSE_SEC);
 /**/
   }
   else if(triangleFlag == ACTIVE_TRAVERSE_SEC){
-	gl_FragData[3] = vec4(0.5, 1.0, 1.0, .8);
-
+    vec4 triangleIndexV = texture1D(grid, (gridIndex + .5)/gridSize); //Debug
+    gl_FragData[3] = vec4(triangleIndexV.xyz, 0.5);//DEBUG
+//    gl_FragData[3] = vec4(0.5, 1.0, 1.0, .8);
   }
   else if(triangleFlag == ACTIVE_TRAVERSE){
-	gl_FragData[3] = vec4(0.3, 0.0, 0.5, .8);
+    vec4 triangleIndexV = texture1D(grid, (gridIndex + .5)/gridSize); //Debug
+    gl_FragData[3] = vec4(triangleIndexV.xyz, 0.5);//DEBUG
+//	gl_FragData[3] = vec4(0.3, 0.0, 0.5, .8);
 
   }
 
@@ -111,7 +114,7 @@ void main()
 vec3 intersect(float vertexIndex, vec4 rPos, vec4 rDir, vec3 lastHit, float triangleIndex)
 {
   vec2 coord2D;
-	
+
   coord2D = index1Dto2D(vertexIndex*3., maxTextureSize, vertexesSize);
   vec3 v0 = texture2D(vertexes, coord2D).xyz;
   coord2D = index1Dto2D(vertexIndex*3. + 1.0, maxTextureSize, vertexesSize);
