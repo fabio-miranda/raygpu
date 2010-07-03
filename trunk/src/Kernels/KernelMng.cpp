@@ -4,7 +4,7 @@
 KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth, float nearPlaneHeight){
 
 
-	UniformGrid* uniformGrid = scene->GetUniformGrid();
+	UniformGrid* uniformGrid = scene->getUniformGrid();
 
 	m_kernelGenerateRay = new KernelGenerateRay(width, height, scene->getGridTexSize(), uniformGrid->getNumVoxels(), uniformGrid->getVoxelSize(), uniformGrid->getBBMin(), uniformGrid->getBBMax(), nearPlaneWidth, nearPlaneHeight);
 
@@ -42,7 +42,7 @@ KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth,
 void KernelMng::step(KernelMngState stateToStop, Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane){
 	cout << "IN:" << m_currentState ;
   render(eyePos, eyeDir, eyeUp, eyeRight, nearPlane);
-  update(stateToStop);	
+  //update(stateToStop);	
   cout << " OUT:" << m_currentState <<endl;
 
 }
@@ -63,7 +63,7 @@ void KernelMng::update(KernelMngState stateToStop){
     //m_currentState = GENERATERAY;	
     return;
   }
-
+/*
   if(m_currentState == GENERATERAY){
     m_currentState = TRAVERSE;
     TC = 0;
@@ -98,14 +98,14 @@ void KernelMng::update(KernelMngState stateToStop){
         m_currentState = SHADE;
       }
 
-  
+  */
 
   //if(m_currentState == stateToStop){
   //m_currentState = GENERATERAY;	
   //return;
   //}
 
-  /*
+  
   static int cont = 0;
 	//if(m_currentState == stateToStop){
 		//m_currentState = GENERATERAY;	
@@ -135,7 +135,7 @@ void KernelMng::update(KernelMngState stateToStop){
 		//}
 		//else
 		//	newState = SHADE;
-	}*/
+	}
 }
 
 void KernelMng::generateRay(){

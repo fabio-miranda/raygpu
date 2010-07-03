@@ -9,8 +9,8 @@
 #include "GraphBasis/Vector3.h"
 #include "GraphBasis/Color.h"
 
+#include "Light/Light.h"
 
-#include "Light/PointLight.h"
 
 
 
@@ -37,6 +37,8 @@ struct lightStruct
   GLfloat spotAngle;
 };
 
+
+
 class RTLight
 {
    static int lightNum;
@@ -44,7 +46,7 @@ class RTLight
    enum LightType {Directional = 0, Point = 1, Spot = 2 };
 
    protected:
-      PointLight mPLight;
+      Light *mLight;
 
       bool mCalculed;
 

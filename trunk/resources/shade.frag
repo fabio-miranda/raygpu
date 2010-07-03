@@ -17,6 +17,7 @@ uniform float lightsSize;
 
 uniform vec3 eyePos;
 
+vec3 getInterpolatedNormal(float triangleIndex);
 
 vec2 index1Dto2D(float index, float width, float size)
 {
@@ -74,81 +75,19 @@ void main()
   gl_FragData[1] = texture2D(triangleInfo, gl_TexCoord[0].st);//DEBUG
 
 //  gl_FragData[2] = vec4(0,0,1, 0.8);
-  gl_FragData[3] = vec4(0,0,1, 0.8);
+//  gl_FragData[3] = vec4(0,0,1, 0.8);
 
   if(triangleFlag == ACTIVE_SHADING)
   {
-    gl_FragData[3] = vec4(1,0,0, .8);
+//    gl_FragData[3] = vec4(1,0,0, .8);
 //    gl_FragData[2] = vec4(1,0,0, .8);
 
     vec4 triangleInfos = texture2D(triangleInfo, gl_TexCoord[0].st);
     fragPos = triangleInfos.rgb;
     float triangleIndex = floor(triangleInfos.a + .5);
 
-    vec2 coord2D = index1Dto2D(triangleIndex*3.0, maxTextureSize, normalsSize);
-    vec3 normal1 = texture2D(normals, coord2D).xyz;
-    coord2D = index1Dto2D(triangleIndex*3.0+1.0, maxTextureSize, normalsSize);
-    vec3 normal2 = texture2D(normals, coord2D).xyz;
-    coord2D = index1Dto2D(triangleIndex*3.0+2.0, maxTextureSize, normalsSize);
-    vec3 normal3 = texture2D(normals, coord2D).xyz;
-
-
-
-
-
-  coord2D = index1Dto2D(triangleIndex*3., maxTextureSize, vertexesSize);
-  vec3 v1 = texture2D(vertexes, coord2D).xyz;
-  coord2D = index1Dto2D(triangleIndex*3. + 1.0, maxTextureSize, vertexesSize);
-  vec3 v2 = texture2D(vertexes, coord2D).xyz;
-  coord2D = index1Dto2D(triangleIndex*3. + 2.0, maxTextureSize, vertexesSize);
-  vec3 v3 = texture2D(vertexes, coord2D).xyz;
-
-    vec3 U =  v1-v2;
-    vec3 V =  v3-v2;
-    vec3 N =  fragPos-v2;
-
-    float dU = length(U);
-    float dV = length(V);
-    float dN = length(N);
-
-    N = normalize(N);
-    U = normalize(U);
-
-    float cost = dot(N,U);
-    if (cost < 0.0) cost = 0.0;
-    if (cost > 1.0) cost = 1.0;
-
-    float t = acos(cost);
-
-    float distY = 0.0, distX = 0.0;
-    distX = dN * cos(t);
-    distY = dN * sin(t);
-
-    float u = distX/ dU;
-    float v = distY/ dV;
-
-    normal1 = normalize(normal1);
-    normal2 = normalize(normal2);
-    normal3 = normalize(normal3);
-
-    float nx = -( (1.0 - (u + v)) * normal2.x +
-      normal1.x * u +
-      normal3.x * v);
-    float ny = -( (1.0 - (u + v)) * normal2.y +
-      normal1.y * u +
-      normal3.y * v);
-    float nz = -( (1.0 - (u + v)) * normal2.z +
-      normal1.z * u +
-      normal2.z * v);
-
-
-  vec3 normal = normalize(vec3(nx, ny, nz));
-
-
-
-
-
-
+    vec3 normal = getInterpolatedNormal(triangleIndex);
+    vec2 coord2D;
 
     ambient = defaultAmbientMaterial;
     diffuse = vec3(0, 0, 0);
@@ -157,7 +96,7 @@ void main()
     coord2D = index1Dto2D(triangleIndex, maxTextureSize, especularSize);
     vec4 matInfo = texture2D(especularTex, coord2D);
     specular = vec3(0, 0, 0);
-    eyeDir = eyePos - fragPos;
+    eyeDir = -(eyePos - fragPos);
 
     coord2D = index1Dto2D(triangleIndex, maxTextureSize, diffuseSize);
     fragMaterial.diffuse = texture2D(diffuseTex, coord2D).rgb;
@@ -175,21 +114,21 @@ void main()
         float lightType = floor(lightPosition.w+.5);
         if(lightType == 0.0) //Directional Light
         {
-          lightDir =  lightPosition.xyz;
+          lightDir =  -lightPosition.xyz;
           calcDirLight(i, normal, ambient, diffuse, specular);
-//          gl_FragData[2] = vec4(0,0,1, 1.0);
+//          gl_FragData[3] = vec4(0,0,1, 1.0);
         }
         else if(lightType == 2.0) //Spot Light
         {
-          lightDir = lightPosition.xyz - fragPos;
+          lightDir = -(lightPosition.xyz - fragPos);
           calcSpotLight(i, normal, ambient, diffuse, specular);
-//          gl_FragData[2] = vec4(0,1,0, 1.0);
+//          gl_FragData[3] = vec4(0,1,0, 1.0);
         }
         else //Point Light
         {
-          lightDir = lightPosition.xyz - fragPos;
+          lightDir = -(lightPosition.xyz - fragPos);
           calcPointLight(i, normal, ambient, diffuse, specular);
-//          gl_FragData[2] = vec4(1,0,0, 1.0);
+//          gl_FragData[3] = vec4(1,0,0, 1.0);
         }
       }
     }
@@ -202,7 +141,8 @@ void main()
     vec3 intensity = ambient + diffuse;
     //      gl_FragData[1] = vec4(intensity + specular, 1.0);
     gl_FragData[2] = vec4(intensity + specular, 1.0);
-    gl_FragData[3] = vec4(intensity + specular, 1.0);
+//    gl_FragData[3] = vec4(intensity + specular, 1.0);
+    gl_FragData[3] = vec4(diffuse, 1.0);
     /**/
   }else
   {
@@ -232,7 +172,6 @@ void calcDirLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout
 	}
 }
 
-
 void calcPointLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular)
 {
   vec3 L = normalize(lightDir);
@@ -251,7 +190,6 @@ void calcPointLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, ino
 	}
 }
 
-
 void calcSpotLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular)
 {
    vec3 L = normalize(lightDir);
@@ -261,7 +199,7 @@ void calcSpotLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inou
    if ( NdotL > 0.0 )
    {
       vec4 lightSpotInfo = texture1D(lights, (i*4.0 + 3.0 + .5)/lightsSize);
-      vec3 lightSpotDir = lightSpotInfo.rgb;
+      vec3 lightSpotDir = -lightSpotInfo.rgb;
       float lightSpotAngle = cos(lightSpotInfo.a);
 
       float spotEffect = dot(normalize(lightSpotDir),-L);
@@ -277,4 +215,63 @@ void calcSpotLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inou
          specular += fragMaterial.specular * lightSpecular.rgb * pow(NdotH, fragMaterial.shininess)*spotEffect;
       }
 	}
+}
+
+vec3 getInterpolatedNormal(float triangleIndex)
+{
+  vec2 coord2D = index1Dto2D(triangleIndex*3.0, maxTextureSize, normalsSize);
+  vec3 normal1 = texture2D(normals, coord2D).xyz;
+  coord2D = index1Dto2D(triangleIndex*3.0+1.0, maxTextureSize, normalsSize);
+  vec3 normal2 = texture2D(normals, coord2D).xyz;
+  coord2D = index1Dto2D(triangleIndex*3.0+2.0, maxTextureSize, normalsSize);
+  vec3 normal3 = texture2D(normals, coord2D).xyz;
+
+  coord2D = index1Dto2D(triangleIndex*3., maxTextureSize, vertexesSize);
+  vec3 v1 = texture2D(vertexes, coord2D).xyz;
+  coord2D = index1Dto2D(triangleIndex*3. + 1.0, maxTextureSize, vertexesSize);
+  vec3 v2 = texture2D(vertexes, coord2D).xyz;
+  coord2D = index1Dto2D(triangleIndex*3. + 2.0, maxTextureSize, vertexesSize);
+  vec3 v3 = texture2D(vertexes, coord2D).xyz;
+
+  vec3 U =  v1-v2;
+  vec3 V =  v3-v2;
+  vec3 N =  fragPos-v2;
+
+  float dU = length(U);
+  float dV = length(V);
+  float dN = length(N);
+
+  N = normalize(N);
+  U = normalize(U);
+
+  float cost = dot(N,U);
+  if (cost < 0.0) cost = 0.0;
+  if (cost > 1.0) cost = 1.0;
+
+  float t = acos(cost);
+
+  float distY = 0.0, distX = 0.0;
+  distX = dN * cos(t);
+  distY = dN * sin(t);
+
+  float u = distX/ dU;
+  float v = distY/ dV;
+
+  normal1 = normalize(normal1);
+  normal2 = normalize(normal2);
+  normal3 = normalize(normal3);
+
+  float nx = -( (1.0 - (u + v)) * normal2.x +
+    normal1.x * u +
+    normal3.x * v);
+  float ny = -( (1.0 - (u + v)) * normal2.y +
+    normal1.y * u +
+    normal3.y * v);
+  float nz = -( (1.0 - (u + v)) * normal2.z +
+    normal1.z * u +
+    normal2.z * v);
+
+
+  vec3 normal = normalize(vec3(nx, ny, nz));
+  return normal;
 }

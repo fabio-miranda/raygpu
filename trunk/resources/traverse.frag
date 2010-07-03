@@ -39,12 +39,43 @@ vec3 findVoxel(vec3 rayPos){
 
 }
 
+vec3 findVoxelPosition(vec3 voxelIndex){
+	return voxelIndex * gridVoxelSize + bbMin;
+}
+
+vec3 findIntersectionOutVoxel(vec3 rayPos, vec3 rayDir, vec3 voxelIndex){
+
+	vec3 intersectionOut = vec3(0.0, 0.0, 0.0);
+
+	if(rayDir.x < 0.0)
+		intersectionOut.x = (findVoxelPosition(voxelIndex).x - rayPos.x) / rayDir.x;
+	if(rayDir.x > 0.0)
+		intersectionOut.x = (findVoxelPosition(voxelIndex + vec3(1, 0, 0)).x - rayPos.x) / rayDir.x;
+
+	if(rayDir.y < 0.0)
+		intersectionOut.y = (findVoxelPosition(voxelIndex).y - rayPos.y) / rayDir.y;
+	if(rayDir.y > 0.0)
+		intersectionOut.y = (findVoxelPosition(voxelIndex + vec3(0, 1, 0)).y - rayPos.y) / rayDir.y;
+
+	if(rayDir.z < 0.0)
+		intersectionOut.z = (findVoxelPosition(voxelIndex).z - rayPos.z) / rayDir.z;
+	if(rayDir.z > 0.0)
+		intersectionOut.z = (findVoxelPosition(voxelIndex + vec3(0, 0, 1)).z - rayPos.z) / rayDir.z;
+
+	return intersectionOut;
+
+
+}
+
 
 void main(){
 
 	vec4 rayDir = texture2D(samplerRayDir, gl_TexCoord[0].st);
 	vec4 rayPos = texture2D(samplerRayPos, gl_TexCoord[0].st);
+	float a = (floor(rayPos.a+0.5)+0.5)/(gridArraySize);
+	vec4 gridIndex = texture1D(samplerGrid, a);
 	vec4 gridIntersectionMax = texture2D(samplerGridIntersectionMax, gl_TexCoord[0].st);
+	//vec4 gridIntersectionMax = vec4(findIntersectionOutVoxel(rayPos.xyz, rayDir.xyz, gridIndex.xyz), 1.0);
 
 	//vec4 gridIndex = texture1D(samplerGrid, findVoxelLinearArray(findVoxel(rayPos.xyz))/gridArraySize);
 	/*
@@ -53,10 +84,10 @@ void main(){
 	*/
 
 
-	float a = (floor(rayPos.a+0.5)+0.5)/(gridArraySize);
-	vec4 gridIndex = texture1D(samplerGrid, a);
 
-gl_FragData[3] = vec4(0, 1, 1, .8);
+
+	
+
 
 	//gl_FragData[3] = vec4(normalize(gridIndex.xyz), 1.0);
 	//gl_FragData[3] = vec4(vec3(rayPos.a/1000.0), 1.0);

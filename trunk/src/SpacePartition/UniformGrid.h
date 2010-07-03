@@ -10,12 +10,13 @@
 #include "RayTracerObjects/RTTriangle.h"
 #include "RayTracerObjects/RTMesh.h"
 #include "RayTracerObjects/RTMaterial.h"
+#include "RayTracerObjects/RTLight.h"
 
 
 class UniformGrid {
 
 public:
-	UniformGrid(unsigned int p_numTriangles, std::vector<RTMesh>* p_triangles, std::vector<RTMaterial>* p_material, Vector3 p_sizeVoxel);
+  UniformGrid(unsigned int p_numTriangles, std::vector<RTMesh>* p_triangles, std::vector<RTMaterial>* p_material, std::vector<RTLight>* p_lightl, Vector3 p_sizeVoxel);
 	~UniformGrid();
 
 	void render();
@@ -28,6 +29,7 @@ public:
   GLfloat* getTriangleAmbientArray();
   GLfloat* getTriangleDiffuseArray();
   GLfloat* getTriangleSpecularArray();
+  GLfloat* getLightsArray();
 
   Vector3 getBBMin();
   Vector3 getBBMax();
@@ -39,6 +41,7 @@ public:
   int getTriangleAmbientArrayAbsoluteSize();
   int getTriangleDiffuseArrayAbsoluteSize();
   int getTriangleSpecularArrayAbsoluteSize();
+  int getLightsArrayAbsoluteSize();
 
 
   int getGridArraySize();
@@ -48,6 +51,7 @@ public:
   int getTriangleAmbientArraySize();
   int getTriangleDiffuseArraySize();
   int getTriangleSpecularArraySize();
+  int getLightsArraySize();
 
   GLuint getGridTextureId();
   Vector3 getVoxelSize();
@@ -55,7 +59,7 @@ public:
 
 private:
 	void calculateBB(std::vector<RTMesh>* p_triangles, Vector3 p_numVoxels);
-	void calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>* p_triangles, std::vector<RTMaterial>* p_material, Vector3 p_numVoxels);
+	void calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>* p_triangles, std::vector<RTMaterial>* p_material, std::vector<RTLight>* p_light, Vector3 p_numVoxels);
 	Vector3 getVertexGridIndex(Vector3 vertex);
 	unsigned int getNumTriangles();
 	unsigned int getVoxelAt(Vector3 index);
@@ -74,6 +78,7 @@ private:
 	GLfloat* m_triangleAmbientArray;
 	GLfloat* m_triangleDiffuseArray;
 	GLfloat* m_triangleSpecularArray;
+  GLfloat* m_lightsArray;
 
 	int m_gridArraySize;
 	int m_triangleVertexArraySize;
@@ -82,6 +87,7 @@ private:
 	int m_triangleAmbientArraySize;
 	int m_triangleDiffuseArraySize;
 	int m_triangleSpecularArraySize;
+  int m_lightsArraySize;
 };
 
 

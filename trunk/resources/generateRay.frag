@@ -221,9 +221,9 @@ void main(){
 	//gl_FragData[3] = vec4(vec3(breakpoint), 0.5);
 
 	
-	if(rayPos.a == 1)
-		gl_FragData[3] = vec4(vec3(normalize(voxelIndex.xyz)), 0.0);
-	else
-		gl_FragData[3] = vec4(vec3(normalize(voxelIndex.xyz)), 1.0);
+	//if(rayPos.a == 1)
+		//gl_FragData[3] = vec4(vec3(normalize(voxelIndex.xyz)), 0.0);
+	//else
+		//gl_FragData[3] = vec4(vec3(normalize(voxelIndex.xyz)), 1.0);
 	
 }

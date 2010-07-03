@@ -13,11 +13,30 @@ using namespace std;
 ///////////////////
 //~ RTScene
 //////////////////
-RTScene :: RTScene(string rt4FileName)
+RTScene :: RTScene(string fileName)
 :mCalculed(false)
 ,mGrid(NULL)
+,mBinFile(false)
 {
-   readFromFile(rt4FileName);
+  int index = fileName.find_last_of(".");
+  assert(index != string::npos);
+  string sub = fileName.substr(index, string::npos);
+
+  if(sub.compare(".rt4")==0 || sub.compare(".RT4")==0)
+  {
+    readFromRT4File(fileName);
+    mBinFile = false;
+  }
+  else if(sub.compare(".rtb")==0 || sub.compare(".RTB")==0)
+  {
+    readFromRTBFile(fileName);
+    mBinFile = true;
+  }
+  else 
+  {
+    cout << "Unknown File Type:" << fileName << endl;
+    assert(false);
+  }
 }
 
 RTScene :: ~RTScene()
@@ -36,7 +55,7 @@ RTScene :: ~RTScene()
   glDeleteTextures(sizeof(id)/sizeof(GLuint), id);
 }
 
-void RTScene :: readFromFile(string rt4FileName)
+void RTScene :: readFromRT4File(string rt4FileName)
 {
 	FILE *file;
 	char buffer[1024];
@@ -122,6 +141,19 @@ void RTScene :: readFromFile(string rt4FileName)
 	assert(numScene == 1);
 }
 
+void RTScene::readFromRTBFile( string rtbFileName )
+{
+
+}
+
+void RTScene::writeRTBFile( string rtbFileName )
+{
+  FILE *fp = fopen("rtbFileName", "wb");
+  assert(fp);
+
+}
+
+
 void RTScene :: readFromStr(char buffer[])
 {
    int r = sscanf( buffer, "%f %f %f %f %f %f %*s\n", &mClear.r, &mClear.g, &mClear.b,
@@ -137,8 +169,8 @@ void RTScene :: configure()
   {
     if(mGrid)
       delete mGrid;
-    //mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, Vector3(10,10,10));
-    mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, Vector3(2,2,2));
+    //mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials,&mLights, Vector3(10,10,10));
+    mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, &mLights, Vector3(10,10,10));
     calcTextures();
     mCalculed = true;
   }
@@ -161,7 +193,7 @@ void RTScene :: render()
   glPushAttrib(GL_LIGHTING_BIT);
 
 
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   glCullFace(GL_BACK);
   glEnable(GL_CULL_FACE);
 
@@ -174,17 +206,19 @@ void RTScene :: render()
   {
     glPushAttrib(GL_LIGHTING_BIT);
     mMaterials[meshIt->getMaterialIndex()].render();
+
     meshIt->render();
+
     glPopAttrib();
   }
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   glCullFace(GL_BACK);
   glPopAttrib();
 
-   mGrid->render();
+   //mGrid->render();
 }
 
-UniformGrid* RTScene ::GetUniformGrid() const 
+UniformGrid* RTScene ::getUniformGrid() const 
 { 
   return mGrid; 
 }
@@ -201,23 +235,16 @@ void RTScene::calcTextures()
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
 
   GLenum sizeType [] = {0,GL_ALPHA, 2 ,GL_RGB, GL_RGBA};
-  
-  GLfloat* lData = new GLfloat[mLights.size()*sizeof(struct lightStruct)];
-  for( unsigned int i = 0; i < mLights.size(); ++i)
-    memcpy(&lData[i*sizeof(struct lightStruct)/sizeof(GLfloat)], mLights[i].getLightStruct(), sizeof(struct lightStruct));
-  int lightArraySize = mLights.size()*sizeof(struct lightStruct)/(4*sizeof(GLfloat));
-  int lightArrayAbsoluteSize = mLights.size()*sizeof(struct lightStruct)/(sizeof(GLfloat));
-
 
   GLfloat* data[] = {   mGrid->getGridArray()/*RGBA*/,
-                        lData/*RGBA*/};
+                        mGrid->getLightsArray()/*RGBA*/};
   
   
   unsigned int size[] = {   mGrid->getGridArraySize(),
-                            lightArraySize };
+                            mGrid->getLightsArraySize()};
   
   int sizeIndex [] = {  mGrid->getGridArrayAbsoluteSize()/mGrid->getGridArraySize(),
-                        lightArrayAbsoluteSize/lightArraySize
+                        mGrid->getLightsArrayAbsoluteSize()/mGrid->getLightsArraySize(),
                         };
   
   int numTextures = sizeof(data)/sizeof(GLfloat*);
