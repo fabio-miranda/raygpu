@@ -22,7 +22,7 @@ public:
 	GLuint getTextureColorId();
 	void renderKernelOutput(KernelMngState stateToRender, int outputNum);
 	void generateRay();
-
+	KernelMngState m_currentState;
 private:
 	KernelMngState oracle();
 	void update(KernelMngState stateToStop);
@@ -33,7 +33,7 @@ private:
 	KernelTraverse* m_kernelTraverse;
 	KernelIntersect* m_kernelIntersect;
 	KernelShade* m_kernelShade;
-	KernelMngState m_currentState;
+
 	UniformGrid* m_uniformGrid;
 	GLuint m_textureRayPosition;
 	GLuint m_textureRayDirection;

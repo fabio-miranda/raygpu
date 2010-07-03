@@ -14,7 +14,11 @@ uniform vec3 bbMax;
 #define INACTIVE 0.0
 #define ACTIVE_TRAVERSE 1.0
 #define ACTIVE_INTERSECT 2.0
-#define OVERFLOW 3.0
+#define ACTIVE_TRAVERSE_SEC 3.0
+#define ACTIVE_SHADING 4.0
+#define OVERFLOW 5.0
+#define DONE 6.0
+
 
 //Voxel index (stored on rayPos.a)
 
@@ -51,20 +55,21 @@ void main(){
 
 	float a = (floor(rayPos.a+0.5)+0.5)/(gridArraySize);
 	vec4 gridIndex = texture1D(samplerGrid, a);
-	
-	
-	
+
+gl_FragData[3] = vec4(0, 1, 1, .8);
+
 	//gl_FragData[3] = vec4(normalize(gridIndex.xyz), 1.0);
 	//gl_FragData[3] = vec4(vec3(rayPos.a/1000.0), 1.0);
 	//return;
-	
+
 	if(gridIndex.x >= gridSize.x || gridIndex.y >= gridSize.y || gridIndex.z >= gridSize.z
-		|| gridIndex.x < 0.0 || gridIndex.y < 0.0 || gridIndex.z < 0.0)
+		|| gridIndex.x < 0.0 || gridIndex.y < 0.0 || gridIndex.z < 0.0
+		|| rayDir.a == INACTIVE)
 	{
-		gl_FragData[0] = vec4(0,0,0,1);
-		gl_FragData[3] = vec4(0, 0, 0, 1);
-		//return;
-		discard;
+		gl_FragData[0] = vec4(0,0,0,INACTIVE);
+		gl_FragData[3] = vec4(0, 0, 1, .8);
+		return;
+		//discard;
 	}
 	/*
 	if(floor(gridIndex.a+0.5) > 0 && floor(rayDir.a+0.5) == ACTIVE_TRAVERSE){
@@ -77,14 +82,15 @@ void main(){
 	if(floor(rayDir.a + 0.5) == ACTIVE_INTERSECT){
 		gl_FragData[3] = vec4(1.0, 0.0, 0.0, 0.8);
 	}
-	else if(floor(rayDir.a + 0.5) == ACTIVE_TRAVERSE){
+	else if(floor(rayDir.a + 0.5) == ACTIVE_TRAVERSE ||
+          floor(rayDir.a + 0.5) == ACTIVE_TRAVERSE_SEC){
 
-		if(floor(gridIndex.a+0.5) > 0.0){
+		if(floor(gridIndex.a+0.5) > -1.0 && floor(rayDir.a + 0.5) == ACTIVE_TRAVERSE){
 			rayDir.a = ACTIVE_INTERSECT;
 			gl_FragData[3] = vec4(0.0, 1.0, 0.0, 0.8);
 		}
 		else{ //Traverse
-			
+
 			//rayPos.xyz = gridIntersectionMax.xyz;
 			vec3 delta = abs(gridVoxelSize.xyz / rayDir.xyz);
 			vec3 step = vec3(1.0, 1.0, 1.0);
@@ -130,7 +136,7 @@ void main(){
 				rayDir.a = ACTIVE_TRAVERSE;
 				gl_FragData[3] = vec4(1, 0, 1, 0.8);
 				rayPos.a = gridLinearIndex;
-				
+
 
 				//gl_FragData[3] = vec4(vec3(gridLinearIndex/1000.0), 1.0);
 				//gl_FragData[3] = vec4(normalize(gridIndex.xyz), 1.0);
@@ -138,9 +144,9 @@ void main(){
 			}
 		}
 	}
-	
-	
-	
+
+
+
 
 //   gl_FragData[0] = rayPos;
 	gl_FragData[0] = rayPos; //untouched, except for rayPos.a
@@ -148,7 +154,7 @@ void main(){
 	gl_FragData[1] = rayDir; //untouched, except for rayDir.a
 	gl_FragData[2] = gridIntersectionMax;
 	//gl_FragData[0] = vec4(vec3(gridIndex.a/gridArraySize), 0.9);
-	
+
 	//gl_FragData[3] = vec4(normalize(gridIntersectionMax.xyz), 0.8);
 
 }

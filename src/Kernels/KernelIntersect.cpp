@@ -13,8 +13,9 @@ KernelIntersect::KernelIntersect(int width, int height, GLuint texIdRayPos, GLui
 
 	//Output
 	addOutput(0, texIdRayDir);
-	m_texIdTriangleHitInfo = addOutput(1);
-  GLuint aux = addOutput(2);
+  addOutput(1, texIdRayPos);
+	m_texIdTriangleHitInfo = addOutput(2);
+  GLuint aux = addOutput(3);
 
   GLint max_tex_size = 0;
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
