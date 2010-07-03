@@ -137,8 +137,8 @@ void RTScene :: configure()
   {
     if(mGrid)
       delete mGrid;
-    mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, Vector3(10,10,10));
-    //mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, Vector3(2,2,2));
+    //mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, Vector3(10,10,10));
+    mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, Vector3(2,2,2));
     calcTextures();
     mCalculed = true;
   }
@@ -174,7 +174,7 @@ void RTScene :: render()
   {
     glPushAttrib(GL_LIGHTING_BIT);
     mMaterials[meshIt->getMaterialIndex()].render();
-    //meshIt->render();
+    meshIt->render();
     glPopAttrib();
   }
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
