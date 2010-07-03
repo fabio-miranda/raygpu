@@ -43,30 +43,6 @@ vec3 findVoxelPosition(vec3 voxelIndex){
 	return voxelIndex * gridVoxelSize + bbMin;
 }
 
-vec3 findIntersectionOutVoxel(vec3 rayPos, vec3 rayDir, vec3 voxelIndex){
-
-	vec3 intersectionOut = vec3(0.0, 0.0, 0.0);
-
-	if(rayDir.x < 0.0)
-		intersectionOut.x = (findVoxelPosition(voxelIndex).x - rayPos.x) / rayDir.x;
-	if(rayDir.x > 0.0)
-		intersectionOut.x = (findVoxelPosition(voxelIndex + vec3(1, 0, 0)).x - rayPos.x) / rayDir.x;
-
-	if(rayDir.y < 0.0)
-		intersectionOut.y = (findVoxelPosition(voxelIndex).y - rayPos.y) / rayDir.y;
-	if(rayDir.y > 0.0)
-		intersectionOut.y = (findVoxelPosition(voxelIndex + vec3(0, 1, 0)).y - rayPos.y) / rayDir.y;
-
-	if(rayDir.z < 0.0)
-		intersectionOut.z = (findVoxelPosition(voxelIndex).z - rayPos.z) / rayDir.z;
-	if(rayDir.z > 0.0)
-		intersectionOut.z = (findVoxelPosition(voxelIndex + vec3(0, 0, 1)).z - rayPos.z) / rayDir.z;
-
-	return intersectionOut;
-
-
-}
-
 
 void main(){
 
@@ -114,7 +90,7 @@ void main(){
 		gl_FragData[3] = vec4(1.0, 0.0, 0.0, 0.8);
 	}
 	else if(floor(rayDir.a + 0.5) == ACTIVE_TRAVERSE ||
-          floor(rayDir.a + 0.5) == ACTIVE_TRAVERSE_SEC){
+           floor(rayDir.a + 0.5) == ACTIVE_TRAVERSE_SEC){
 
 		if(floor(gridIndex.a+0.5) > -1.0 && floor(rayDir.a + 0.5) == ACTIVE_TRAVERSE){
 			rayDir.a = ACTIVE_INTERSECT;

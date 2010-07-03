@@ -83,6 +83,7 @@ vector<RTTriangle> RTTriangle::readUmFile(unsigned int materialIndex, string fil
     nList[i] = Vector3(0,0,0);
     //fscanf(file, "%f %f %f\n", &vList[i].z, &vList[i].y, &vList[i].x);
     fscanf(file, "%f %f %f\n", &vList[i].x, &vList[i].y, &vList[i].z); 
+	//vList[i] = vList[i] * 100.0f;
 
     //fscanf(file, "%f %f %f\n", &(vList[i].y), &(vList[i].x), &(vList[i].z)); 
   }

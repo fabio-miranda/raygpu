@@ -52,7 +52,7 @@ void main()
 
 
 
-  if(triangleFlag == ACTIVE_INTERSECT)
+  if(floor(triangleFlag+0.5) == ACTIVE_INTERSECT)
   {
 //    float triangleIndex = floor(texture1D(grid, (gridIndex + .5)/gridSize).a + .5);
     vec4 triangleIndexV = texture1D(grid, (gridIndex + .5)/gridSize); //Debug
@@ -69,7 +69,7 @@ void main()
     while(floor(vertexIndex+0.5) != -1.0)
     {
       lastHit = intersect(vertexIndex, rPos, rDir, lastHit, triangleIndex);
-      triangleIndex++;
+      triangleIndex = floor(triangleIndex+0.5) + 1.0;
       vec2 coord2D = index1Dto2D(triangleIndex, maxTextureSize, triangleListSize);
       vertexIndex = floor(texture2D(triangleList, coord2D).a + .5);
     }
@@ -111,7 +111,7 @@ void main()
 vec3 intersect(float vertexIndex, vec4 rPos, vec4 rDir, vec3 lastHit, float triangleIndex)
 {
   vec2 coord2D;
-
+	
   coord2D = index1Dto2D(vertexIndex*3., maxTextureSize, vertexesSize);
   vec3 v0 = texture2D(vertexes, coord2D).xyz;
   coord2D = index1Dto2D(vertexIndex*3. + 1.0, maxTextureSize, vertexesSize);
