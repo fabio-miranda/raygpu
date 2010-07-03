@@ -29,8 +29,8 @@ RTScene :: RTScene(string fileName)
   }
   else if(sub.compare(".rtb")==0 || sub.compare(".RTB")==0)
   {
-    readFromRTBFile(fileName);
     mBinFile = true;
+    mRTBFileName = fileName;
   }
   else 
   {
@@ -75,7 +75,7 @@ void RTScene :: readFromRT4File(string rt4FileName)
 //	   cout << buffer <<endl;
 	   if(!strcmp(buffer, "RT"))
 	   {
-			/* Ignore File Version Information */
+			// Ignore File Version Information 
          fscanf(file, "%*[^\n]s");
 	   }else if(!strcmp(buffer, "CAMERA"))
       {
@@ -135,22 +135,17 @@ void RTScene :: readFromRT4File(string rt4FileName)
          fscanf(file, "%*[^\n]s");
 		}
 	}
+
    fclose( file );
 
-	assert(numCamera == 1);
-	assert(numScene == 1);
-}
-
-void RTScene::readFromRTBFile( string rtbFileName )
-{
-
+	/*assert(numCamera == 1);
+	assert(numScene == 1);*/
 }
 
 void RTScene::writeRTBFile( string rtbFileName )
 {
-  FILE *fp = fopen("rtbFileName", "wb");
-  assert(fp);
-
+  if(mGrid)
+    mGrid->writeRTBFile(rtbFileName);
 }
 
 
@@ -169,53 +164,63 @@ void RTScene :: configure()
   {
     if(mGrid)
       delete mGrid;
-    //mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials,&mLights, Vector3(10,10,10));
-    mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, &mLights, Vector3(10,10,10));
+    
+    if(mBinFile)
+      mGrid = new UniformGrid(mRTBFileName);
+    else 
+    {
+      mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, &mLights, Vector3(10,10,10));
+    }
+
     calcTextures();
     mCalculed = true;
   }
-  
-  vector<RTLight> :: iterator lightIt;
-   for( lightIt = mLights.begin(); lightIt!=mLights.end(); ++lightIt)
-      lightIt->configure();
+  if(!mBinFile)
+  {
+    vector<RTLight> :: iterator lightIt;
+     for( lightIt = mLights.begin(); lightIt!=mLights.end(); ++lightIt)
+        lightIt->configure();
 
-   vector<RTMesh> :: iterator meshIt;
-   for( meshIt = mMeshes.begin(); meshIt!=mMeshes.end(); ++meshIt)
-   {
-      mMaterials[meshIt->getMaterialIndex()].configure();
-      meshIt->configure();
-   }
+     vector<RTMesh> :: iterator meshIt;
+     for( meshIt = mMeshes.begin(); meshIt!=mMeshes.end(); ++meshIt)
+     {
+        mMaterials[meshIt->getMaterialIndex()].configure();
+        meshIt->configure();
+     }
+  }
 }
 
 
 void RTScene :: render()
 {
-  glPushAttrib(GL_LIGHTING_BIT);
-
-
-  //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-  glCullFace(GL_BACK);
-  glEnable(GL_CULL_FACE);
-
-  vector<RTLight> :: iterator lightIt;
-  for( lightIt = mLights.begin(); lightIt!=mLights.end(); ++lightIt)
-    lightIt->render();
-
-  vector<RTMesh> :: iterator meshIt;
-  for( meshIt = mMeshes.begin(); meshIt!=mMeshes.end(); ++meshIt)
+  if(!mBinFile)
   {
     glPushAttrib(GL_LIGHTING_BIT);
-    mMaterials[meshIt->getMaterialIndex()].render();
 
-    meshIt->render();
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
 
+    vector<RTLight> :: iterator lightIt;
+    for( lightIt = mLights.begin(); lightIt!=mLights.end(); ++lightIt)
+      lightIt->render();
+
+    vector<RTMesh> :: iterator meshIt;
+    for( meshIt = mMeshes.begin(); meshIt!=mMeshes.end(); ++meshIt)
+    {
+      glPushAttrib(GL_LIGHTING_BIT);
+      mMaterials[meshIt->getMaterialIndex()].render();
+
+      meshIt->render();
+
+      glPopAttrib();
+    }
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glCullFace(GL_BACK);
     glPopAttrib();
-  }
-  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  glCullFace(GL_BACK);
-  glPopAttrib();
 
-   //mGrid->render();
+     //mGrid->render();
+  }
 }
 
 UniformGrid* RTScene ::getUniformGrid() const 
@@ -242,6 +247,8 @@ void RTScene::calcTextures()
   
   unsigned int size[] = {   mGrid->getGridArraySize(),
                             mGrid->getLightsArraySize()};
+
+
   
   int sizeIndex [] = {  mGrid->getGridArrayAbsoluteSize()/mGrid->getGridArraySize(),
                         mGrid->getLightsArrayAbsoluteSize()/mGrid->getLightsArraySize(),
@@ -251,10 +258,10 @@ void RTScene::calcTextures()
   GLuint *id = new GLuint[numTextures];
   //// //DEBUG
   //char sizeTypeStr [5][10] = {"NOT","GL_ALPHA", "2" ,"GL_RGB", "GL_RGBA"};
-  //for(int i=0;i<numTextures;++i)
-  //{
-  //  printf("%d %s\n",sizeIndex[i], sizeTypeStr[sizeIndex[i]]);
-  //}
+  for(int i=0;i<numTextures;++i)
+  {
+    printf("%d %d\n",i, size[i]);
+  }
 
 
   glGenTextures(numTextures, id);
@@ -308,6 +315,11 @@ void RTScene::calcTextures()
 
   int numTextures2D = sizeof(data2D)/sizeof(GLfloat*);
   GLuint *id2D = new GLuint[numTextures2D];
+
+  for(int i=0;i<numTextures2D;++i)
+  {
+    printf("%d %d\n",i, size2D[i]);
+  }
 
   glGenTextures(numTextures2D, id2D);
   for(int i=0; i<numTextures2D; ++i)
@@ -394,7 +406,7 @@ GLuint RTScene::getLightsTexId()
 
 GLfloat RTScene::getLightsTexSize()
 {
-  return  mLights.size()*sizeof(struct lightStruct)/(4*sizeof(GLfloat));
+  return  mGrid->getLightsArraySize();
 }
 
 GLfloat RTScene::getGridTexSize()

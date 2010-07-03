@@ -90,8 +90,11 @@ void init(int argc, char *argv[]){
   //glPolygonMode(GL_FRONT, GL_LINE);
 
 
-	rtScene = new RTScene("./resources/scenes/cavalo.rt4");
+	//rtScene = new RTScene("./resources/scenes/cavalo.rt4");
+  rtScene = new RTScene("./resources/scenes/cavalo.rtb");
 	rtScene->configure();
+  //rtScene->writeRTBFile("./resources/scenes/cavalo.rtb");
+  
 	float nearPlaneHeight = 2.0f * tanf(DEG_TO_RAD(fov/2.0f)) * nearPlane;
 	float nearPlaneWidth = nearPlaneHeight * ((GLfloat)APP_WIDTH/(GLfloat)APP_HEIGHT);
 	kernelMng = new KernelMng(APP_WIDTH, APP_HEIGHT, rtScene, nearPlaneWidth, nearPlaneHeight);

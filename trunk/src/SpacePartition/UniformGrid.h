@@ -17,6 +17,7 @@ class UniformGrid {
 
 public:
   UniformGrid(unsigned int p_numTriangles, std::vector<RTMesh>* p_triangles, std::vector<RTMaterial>* p_material, std::vector<RTLight>* p_lightl, Vector3 p_sizeVoxel);
+  UniformGrid(string rtbFileName);
 	~UniformGrid();
 
 	void render();
@@ -57,6 +58,8 @@ public:
   Vector3 getVoxelSize();
   Vector3 getNumVoxels();
 
+  void writeRTBFile(string fileName);
+
 private:
 	void calculateBB(std::vector<RTMesh>* p_triangles, Vector3 p_numVoxels);
 	void calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>* p_triangles, std::vector<RTMaterial>* p_material, std::vector<RTLight>* p_light, Vector3 p_numVoxels);
@@ -65,6 +68,8 @@ private:
 	unsigned int getVoxelAt(Vector3 index);
 	void setMinMax(Vector3 vertex);
 	void initialize(void** vector, int size);
+
+  void readRTBFile(string fileName);
 
 	Vector3 m_min;
 	Vector3 m_max;
