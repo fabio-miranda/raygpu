@@ -1,7 +1,7 @@
 uniform sampler2D rayDir;
 uniform sampler2D triangleInfo;
 
-//uniform sampler2D vertexes;
+uniform sampler2D vertexes;
 uniform sampler2D normals;
 uniform sampler2D diffuseTex;
 uniform sampler2D especularTex;
@@ -9,7 +9,7 @@ uniform sampler1D lights;
 
 uniform float maxTextureSize;
 
-//uniform float vertexesSize;
+uniform float vertexesSize;
 uniform float normalsSize;
 uniform float diffuseSize;
 uniform float especularSize;
@@ -32,12 +32,13 @@ void calcDirLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout
 void calcPointLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular);
 void calcSpotLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular);
 
-#define INACTIVE 0
-#define ACTIVE_TRAVERSE 1
-#define ACTIVE_INTERSECT 2
-#define ACTIVE_SHADING 3
-#define DONE 4
-#define OVERFLOW 5
+#define INACTIVE 0.0
+#define ACTIVE_TRAVERSE 1.0
+#define ACTIVE_INTERSECT 2.0
+#define ACTIVE_TRAVERSE_SEC 3.0
+#define ACTIVE_SHADING 4.0
+#define OVERFLOW 5.0
+#define DONE 6.0
 
 //lightStruct
 //{
@@ -67,19 +68,88 @@ struct material
 void main()
 {
   vec4 rDir = texture2D(rayDir, gl_TexCoord[0].st);
-  int triangleFlag = int(floor(rDir.w+.5));
+  float triangleFlag = floor(rDir.w+.5);
 
   gl_FragData[0] = rDir; //DEBUG
   gl_FragData[1] = texture2D(triangleInfo, gl_TexCoord[0].st);//DEBUG
 
+//  gl_FragData[2] = vec4(0,0,1, 0.8);
+  gl_FragData[3] = vec4(0,0,1, 0.8);
+
   if(triangleFlag == ACTIVE_SHADING)
   {
+    gl_FragData[3] = vec4(1,0,0, .8);
+//    gl_FragData[2] = vec4(1,0,0, .8);
+
     vec4 triangleInfos = texture2D(triangleInfo, gl_TexCoord[0].st);
     fragPos = triangleInfos.rgb;
     float triangleIndex = floor(triangleInfos.a + .5);
 
-    vec2 coord2D = index1Dto2D(triangleIndex, maxTextureSize, normalsSize);
-    vec3 normal = texture2D(normals, coord2D).xyz;
+    vec2 coord2D = index1Dto2D(triangleIndex*3.0, maxTextureSize, normalsSize);
+    vec3 normal1 = texture2D(normals, coord2D).xyz;
+    coord2D = index1Dto2D(triangleIndex*3.0+1.0, maxTextureSize, normalsSize);
+    vec3 normal2 = texture2D(normals, coord2D).xyz;
+    coord2D = index1Dto2D(triangleIndex*3.0+2.0, maxTextureSize, normalsSize);
+    vec3 normal3 = texture2D(normals, coord2D).xyz;
+
+
+
+
+
+  coord2D = index1Dto2D(triangleIndex*3., maxTextureSize, vertexesSize);
+  vec3 v1 = texture2D(vertexes, coord2D).xyz;
+  coord2D = index1Dto2D(triangleIndex*3. + 1.0, maxTextureSize, vertexesSize);
+  vec3 v2 = texture2D(vertexes, coord2D).xyz;
+  coord2D = index1Dto2D(triangleIndex*3. + 2.0, maxTextureSize, vertexesSize);
+  vec3 v3 = texture2D(vertexes, coord2D).xyz;
+
+    vec3 U =  v1-v2;
+    vec3 V =  v3-v2;
+    vec3 N =  fragPos-v2;
+
+    float dU = length(U);
+    float dV = length(V);
+    float dN = length(N);
+
+    N = normalize(N);
+    U = normalize(U);
+
+    float cost = dot(N,U);
+    if (cost < 0.0) cost = 0.0;
+    if (cost > 1.0) cost = 1.0;
+
+    float t = acos(cost);
+
+    float distY = 0.0, distX = 0.0;
+    distX = dN * cos(t);
+    distY = dN * sin(t);
+
+    float u = distX/ dU;
+    float v = distY/ dV;
+
+    normal1 = normalize(normal1);
+    normal2 = normalize(normal2);
+    normal3 = normalize(normal3);
+
+    float nx = -( (1.0 - (u + v)) * normal2.x +
+      normal1.x * u +
+      normal3.x * v);
+    float ny = -( (1.0 - (u + v)) * normal2.y +
+      normal1.y * u +
+      normal3.y * v);
+    float nz = -( (1.0 - (u + v)) * normal2.z +
+      normal1.z * u +
+      normal2.z * v);
+
+
+  vec3 normal = normalize(vec3(nx, ny, nz));
+
+
+
+
+
+
+
     ambient = defaultAmbientMaterial;
     diffuse = vec3(0, 0, 0);
 
@@ -124,13 +194,16 @@ void main()
       }
     }
     /**/
+
     ///Set Ray State to Done
     rDir.w = float(DONE);
     //      gl_FragData[0] = rDir;
 
     vec3 intensity = ambient + diffuse;
     //      gl_FragData[1] = vec4(intensity + specular, 1.0);
-          gl_FragData[2] = vec4(intensity + specular, 1.0);
+    gl_FragData[2] = vec4(intensity + specular, 1.0);
+    gl_FragData[3] = vec4(intensity + specular, 1.0);
+    /**/
   }else
   {
     ///Discard Pixel

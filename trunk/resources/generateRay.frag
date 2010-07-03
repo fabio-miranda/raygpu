@@ -179,11 +179,11 @@ void main(){
 			//posIntersectionOut = rayPos.xyz + posIntersectionOut * rayDir.xyz;
 
 			breakpoint = 1.0;
-			
+
 			if(rayPos.a >= gridArraySize)
 				hit = false;
 		}
-		
+
 		if(hit == false){
 			intersectionMin = 0.0;
 			rayPos = vec4(0.0, 0.0 ,0.0, -1.0);
@@ -210,7 +210,7 @@ void main(){
 	//gl_FragData[2] = vec4(vec3(intersectionMin),1.0);
 	gl_FragData[2] = vec4(intersectionMin);
 	//gl_FragData[3] = vec4(normalize(intersectionOut), 1.0);
-	gl_FragData[3] = vec4(intersectionOut, 1.0);
+//	gl_FragData[3] = vec4(intersectionOut, 1.0);
 	//gl_FragData[3] = vec4(normalize(voxelIndex.xyz), 0.8);
 
 	//gl_FragData[3] = vec4(normalize(rayPos.xyz), 1);

@@ -172,24 +172,24 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 					m_triangleVertexArray[triangleIndex*3*3+3+3+1] = aux_grid[cont].at(j)->v3.y;
 					m_triangleVertexArray[triangleIndex*3*3+3+3+2] = aux_grid[cont].at(j)->v3.z;
 
-					Vector3 n = (aux_grid[cont].at(j)->v2 - aux_grid[cont].at(j)->v1) ^ (aux_grid[cont].at(j)->v3 - aux_grid[cont].at(j)->v2);
-					n = n.unitary();
+					//Vector3 n = (aux_grid[cont].at(j)->v2 - aux_grid[cont].at(j)->v1) ^ (aux_grid[cont].at(j)->v3 - aux_grid[cont].at(j)->v2);
+					//n = n.unitary();
 
-          m_triangleNormalsArray[triangleIndex*3] = n.x;
-          m_triangleNormalsArray[triangleIndex*3+1] = n.y;
-          m_triangleNormalsArray[triangleIndex*3+2] = n.z;
+          //m_triangleNormalsArray[triangleIndex*3] = n.x;
+          //m_triangleNormalsArray[triangleIndex*3+1] = n.y;
+          //m_triangleNormalsArray[triangleIndex*3+2] = n.z;
 
-	/*				m_triangleNormalsArray[triangleIndex*3] = aux_grid[cont].at(j)->n1.x;
-					m_triangleNormalsArray[triangleIndex*3+1] = aux_grid[cont].at(j)->n1.y;
-					m_triangleNormalsArray[triangleIndex*3+2] = aux_grid[cont].at(j)->n1.z;*/
+					m_triangleNormalsArray[triangleIndex*3*3] = aux_grid[cont].at(j)->n1.x;
+					m_triangleNormalsArray[triangleIndex*3*3+1] = aux_grid[cont].at(j)->n1.y;
+					m_triangleNormalsArray[triangleIndex*3*3+2] = aux_grid[cont].at(j)->n1.z;
 
-         /* m_triangleNormalsArray[triangleIndex*3+3] = aux_grid[cont].at(j)->n2.x;
-          m_triangleNormalsArray[triangleIndex*3+3+1] = aux_grid[cont].at(j)->n2.y;
-          m_triangleNormalsArray[triangleIndex*3+3+2] = aux_grid[cont].at(j)->n2.z;
+          m_triangleNormalsArray[triangleIndex*3*3+3] = aux_grid[cont].at(j)->n2.x;
+          m_triangleNormalsArray[triangleIndex*3*3+3+1] = aux_grid[cont].at(j)->n2.y;
+          m_triangleNormalsArray[triangleIndex*3*3+3+2] = aux_grid[cont].at(j)->n2.z;
 
-          m_triangleNormalsArray[triangleIndex*3+3+3] = aux_grid[cont].at(j)->n3.x;
-          m_triangleNormalsArray[triangleIndex*3+3+3+1] = aux_grid[cont].at(j)->n3.y;
-          m_triangleNormalsArray[triangleIndex*3+3+3+2] = aux_grid[cont].at(j)->n3.z;*/
+          m_triangleNormalsArray[triangleIndex*3*3+3+3] = aux_grid[cont].at(j)->n3.x;
+          m_triangleNormalsArray[triangleIndex*3*3+3+3+1] = aux_grid[cont].at(j)->n3.y;
+          m_triangleNormalsArray[triangleIndex*3*3+3+3+2] = aux_grid[cont].at(j)->n3.z;
 
 
 					m_triangleSpecularArray[triangleIndex*4] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mSpecular.r;
