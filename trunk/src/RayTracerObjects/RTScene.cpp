@@ -219,7 +219,7 @@ void RTScene :: render()
     glCullFace(GL_BACK);
     glPopAttrib();
 
-     //mGrid->render();
+     mGrid->render();
   }
 }
 

@@ -103,9 +103,16 @@ vec3 findVoxel(vec3 rayPos){
 
 	//index = (floor(rayPos+0.5) - floor(bbMin+0.5)) / floor(gridVoxelSize+0.5);
 	//index = (rayPos - bbMin) / gridVoxelSize;
-	//index = (floor(rayPos+0.5) - bbMin) / gridVoxelSize;
-	index = (floor(rayPos-0.5) - bbMin) / gridVoxelSize;
+//	index = (floor(rayPos+0.5) - bbMin) / gridVoxelSize;
+	index = (rayPos - bbMin) / gridVoxelSize;
 	index = trunc(index);
+
+	if(index.x >= gridSize.x)
+    index.x = gridSize.x - 1.0;
+  if(index.y >= gridSize.y)
+    index.y = gridSize.y - 1.0;
+  if(index.z >= gridSize.z)
+    index.z = gridSize.z - 1.0;
 
 	return index;
 
@@ -192,7 +199,7 @@ void main(){
 		}
 	}
 
-	
+
 
 //	gl_FragData[0] = vec4(normalize(rayPos.xyz), 0.5);
 //	gl_FragData[0] = vec4((vec3(length(rayPos.xyz-eyePos.xyz)/25.)), 1.5);
@@ -214,17 +221,17 @@ void main(){
 	//gl_FragData[3] = vec4(normalize(voxelIndex.xyz), 0.8);
 
 	//gl_FragData[3] = vec4(normalize(rayPos.xyz), 1);
-	//gl_FragData[3] = vec4(vec3(normalize(voxelIndex.xyz)), 1.0);
+	//gl_FragData[3] = vec4(vec3(normalize(voxelIndex.xyz)), .8);
 	//gl_FragData[3] = vec4(vec3(rayPos.a/1000.0), 1.0);
 	//gl_FragData[3] = vec4(vec3(intersectionMin),1.0);
 	gl_FragData[3] = vec4(intersectionOut, 1.0);
 
 	//gl_FragData[3] = vec4(vec3(breakpoint), 0.5);
 
-	
+
 	//if(rayPos.a == 1)
 		//gl_FragData[3] = vec4(vec3(normalize(voxelIndex.xyz)), 0.0);
 	//else
 		//gl_FragData[3] = vec4(vec3(normalize(voxelIndex.xyz)), 1.0);
-	
+
 }
