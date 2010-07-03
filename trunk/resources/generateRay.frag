@@ -218,6 +218,7 @@ void main(){
 	//gl_FragData[3] = vec4(vec3(rayPos.a/1000.0), 1.0);
 	//gl_FragData[3] = vec4(vec3(intersectionMin),1.0);
 	gl_FragData[3] = vec4(intersectionOut, 1.0);
+
 	//gl_FragData[3] = vec4(vec3(breakpoint), 0.5);
 
 	
