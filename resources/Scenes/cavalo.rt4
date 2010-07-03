@@ -7,5 +7,5 @@ LIGHT -50. 100. 0.   204 204. 204.   255. 255. 255.  2. 1.0 40.   0. -1. 0.
 LIGHT 0. 0. -1.   204 204. 204.   255. 255. 255.  0. 
 
 
-MESH 0  0. 0. 0.     20.  30.0  30.0  resources/Models/bunny.msh
+MESH 0  0. 0. 0.     20.  30.0  30.0  resources/Models/cavalo.um
 

@@ -29,6 +29,7 @@ class RTScene
       Color mAmbient;
 
       bool mBinFile;
+      string mRTBFileName;
 
       vector<RTMaterial> mMaterials;
       vector<RTLight> mLights;

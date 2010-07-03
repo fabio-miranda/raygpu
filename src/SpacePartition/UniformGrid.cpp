@@ -8,6 +8,15 @@ UniformGrid::UniformGrid(unsigned int p_numTriangles, std::vector<RTMesh>* p_mes
 
 	calculateBB(p_mesh, p_numVoxels);
 	calculateGrid(p_numTriangles, p_mesh, p_material, p_light, p_numVoxels);
+  //readRTBFile("./resources/scenes/cavalo.rtb");
+}
+
+UniformGrid::UniformGrid( string rtbFileName )
+{
+  m_min = Vector3(std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity());
+  m_max = Vector3(0, 0, 0);
+
+  readRTBFile(rtbFileName);
 }
 
 
@@ -480,6 +489,165 @@ int UniformGrid::getTriangleSpecularArrayAbsoluteSize()
 int UniformGrid::getLightsArrayAbsoluteSize()
 {
   return m_lightsArraySize;
+}
+
+struct fileBuffer
+{
+  GLint max_tex_size;
+  float min_x, min_y, min_z;
+  float max_x, max_y, max_z;
+  float gridSize_x, gridSize_y, gridSize_z;
+  float numVoxels_x, numVoxels_y, numVoxels_z;
+  float voxelSize_x, voxelSize_y, voxelSize_z;
+
+  int gridArraySize;
+  int lightsArraySize;
+
+  int triangleVertexArraySize;
+  int triangleListArraySize;
+  int triangleNormalsArraySize;
+  int triangleAmbientArraySize;
+  int triangleDiffuseArraySize;
+  int triangleSpecularArraySize;
+};
+
+void UniformGrid::writeRTBFile( string fileName )
+{
+  FILE *fp = fopen(fileName.c_str(), "wb");
+  assert(fp);
+
+  GLint max_tex_size = 0;
+  glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
+    
+  struct fileBuffer writeFileBuffer;
+  writeFileBuffer.max_tex_size = max_tex_size;
+  writeFileBuffer.min_x = m_min.x;
+  writeFileBuffer.min_y = m_min.y;
+  writeFileBuffer.min_z = m_min.z;
+
+  writeFileBuffer.max_x = m_max.x;
+  writeFileBuffer.max_y = m_max.y;
+  writeFileBuffer.max_z = m_max.z;
+
+  writeFileBuffer.gridSize_x = m_gridSize.x;
+  writeFileBuffer.gridSize_y = m_gridSize.y;
+  writeFileBuffer.gridSize_z = m_gridSize.z;
+
+  writeFileBuffer.numVoxels_x = m_numVoxels.x;
+  writeFileBuffer.numVoxels_y = m_numVoxels.y;
+  writeFileBuffer.numVoxels_z = m_numVoxels.z;
+
+  writeFileBuffer.voxelSize_x = m_voxelSize.x;
+  writeFileBuffer.voxelSize_y = m_voxelSize.y;
+  writeFileBuffer.voxelSize_z = m_voxelSize.z;
+
+  writeFileBuffer.gridArraySize = m_gridArraySize;
+  writeFileBuffer.lightsArraySize = m_lightsArraySize;
+
+  writeFileBuffer.triangleVertexArraySize = m_triangleVertexArraySize;
+  writeFileBuffer.triangleListArraySize = m_triangleListArraySize;
+  writeFileBuffer.triangleNormalsArraySize = m_triangleNormalsArraySize;
+  writeFileBuffer.triangleAmbientArraySize = m_triangleAmbientArraySize;
+  writeFileBuffer.triangleDiffuseArraySize = m_triangleDiffuseArraySize;
+  writeFileBuffer.triangleSpecularArraySize = m_triangleSpecularArraySize;
+
+  fwrite(&writeFileBuffer, sizeof(fileBuffer),1,fp);
+
+  fwrite(m_gridArray, sizeof(GLfloat),m_gridArraySize,fp);
+  fwrite(m_lightsArray, sizeof(GLfloat),m_lightsArraySize,fp);
+  
+  int texture2DnumLines = (int)((m_triangleVertexArraySize/3)/max_tex_size) + (int)(m_triangleVertexArraySize%max_tex_size != 0);
+  fwrite(m_triangleVertexArray, sizeof(GLfloat),texture2DnumLines*max_tex_size*3,fp);
+
+  texture2DnumLines = (int)((m_triangleListArraySize)/max_tex_size) + (int)(m_triangleListArraySize%max_tex_size != 0);
+  fwrite(m_triangleListArray, sizeof(GLfloat),texture2DnumLines*max_tex_size,fp);
+
+  texture2DnumLines = (int)((m_triangleNormalsArraySize/3)/max_tex_size) + (int)(m_triangleNormalsArraySize%max_tex_size != 0);
+  fwrite(m_triangleNormalsArray, sizeof(GLfloat),texture2DnumLines*max_tex_size*3,fp);
+
+  texture2DnumLines = (int)((m_triangleAmbientArraySize/3)/max_tex_size) + (int)(m_triangleAmbientArraySize%max_tex_size != 0);
+  fwrite(m_triangleAmbientArray, sizeof(GLfloat),texture2DnumLines*max_tex_size*3,fp);
+
+  texture2DnumLines = (int)((m_triangleDiffuseArraySize/3)/max_tex_size) + (int)(m_triangleDiffuseArraySize%max_tex_size != 0);
+  fwrite(m_triangleDiffuseArray, sizeof(GLfloat),texture2DnumLines*max_tex_size*3,fp);
+
+  texture2DnumLines = (int)((m_triangleSpecularArraySize/4)/max_tex_size) + (int)(m_triangleSpecularArraySize%max_tex_size != 0);
+  fwrite(m_triangleSpecularArray, sizeof(GLfloat),texture2DnumLines*max_tex_size*4,fp);
+  fclose(fp);
+}
+
+void UniformGrid::readRTBFile( string fileName )
+{
+  FILE *fp = fopen(fileName.c_str(), "rb");
+  assert(fp);
+
+  GLint max_tex_size = 0;
+  glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
+
+  struct fileBuffer readFileBuffer;
+  fread(&readFileBuffer, sizeof(fileBuffer),1,fp);
+
+  assert(max_tex_size == readFileBuffer.max_tex_size);
+
+  m_min.x = readFileBuffer.min_x;
+  m_min.y = readFileBuffer.min_y;
+  m_min.z = readFileBuffer.min_z;
+
+  m_max.x = readFileBuffer.max_x;
+  m_max.y = readFileBuffer.max_y;
+  m_max.z = readFileBuffer.max_z;
+
+  m_gridSize.x = readFileBuffer.gridSize_x;
+  m_gridSize.y = readFileBuffer.gridSize_y;
+  m_gridSize.z = readFileBuffer.gridSize_z;
+
+  m_numVoxels.x = readFileBuffer.numVoxels_x;
+  m_numVoxels.y = readFileBuffer.numVoxels_y;
+  m_numVoxels.z = readFileBuffer.numVoxels_z;
+
+  m_voxelSize.x = readFileBuffer.voxelSize_x;
+  m_voxelSize.y = readFileBuffer.voxelSize_y;
+  m_voxelSize.z = readFileBuffer.voxelSize_z;
+
+  m_gridArraySize = readFileBuffer.gridArraySize;
+  m_lightsArraySize = readFileBuffer.lightsArraySize;
+
+  m_triangleVertexArraySize = readFileBuffer.triangleVertexArraySize;
+  m_triangleListArraySize = readFileBuffer.triangleListArraySize;
+  m_triangleNormalsArraySize = readFileBuffer.triangleNormalsArraySize;
+  m_triangleAmbientArraySize = readFileBuffer.triangleAmbientArraySize;
+  m_triangleDiffuseArraySize = readFileBuffer.triangleDiffuseArraySize;
+  m_triangleSpecularArraySize = readFileBuffer.triangleSpecularArraySize;
+
+  m_gridArray = new GLfloat[m_gridArraySize];
+  fread(m_gridArray, sizeof(GLfloat),m_gridArraySize,fp);
+  m_lightsArray = new GLfloat[m_lightsArraySize];
+  fread(m_lightsArray, sizeof(GLfloat),m_lightsArraySize,fp);
+
+  int texture2DnumLines = (int)((m_triangleVertexArraySize/3)/max_tex_size) + (int)(m_triangleVertexArraySize%max_tex_size != 0);
+  m_triangleVertexArray = new GLfloat[texture2DnumLines*max_tex_size*3];
+  fread(m_triangleVertexArray, sizeof(GLfloat),texture2DnumLines*max_tex_size*3,fp);
+
+  texture2DnumLines = (int)((m_triangleListArraySize)/max_tex_size) + (int)(m_triangleListArraySize%max_tex_size != 0);
+  m_triangleListArray = new GLfloat[texture2DnumLines*max_tex_size];
+  fread(m_triangleListArray, sizeof(GLfloat),texture2DnumLines*max_tex_size,fp);
+
+  texture2DnumLines = (int)((m_triangleNormalsArraySize/3)/max_tex_size) + (int)(m_triangleNormalsArraySize%max_tex_size != 0);
+  m_triangleNormalsArray = new GLfloat[texture2DnumLines*max_tex_size*3];
+  fread(m_triangleNormalsArray, sizeof(GLfloat),texture2DnumLines*max_tex_size*3,fp);
+
+  texture2DnumLines = (int)((m_triangleAmbientArraySize/3)/max_tex_size) + (int)(m_triangleAmbientArraySize%max_tex_size != 0);
+  m_triangleAmbientArray = new GLfloat[texture2DnumLines*max_tex_size*3];
+  fread(m_triangleAmbientArray, sizeof(GLfloat),texture2DnumLines*max_tex_size*3,fp);
+
+  texture2DnumLines = (int)((m_triangleDiffuseArraySize/3)/max_tex_size) + (int)(m_triangleDiffuseArraySize%max_tex_size != 0);
+  m_triangleDiffuseArray = new GLfloat[texture2DnumLines*max_tex_size*3];
+  fread(m_triangleDiffuseArray, sizeof(GLfloat),texture2DnumLines*max_tex_size*3,fp);
+
+  texture2DnumLines = (int)((m_triangleSpecularArraySize/4)/max_tex_size) + (int)(m_triangleSpecularArraySize%max_tex_size != 0);
+  m_triangleSpecularArray = new GLfloat[texture2DnumLines*max_tex_size*4];
+  fread(m_triangleSpecularArray, sizeof(GLfloat),texture2DnumLines*max_tex_size*4,fp);
+  fclose(fp);
 }
 
 
