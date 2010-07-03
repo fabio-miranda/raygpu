@@ -8,6 +8,11 @@
 
 #include "RayTracerObjects/RTLight.h"
 
+#include "Light/Light.h"
+#include "Light/PointLight.h"
+#include "Light/SpotLight.h"
+#include "Light/DirectionalLight.h"
+
 using namespace std;
 
 int RTLight :: lightNum = 0;
@@ -17,6 +22,7 @@ int RTLight :: lightNum = 0;
 RTLight :: RTLight()
 :mCalculed(false)
 ,mLightStruct(NULL)
+,mLight(NULL)
 {
    myRTLightNum = lightNum++;
 
@@ -28,6 +34,8 @@ RTLight :: ~RTLight()
 {
   if(mLightStruct)
     delete mLightStruct;
+  if(mLight)
+    delete mLight;
 }
 
 int RTLight :: getMyRTLightNumber() const
@@ -51,7 +59,6 @@ void RTLight :: readFromStr(char buffer[])
     %f \
     %f %f %f \n", 
       &mPos.x, &mPos.y, &mPos.z,
-
       &mDiffuse.r, &mDiffuse.g, &mDiffuse.b, 
       &mSpecular.r, &mSpecular.g, &mSpecular.b,
       &type,
@@ -63,6 +70,8 @@ void RTLight :: readFromStr(char buffer[])
   mSpecular *= 1.0/255;
   mType = (LightType)(int) floor(type + .5);
   assert(r >= 9);
+
+
   //cout << "Light num, pos, Diffuse, Specular, Type, SpotExponent, SpotAngle, SpotDir:\n"<< myLightNum << endl << mPos  << mDiffuse << mSpecular <<endl << mType << endl << mSpotExponent << endl << mSpotAngle << endl << mSpotDir<<endl;
 }
 
@@ -70,21 +79,42 @@ void RTLight :: configure()
 {
    if(!mCalculed)
    {
-      mPLight.setAmbientColor(mDiffuse*.2);
-      mPLight.setDiffuseColor(mDiffuse);
-      mPLight.setSpecularColor(mSpecular);
-      mPLight.setPosition(mPos);
-
-      
+     if(mLight)
+       delete mLight;
+     switch(mType)
+     {
+       case Point:
+         mLight = new PointLight();
+         //mLight->setPosition(mPos + Vector3(100,0,0));
+         break;
+       case Directional:
+         mLight = new DirectionalLight();
+         //mLight->setPosition(mPos);
+         break;
+       case Spot:
+         mLight = new SpotLight();
+         ((SpotLight*)mLight)->setSpotAngle(mSpotAngle);
+         ((SpotLight*)mLight)->setSpotDirection(mSpotDir);
+         ((SpotLight*)mLight)->setSpotExponent(mSpotExponent);
+          //mLight->setPosition(mPos + Vector3(100,0,0));
+         break;
+     } 
+     
+      mLight->setAmbientColor(Color(0,0,0));
+      mLight->setDiffuseColor(mDiffuse);
+      mLight->setSpecularColor(mSpecular);
+      mLight->setPosition(mPos);
+      //*******TIRAR SOMA DE CIMA!!!!!!!!!!
+     
 
       mCalculed = true;
    }
-   mPLight.configure();
+   mLight->configure();
 }
 
 void RTLight :: render()
 {
-   mPLight.render();
+   mLight->render();
 }
 
 struct lightStruct * RTLight::getLightStruct()
@@ -109,6 +139,7 @@ struct lightStruct * RTLight::getLightStruct()
   mLightStruct->spotDir[1] = mSpotDir.y;
   mLightStruct->spotDir[2] = mSpotDir.z;
   mLightStruct->spotAngle = DEG_TO_RAD(mSpotAngle);
+
   return mLightStruct;
 }
 

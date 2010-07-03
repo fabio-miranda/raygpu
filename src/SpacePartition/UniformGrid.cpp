@@ -1,13 +1,13 @@
 #include "UniformGrid.h"
 #include <math.h>
 
-UniformGrid::UniformGrid(unsigned int p_numTriangles, std::vector<RTMesh>* p_mesh, std::vector<RTMaterial>* p_material, Vector3 p_numVoxels)
+UniformGrid::UniformGrid(unsigned int p_numTriangles, std::vector<RTMesh>* p_mesh, std::vector<RTMaterial>* p_material, std::vector<RTLight>* p_light, Vector3 p_numVoxels)
 {
 	m_min = Vector3(std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity());
 	m_max = Vector3(0, 0, 0);
 
 	calculateBB(p_mesh, p_numVoxels);
-	calculateGrid(p_numTriangles, p_mesh, p_material, p_numVoxels);
+	calculateGrid(p_numTriangles, p_mesh, p_material, p_light, p_numVoxels);
 }
 
 
@@ -43,7 +43,7 @@ void UniformGrid::calculateBB(std::vector<RTMesh>* p_mesh, Vector3 p_numVoxels)
 	m_voxelSize = Vector3(m_gridSize.x / p_numVoxels.x, m_gridSize.y / p_numVoxels.y, m_gridSize.z / p_numVoxels.z);
 }
 
-void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>* p_mesh, std::vector<RTMaterial>* p_material, Vector3 p_numVoxels)
+void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>* p_mesh, std::vector<RTMaterial>* p_material, std::vector<RTLight>* p_light, Vector3 p_numVoxels)
 {
 	std::vector<RTTriangle*>* aux_grid = new std::vector<RTTriangle*>[(int)(p_numVoxels.x * p_numVoxels.y * p_numVoxels.z)];
   
@@ -144,6 +144,11 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
   texture2DnumLines = (int)((m_triangleSpecularArraySize/4)/max_tex_size) + (int)(m_triangleSpecularArraySize%max_tex_size != 0);
 	m_triangleSpecularArray = new GLfloat[texture2DnumLines*max_tex_size*4];
 	memset(m_triangleSpecularArray, 0, sizeof(GLfloat) * texture2DnumLines*max_tex_size*4);
+
+  m_lightsArraySize = p_light->size()*sizeof(struct lightStruct)/(sizeof(GLfloat));
+  m_lightsArray = new GLfloat[m_lightsArraySize];
+  for( unsigned int i = 0; i < p_light->size(); ++i)
+    memcpy(&m_lightsArray[i*sizeof(struct lightStruct)/sizeof(GLfloat)], p_light->at(i).getLightStruct(), sizeof(struct lightStruct));
 
  
 	unsigned int gridCount = 0;
@@ -391,6 +396,10 @@ GLfloat* UniformGrid::getTriangleSpecularArray()
 {
   return m_triangleSpecularArray;
 }
+GLfloat* UniformGrid::getLightsArray()
+{
+  return m_lightsArray;
+}
 
 
 int UniformGrid::getGridArraySize(){
@@ -419,6 +428,10 @@ int UniformGrid::getTriangleSpecularArraySize(){
 }
 
 
+int UniformGrid::getLightsArraySize()
+{
+  return (int)((float)(m_lightsArraySize)/4.0);
+}
 Vector3 UniformGrid::getNumVoxels(){
 	return m_numVoxels;
 }
@@ -463,3 +476,10 @@ int UniformGrid::getTriangleSpecularArrayAbsoluteSize()
 {
   return m_triangleSpecularArraySize;
 } 
+
+int UniformGrid::getLightsArrayAbsoluteSize()
+{
+  return m_lightsArraySize;
+}
+
+

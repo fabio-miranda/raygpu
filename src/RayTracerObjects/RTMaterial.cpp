@@ -37,9 +37,9 @@ void RTMaterial :: configure()
 {
    if(!mCalculed)
    {
-      mGAmbient[0] = mDiffuse.r*.2;
-      mGAmbient[1] = mDiffuse.g*.2;
-      mGAmbient[2] = mDiffuse.b*.2;
+      mGAmbient[0] = 1.0;
+      mGAmbient[1] = 1.0;
+      mGAmbient[2] = 1.0;
       mGAmbient[3] = 1.0;
 
       mGDiffuse[0] = mDiffuse.r;

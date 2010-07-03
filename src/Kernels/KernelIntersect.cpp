@@ -24,6 +24,7 @@ KernelIntersect::KernelIntersect(int width, int height, GLuint texIdRayPos, GLui
 	m_shader->setActive(true);
     addInputTexture(GL_TEXTURE_2D, "rayPos", texIdRayPos);
     addInputTexture(GL_TEXTURE_2D, "rayDir", texIdRayDir);
+    addInputTexture(GL_TEXTURE_2D, "triangleInfoTex", m_texIdTriangleHitInfo);
     addInputTexture(GL_TEXTURE_1D, "grid", texIdGrid);
     addInputTexture(GL_TEXTURE_2D, "vertexes", texIdvertexes);
     //addInputTexture(GL_TEXTURE_1D, "vertexes", texIdvertexes);

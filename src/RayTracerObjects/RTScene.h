@@ -28,6 +28,8 @@ class RTScene
       Color mClear;
       Color mAmbient;
 
+      bool mBinFile;
+
       vector<RTMaterial> mMaterials;
       vector<RTLight> mLights;
       vector<RTMesh> mMeshes;
@@ -49,13 +51,14 @@ class RTScene
 
    public:
 	   RTScene(){};
-      RTScene(string rt4FileName);
+      RTScene(string fileName);
       ~RTScene();
 
       void configure();
       void render();
 
-      UniformGrid* GetUniformGrid() const;
+      UniformGrid* getUniformGrid() const;
+      void writeRTBFile(string rtbFileName);
 
 
       GLuint getGridTexId();
@@ -78,7 +81,8 @@ class RTScene
 
    protected:
       void readFromStr(char buffer[]);
-      void readFromFile(string rt4FileName);
+      void readFromRT4File(string rt4FileName);
+      void readFromRTBFile(string rtbFileName);
 	    unsigned int getSceneNumTriangles();
 
       void calcTextures();
