@@ -141,8 +141,8 @@ void main()
     vec3 intensity = ambient + diffuse;
     //      gl_FragData[1] = vec4(intensity + specular, 1.0);
     gl_FragData[2] = vec4(intensity + specular, 1.0);
-//    gl_FragData[3] = vec4(intensity + specular, 1.0);
-    gl_FragData[3] = vec4(diffuse, 1.0);
+    gl_FragData[3] = vec4(intensity + specular, 1.0);
+
     /**/
   }else
   {
@@ -156,20 +156,21 @@ void main()
 
 void calcDirLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular)
 {
-   vec3 L = normalize(lightDir);
-   vec3 H = normalize(L + normalize(eyeDir));
+  vec3 L = normalize(lightDir);
+  vec3 H = normalize(L + normalize(eyeDir));
 
-   float NdotL = max(0.0, dot(N, L));
-   if ( NdotL > 0.0 )
-   {
-      vec3 lightDiffuse = texture1D(lights, (i*4.0 + .5)/lightsSize).rgb;
-      float att = 1.0; //future work
-      float NdotH = max(0.0, dot(N, H));
+  float NdotL = max(0.0, dot(N, L));
+  if ( NdotL > 0.0 )
+  {
+    vec3 lightDiffuse = texture1D(lights, (i*4.0 + .5)/lightsSize).rgb;
+    float att = 1.0; //future work
+    float NdotH = max(0.0, dot(N, H));
 
-      diffuse += fragMaterial.diffuse * lightDiffuse * NdotL;
+    diffuse += fragMaterial.diffuse * lightDiffuse * NdotL;
 
-		specular += fragMaterial.specular * lightSpecular.rgb * pow(NdotH, fragMaterial.shininess);
-	}
+    specular += fragMaterial.specular * lightSpecular.rgb * pow(NdotH, fragMaterial.shininess);
+
+  }
 }
 
 void calcPointLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular)
@@ -192,29 +193,29 @@ void calcPointLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, ino
 
 void calcSpotLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inout vec3 specular)
 {
-   vec3 L = normalize(lightDir);
-   vec3 H = normalize(L + normalize(eyeDir));
+  vec3 L = normalize(lightDir);
+  vec3 H = normalize(L + normalize(eyeDir));
 
-   float NdotL = max(0.0, dot(N, L));
-   if ( NdotL > 0.0 )
-   {
-      vec4 lightSpotInfo = texture1D(lights, (i*4.0 + 3.0 + .5)/lightsSize);
-      vec3 lightSpotDir = -lightSpotInfo.rgb;
-      float lightSpotAngle = cos(lightSpotInfo.a);
+  float NdotL = max(0.0, dot(N, L));
+  if ( NdotL > 0.0 )
+  {
+    vec4 lightSpotInfo = texture1D(lights, (i*4.0 + 3.0 + .5)/lightsSize);
+    vec3 lightSpotDir = -lightSpotInfo.rgb;
+    float lightSpotAngle = cos(lightSpotInfo.a);
 
-      float spotEffect = dot(normalize(lightSpotDir),-L);
-      if (spotEffect > lightSpotAngle)
-      {
-         vec4 lightDiffuse = texture1D(lights, (i*4.0 + .5)/lightsSize);
-         float att = 1.0; //future work
-         float NdotH = max(0.0, dot(N, H));
+    float spotEffect = dot(normalize(lightSpotDir),-L);
+    if (spotEffect > lightSpotAngle)
+    {
+      vec4 lightDiffuse = texture1D(lights, (i*4.0 + .5)/lightsSize);
+      float att = 1.0; //future work
+      float NdotH = max(0.0, dot(N, H));
 
-         spotEffect = pow(spotEffect, lightDiffuse.a);
-         diffuse += fragMaterial.diffuse * lightDiffuse.rgb * NdotL * spotEffect;
+      spotEffect = pow(spotEffect, lightDiffuse.a);
+      diffuse += fragMaterial.diffuse * lightDiffuse.rgb * NdotL * spotEffect;
 
-         specular += fragMaterial.specular * lightSpecular.rgb * pow(NdotH, fragMaterial.shininess)*spotEffect;
-      }
-	}
+      specular += fragMaterial.specular * lightSpecular.rgb * pow(NdotH, fragMaterial.shininess)*spotEffect;
+    }
+  }
 }
 
 vec3 getInterpolatedNormal(float triangleIndex)

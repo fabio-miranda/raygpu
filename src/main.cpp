@@ -90,8 +90,8 @@ void init(int argc, char *argv[]){
   //glPolygonMode(GL_FRONT, GL_LINE);
 
 
-	//rtScene = new RTScene("./resources/scenes/cavalo.rt4");
-  rtScene = new RTScene("./resources/scenes/cavalo.rtb");
+	rtScene = new RTScene("./resources/scenes/cavalo.rt4");
+  //rtScene = new RTScene("./resources/scenes/cavalo.rtb");
 	rtScene->configure();
   //rtScene->writeRTBFile("./resources/scenes/cavalo.rtb");
   

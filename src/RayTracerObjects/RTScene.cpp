@@ -160,26 +160,8 @@ void RTScene :: readFromStr(char buffer[])
 
 void RTScene :: configure()
 {
-  if(!mCalculed) 
-  {
-    if(mGrid)
-      delete mGrid;
-    
-    if(mBinFile)
-      mGrid = new UniformGrid(mRTBFileName);
-    else 
-    {
-      mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, &mLights, Vector3(10,10,10));
-    }
-
-    calcTextures();
-    mCalculed = true;
-  }
   if(!mBinFile)
   {
-    vector<RTLight> :: iterator lightIt;
-     for( lightIt = mLights.begin(); lightIt!=mLights.end(); ++lightIt)
-        lightIt->configure();
 
      vector<RTMesh> :: iterator meshIt;
      for( meshIt = mMeshes.begin(); meshIt!=mMeshes.end(); ++meshIt)
@@ -187,6 +169,29 @@ void RTScene :: configure()
         mMaterials[meshIt->getMaterialIndex()].configure();
         meshIt->configure();
      }
+  }
+
+  if(!mCalculed) 
+  {
+    if(mGrid)
+      delete mGrid;
+
+    if(mBinFile)
+      mGrid = new UniformGrid(mRTBFileName);
+    else 
+    {
+      mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, &mLights, Vector3(2,2,2));
+    }
+
+    calcTextures();
+    mCalculed = true;
+  }
+
+  if(!mBinFile)
+  {
+    vector<RTLight> :: iterator lightIt;
+    for( lightIt = mLights.begin(); lightIt!=mLights.end(); ++lightIt)
+      lightIt->configure();
   }
 }
 
@@ -219,7 +224,7 @@ void RTScene :: render()
     glCullFace(GL_BACK);
     glPopAttrib();
 
-     mGrid->render();
+     //mGrid->render();
   }
 }
 
