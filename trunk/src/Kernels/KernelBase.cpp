@@ -57,7 +57,10 @@ GLuint KernelBase::addOutput(int index, GLuint textureId){
 }
 
 GLuint KernelBase::getOutputTexture(int index){
-	return m_outputTextures.at(index);
+	if(index < m_outputTextures.size())
+		return m_outputTextures.at(index);
+	else
+		return m_outputTextures.at(m_outputTextures.size()-1);
 }
 
 void KernelBase::activateTextures(){

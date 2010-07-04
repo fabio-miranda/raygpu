@@ -13,9 +13,13 @@ uniform float gridArraySize;
 
 //Ray states (stored on rayDir.a)
 #define INACTIVE 0.0
-#define ACTIVE_TRAVERSE 1.0
-#define ACTIVE_INTERSECT 2.0
-#define OVERFLOW 3.0
+#define ACTIVE_CALCULATEOUTVOXEL 1.0
+#define ACTIVE_TRAVERSE 2.0
+#define ACTIVE_INTERSECT 3.0
+#define ACTIVE_TRAVERSE_SEC 4.0
+#define ACTIVE_SHADING 5.0
+#define OVERFLOW 6.0
+#define DONE 7.0
 
 //Ray voxel (stored on rayPos.a)
 
@@ -108,11 +112,11 @@ vec3 findVoxel(vec3 rayPos){
 	index = trunc(index);
 
 	if(index.x >= gridSize.x)
-    index.x = gridSize.x - 1.0;
-  if(index.y >= gridSize.y)
-    index.y = gridSize.y - 1.0;
-  if(index.z >= gridSize.z)
-    index.z = gridSize.z - 1.0;
+		index.x = gridSize.x - 1.0;
+	if(index.y >= gridSize.y)
+		index.y = gridSize.y - 1.0;
+	if(index.z >= gridSize.z)
+		index.z = gridSize.z - 1.0;
 
 	return index;
 
@@ -166,8 +170,9 @@ void main(){
 	float breakpoint = 0.0;
 
 	if(insideGrid(rayPos.xyz)){
-		rayDir.a = ACTIVE_TRAVERSE;
-		rayPos = rayPos;
+		rayDir.a = ACTIVE_CALCULATEOUTVOXEL;
+		voxelIndex = findVoxel(rayPos.xyz);
+		rayPos.a = findVoxelLinearArray(voxelIndex.xyz);
 	}
 	else{
 
@@ -177,12 +182,12 @@ void main(){
 		//intersectionMax is the maximum distance from the eye to the bounding box
 		bool hit = hitGrid(rayPos.xyz, rayDir.xyz, intersectionMin, intersectionMax);
 		if(hit && intersectionMin > 0.0){
-			rayDir.a = ACTIVE_TRAVERSE;
+			rayDir.a = ACTIVE_CALCULATEOUTVOXEL;
 			rayPos.xyz = rayPos.xyz + intersectionMin * rayDir.xyz;
 			voxelIndex = findVoxel(rayPos.xyz);
 			rayPos.a = findVoxelLinearArray(voxelIndex.xyz);
 
-			intersectionOut = findIntersectionOutVoxel(rayPos.xyz, rayDir.xyz, voxelIndex.xyz);
+			//intersectionOut = findIntersectionOutVoxel(rayPos.xyz, rayDir.xyz, voxelIndex.xyz);
 			//posIntersectionOut = rayPos.xyz + posIntersectionOut * rayDir.xyz;
 
 			breakpoint = 1.0;
@@ -192,7 +197,6 @@ void main(){
 		}
 
 		if(hit == false){
-			intersectionMin = 0.0;
 			rayPos = vec4(0.0, 0.0 ,0.0, -1.0);
 			rayDir.a = INACTIVE;
 			breakpoint = -1.0;
@@ -215,7 +219,7 @@ void main(){
 	//gl_FragData[1] = vec4(normalize(rayDir.xyz), 1.0);
 	gl_FragData[1] = rayDir;
 	//gl_FragData[2] = vec4(vec3(intersectionMin),1.0);
-	gl_FragData[2] = vec4(intersectionMin);
+	//gl_FragData[2] = vec4(intersectionMin);
 	//gl_FragData[3] = vec4(normalize(intersectionOut), 1.0);
 //	gl_FragData[3] = vec4(intersectionOut, 1.0);
 	//gl_FragData[3] = vec4(normalize(voxelIndex.xyz), 0.8);
@@ -224,7 +228,7 @@ void main(){
 	//gl_FragData[3] = vec4(vec3(normalize(voxelIndex.xyz)), .8);
 	//gl_FragData[3] = vec4(vec3(rayPos.a/1000.0), 1.0);
 	//gl_FragData[3] = vec4(vec3(intersectionMin),1.0);
-	gl_FragData[3] = vec4(intersectionOut, 1.0);
+	//gl_FragData[3] = vec4(intersectionOut, 1.0);
 
 	//gl_FragData[3] = vec4(vec3(breakpoint), 0.5);
 

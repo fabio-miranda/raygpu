@@ -1,7 +1,7 @@
 #ifndef Config_H
 #define Config_H
 
-#define AUTO_STATE_CHANGE true
+#define AUTO_STATE_CHANGE false
 #define AUTO_STEP false
 
 #define RAYTRACE_WHILE_MOVING true

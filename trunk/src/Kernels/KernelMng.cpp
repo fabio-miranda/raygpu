@@ -8,6 +8,16 @@ KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth,
 
 	m_kernelGenerateRay = new KernelGenerateRay(width, height, scene->getGridTexSize(), uniformGrid->getNumVoxels(), uniformGrid->getVoxelSize(), uniformGrid->getBBMin(), uniformGrid->getBBMax(), nearPlaneWidth, nearPlaneHeight);
 
+	m_kernelCalculateVoxel = new KernelCalculateVoxel(width, height, uniformGrid->getVoxelSize(),
+													  uniformGrid->getBBMin(),
+													  uniformGrid->getBBMax(),
+													  scene->getGridTexId(),
+													  scene->getGridTexSize(),
+													  uniformGrid->getNumVoxels(),
+													  m_kernelGenerateRay->getTexIdRayPos(),
+													  m_kernelGenerateRay->getTexIdRayDir());
+
+
 
 	m_kernelTraverse = new KernelTraverse( width, height, uniformGrid->getVoxelSize(),
 											uniformGrid->getBBMin(),
@@ -17,8 +27,7 @@ KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth,
 											uniformGrid->getNumVoxels(),
 											m_kernelGenerateRay->getTexIdRayPos(),
 											m_kernelGenerateRay->getTexIdRayDir(),
-											m_kernelGenerateRay->getTexIdIntersectionMax(),
-											m_kernelGenerateRay->getTexIdIntersectionMin());
+											m_kernelCalculateVoxel->getTexIdIntersectionMax());
 
 
 	m_kernelIntersect = new KernelIntersect(width, height, m_kernelGenerateRay->getTexIdRayPos(),
@@ -34,15 +43,17 @@ KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth,
 									scene->getLightsTexSize(), scene->getClearColor());
 	
 	m_currentState = GENERATERAY;
+	m_numTraverses = 0;
+	glGenQueries(1, &m_occlusionQueryId);
 	//m_uniformGrid = uniformGrid;
 
 }
 
 
-void KernelMng::step(KernelMngState stateToStop, Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane){
-	cout << "IN:" << m_currentState ;
+void KernelMng::step(bool updateStates, int traversePerIntersection, KernelMngState stateToStop, Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane){
+  cout << "IN:" << m_currentState ;
   render(eyePos, eyeDir, eyeUp, eyeRight, nearPlane);
-  //update(stateToStop);	
+  if(updateStates) update(traversePerIntersection, stateToStop);
   cout << " OUT:" << m_currentState <<endl;
 
 }
@@ -51,93 +62,32 @@ GLuint KernelMng::getTextureColorId(){
 	return m_kernelShade->getTextureColorId();
 }
 
-void KernelMng::update(KernelMngState stateToStop){
-	
-  
-  static int TC = 0;
-  static int TI = 0;
-  static int TS = 0;
+void KernelMng::update(int traversePerIntersection, KernelMngState stateToStop){
 
-
-  if(m_currentState == stateToStop){
-    //m_currentState = GENERATERAY;	
-    return;
-  }
-/*
-  if(m_currentState == GENERATERAY){
-    m_currentState = TRAVERSE;
-    TC = 0;
-    TI = 0;
-    TS = 0;
-  }else 
-    if(m_currentState == TRAVERSE && TI==0)
-    {
-      if( TC <= 5)
-      {
-        m_currentState = TRAVERSE;
-        TC++;
-      }else
-      {
-        m_currentState = INTERSECT;
-        TC = 2;
-      }
-    }else
-      if((m_currentState == INTERSECT || m_currentState == TRAVERSE )&&TS==0)
-      {
-        if(TI<5)
-        {
-          m_currentState = oracle();
-          TI++;
-        }else
-        {
-          TS = 1;
-          m_currentState = INTERSECT;
-        }
-      }else if(m_currentState == INTERSECT && TS==1)
-      {
-        m_currentState = SHADE;
-      }
-
-  */
-
-  //if(m_currentState == stateToStop){
-  //m_currentState = GENERATERAY;	
-  //return;
-  //}
-
-  
-  static int cont = 0;
-	//if(m_currentState == stateToStop){
-		//m_currentState = GENERATERAY;	
+	if(m_currentState == stateToStop){
+		m_currentState = GENERATERAY;	
 		//return;
-	//}
-	//else 
-    if(m_currentState == GENERATERAY){
-    cont = 0;
-		m_currentState = TRAVERSE;
 	}
-	
+	if(m_currentState == GENERATERAY){
+		m_currentState = CALCULATEVOXEL;
+	}
+	else if(m_currentState == CALCULATEVOXEL){
+		m_currentState = TRAVERSE;
+		m_numTraverses++;
+	}
 	else if(m_currentState == INTERSECT){
 		m_currentState = SHADE;
 	}
-	else if(m_currentState == SHADE){
-		m_currentState = TRAVERSE;
+	else if(m_currentState == TRAVERSE){
+		m_numTraverses++;
 	}
-
-  else if(m_currentState == INTERSECT || m_currentState == TRAVERSE){
-
-  //if( m_currentState == TRAVERSE)
-  //  cont ++;
-  //else cont = 0;
-  //if(cont==15)
-		//if(countActiveRays() > 0){
-			m_currentState = oracle();
-		//}
-		//else
-		//	newState = SHADE;
+	//else if(m_currentState == SHADE){
+		//m_currentState = TRAVERSE;
+	//}
+	if(m_currentState == INTERSECT || m_currentState == TRAVERSE){
+		m_currentState = oracle(traversePerIntersection);
 	}
 }
-
 void KernelMng::generateRay(){
 	m_currentState = GENERATERAY;
 }
@@ -156,6 +106,9 @@ void KernelMng::render(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 ey
 		case GENERATERAY:
 			m_kernelGenerateRay->step(eyePos, eyeDir, eyeUp, eyeRight, nearPlane);
 			break;
+		case CALCULATEVOXEL:
+			m_kernelCalculateVoxel->step();
+			break;
 		case TRAVERSE:
 			m_kernelTraverse->step();
 			break;
@@ -172,17 +125,21 @@ void KernelMng::render(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 ey
 	glPopMatrix();
 }
 
-void KernelMng::renderKernelOutput(KernelMngState stateToRender, int outputNum){
+void KernelMng::renderKernelOutput(bool renderCurrentState, KernelMngState stateToRender, int outputNum){
+
+	if(renderCurrentState)
+		stateToRender = m_currentState;
 
 	GLuint textureId;
 	if(stateToRender == GENERATERAY)
 		textureId = m_kernelGenerateRay->getOutputTexture(outputNum);
+	else if(stateToRender == CALCULATEVOXEL)
+		textureId = m_kernelCalculateVoxel->getOutputTexture(outputNum);
 	else if(stateToRender == TRAVERSE)
 		textureId = m_kernelTraverse->getOutputTexture(outputNum);
 	else if(stateToRender == INTERSECT)
 		textureId = m_kernelIntersect->getOutputTexture(outputNum);
 	else if(stateToRender == SHADE)
-    //return;
 		textureId = m_kernelShade->getOutputTexture(outputNum);
 
 	glMatrixMode(GL_PROJECTION);
@@ -212,23 +169,42 @@ void KernelMng::renderKernelOutput(KernelMngState stateToRender, int outputNum){
 	
 }
 
-KernelMngState KernelMng::oracle(){
+KernelMngState KernelMng::oracle(int traversePerIntersection){
+	
+	KernelMngState newState = m_currentState;
 
-	static int c = 0;
-  if(m_currentState == INTERSECT)
-  {
-    c = 0;
-    return TRAVERSE;
-  }
-	else if(m_currentState == TRAVERSE)
-    if(c==2)
-    {
-		  return INTERSECT;
-    }else c++;
+	if(m_currentState == INTERSECT){
+		newState = TRAVERSE;
+	}
+	else{
+		if(m_numTraverses > traversePerIntersection){
+			newState = INTERSECT;
+			m_numTraverses = 0;
+		}
+	}
+
+
+	//std::cout << countActiveRays() << "\n";
+
+	return newState;
+
 }
 
 int KernelMng::countActiveRays(){
-	return 0;
+	
+	glEnable(GL_STENCIL_TEST);
+    glDisable(GL_DEPTH_TEST);
+
+	glStencilFunc(GL_EQUAL, 1, 1);
+	glStencilOp(GL_ZERO, GL_KEEP, GL_KEEP);
+	glBeginQuery(GL_SAMPLES_PASSED_ARB, m_occlusionQueryId);
+	m_kernelShade->step(Vector3(0, -150, 0));
+	glEndQuery(GL_SAMPLES_PASSED_ARB);
+	GLuint occ = 0;
+	glGetQueryObjectuivARB(m_occlusionQueryId, GL_QUERY_RESULT_ARB, &occ);
+
+	return occ;
+
 }
 
 KernelMngState KernelMng::getCurrentState() const

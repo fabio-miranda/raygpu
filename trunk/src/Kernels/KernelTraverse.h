@@ -11,7 +11,7 @@ class KernelTraverse : public KernelBase {
 
 public:
 	KernelTraverse();
-	KernelTraverse(int width, int height, Vector3 voxelSize, Vector3 bbMin, Vector3 bbMax, GLuint texIdGrid, int gridArraySize, Vector3 gridSize, GLuint texIdRayPos, GLuint texIdRayDir, GLuint texIdGridIntersectionMax, GLuint texIdGridIntersectionMin);
+	KernelTraverse(int width, int height, Vector3 voxelSize, Vector3 bbMin, Vector3 bbMax, GLuint texIdGrid, int gridArraySize, Vector3 gridSize, GLuint texIdRayPos, GLuint texIdRayDir, GLuint texIdGridIntersectionMax);
 	~KernelTraverse();
 
 	

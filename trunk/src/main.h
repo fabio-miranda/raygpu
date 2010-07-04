@@ -8,6 +8,7 @@
 #include "GraphBasis\Vector3.h"
 #include "RayTracerObjects\RTScene.h"
 #include "Kernels\KernelMng.h"
+#include "Config.h"
 
 void render();
 void init(int argc, char *argv[]);
