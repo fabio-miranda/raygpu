@@ -246,27 +246,23 @@ void RTScene::calcTextures()
 
   GLenum sizeType [] = {0,GL_ALPHA, 2 ,GL_RGB, GL_RGBA};
 
-  GLfloat* data[] = {   mGrid->getGridArray()/*RGBA*/,
-                        mGrid->getLightsArray()/*RGBA*/};
+  GLfloat* data[] = {mGrid->getLightsArray()/*RGBA*/};
   
   
-  unsigned int size[] = {   mGrid->getGridArraySize(),
-                            mGrid->getLightsArraySize()};
+  unsigned int size[] = { mGrid->getLightsArraySize()};
 
 
   
-  int sizeIndex [] = {  mGrid->getGridArrayAbsoluteSize()/mGrid->getGridArraySize(),
-                        mGrid->getLightsArrayAbsoluteSize()/mGrid->getLightsArraySize(),
-                        };
+  int sizeIndex [] = { mGrid->getLightsArrayAbsoluteSize()/mGrid->getLightsArraySize()};
   
   int numTextures = sizeof(data)/sizeof(GLfloat*);
   GLuint *id = new GLuint[numTextures];
   //// //DEBUG
   //char sizeTypeStr [5][10] = {"NOT","GL_ALPHA", "2" ,"GL_RGB", "GL_RGBA"};
-  for(int i=0;i<numTextures;++i)
-  {
-    printf("%d %d\n",i, size[i]);
-  }
+  //for(int i=0;i<numTextures;++i)
+  //{
+  //  printf("%d %d\n",i, size[i]);
+  //}
 
 
   glGenTextures(numTextures, id);
@@ -294,7 +290,8 @@ void RTScene::calcTextures()
   /////2D
   /////2D
 
-  GLfloat* data2D[] = {  mGrid->getTriangleVertexArray()/*RGB*/,
+  GLfloat* data2D[] = {  mGrid->getGridArray()/*RGBA*/,
+                         mGrid->getTriangleVertexArray()/*RGB*/,
 							           mGrid->getTriangleListArray()/*A*/,
                          mGrid->getTriangleAmbientArray()/*RGB*/,
                          mGrid->getTriangleDiffuseArray()/*RGB*/,
@@ -302,7 +299,8 @@ void RTScene::calcTextures()
                          mGrid->getTriangleNormalsArray()/*RGB*/
                         };
 
-  unsigned int size2D[] = { mGrid->getTriangleVertexArraySize(),
+  unsigned int size2D[] = { mGrid->getGridArraySize(),
+                            mGrid->getTriangleVertexArraySize(),
 							              mGrid->getTriangleListArraySize(),
                             mGrid->getTriangleAmbientArraySize(),
                             mGrid->getTriangleDiffuseArraySize(), 
@@ -310,7 +308,8 @@ void RTScene::calcTextures()
                             mGrid->getTriangleNormalsArraySize()
                           };
 
-  int sizeIndex2D[] = { mGrid->getTriangleVertexArrayAbsoluteSize()/mGrid->getTriangleVertexArraySize(),
+  int sizeIndex2D[] = { mGrid->getGridArrayAbsoluteSize()/mGrid->getGridArraySize(),
+                        mGrid->getTriangleVertexArrayAbsoluteSize()/mGrid->getTriangleVertexArraySize(),
 						            mGrid->getTriangleListArrayAbsoluteSize()/mGrid->getTriangleListArraySize(),
                         mGrid->getTriangleAmbientArrayAbsoluteSize()/mGrid->getTriangleAmbientArraySize(),
                         mGrid->getTriangleDiffuseArrayAbsoluteSize()/mGrid->getTriangleDiffuseArraySize(), 
@@ -321,10 +320,10 @@ void RTScene::calcTextures()
   int numTextures2D = sizeof(data2D)/sizeof(GLfloat*);
   GLuint *id2D = new GLuint[numTextures2D];
 
-  for(int i=0;i<numTextures2D;++i)
-  {
-    printf("%d %d\n",i, size2D[i]);
-  }
+  //for(int i=0;i<numTextures2D;++i)
+  //{
+  //  printf("%d %d\n",i, size2D[i]);
+  //}
 
   glGenTextures(numTextures2D, id2D);
   for(int i=0; i<numTextures2D; ++i)
@@ -348,10 +347,10 @@ void RTScene::calcTextures()
 
   
   int i = 0;
-  mGridTexId = id[i++];
   mLightsTexId = id[i++];
   
   i = 0;
+  mGridTexId = id2D[i++];
   mVertexesTexId = id2D[i++];
   mTrianglesTexId = id2D[i++];
   mAmbientTexId = id2D[i++];

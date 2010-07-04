@@ -8,4 +8,5 @@ LIGHT 0. 0. -1.   204 204. 204.   255. 255. 255.  0.
 
 
 MESH 0  50. 1. 0.     400. 400. 400.0  resources/Models/bunny.msh
+MESH 0  -50. -1. 10.     400. 400. 400.0  resources/Models/bunny.msh
 

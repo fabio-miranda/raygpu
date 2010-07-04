@@ -27,7 +27,7 @@ GLenum e;
 int main(int argc, char *argv[]){
 	
 	init(argc, argv);
-
+  cout << argv[1] <<endl;
 
 	glutMainLoop();
 }
@@ -44,8 +44,6 @@ void renderAxis(){
 }
 
 void init(int argc, char *argv[]){
-	  
-
 	camAlpha = 270.0;
 	camBeta = 0.0;
 	camR = 150;
@@ -88,10 +86,11 @@ void init(int argc, char *argv[]){
 
 
   //glPolygonMode(GL_FRONT, GL_LINE);
+  
+  
 
-
-	rtScene = new RTScene("./resources/scenes/cavalo.rt4");
-  //rtScene = new RTScene("./resources/scenes/cavalo.rtb");
+	//rtScene = new RTScene("./resources/scenes/cavalo.rt4");
+  rtScene = new RTScene("./resources/scenes/cavalo.rtb");
 	rtScene->configure();
   //rtScene->writeRTBFile("./resources/scenes/cavalo.rtb");
   
