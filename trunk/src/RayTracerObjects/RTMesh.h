@@ -21,7 +21,7 @@ class RTMesh
 
       int mMaterialIndex;
       Vector3 mPos;
-      Vector3 mPos2;
+      Vector3 mScale;
       vector<RTTriangle> mTriangles;
 
       int myRTMeshNum;
@@ -38,5 +38,6 @@ class RTMesh
       void render();
    protected:
        void calcVBO();
+       void applyScaleTranslateToVertexes();
 };
 

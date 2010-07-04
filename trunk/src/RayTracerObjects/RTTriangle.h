@@ -25,10 +25,10 @@ public:
    unsigned int getGlobalIndex();
    static unsigned int getMaxNumTriangles();
 
-   static vector<RTTriangle> readFromFile(unsigned int materialIndex, string fileName);
+   static vector<RTTriangle> readFromFile(unsigned int materialIndex, string fileName, Vector3 pos, Vector3 scale);
 protected:
-    static vector<RTTriangle> readUmFile(unsigned int materialIndex, string fileName);
-    static vector<RTTriangle> readMshFile(unsigned int materialIndex, string fileName);
+    static vector<RTTriangle> readUmFile(unsigned int materialIndex, string fileName, Vector3 pos, Vector3 scale);
+    static vector<RTTriangle> readMshFile(unsigned int materialIndex, string fileName, Vector3 pos, Vector3 scale);
 
 };
 

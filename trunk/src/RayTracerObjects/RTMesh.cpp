@@ -29,9 +29,9 @@ int RTMesh :: getMyRTMeshNumber() const
 void RTMesh :: readFromStr(char buffer[])
 {
    int r = sscanf( buffer, "%d %f %f %f %f %f %f %s\n", &mMaterialIndex, &mPos.x, &mPos.y, &mPos.z,
-      &mPos2.x, &mPos2.y, &mPos2.z, buffer);
+      &mScale.x, &mScale.y, &mScale.z, buffer);
    cout << "Ler Arquivo " << buffer <<endl;
-   mTriangles = RTTriangle::readFromFile(mMaterialIndex, string(buffer));
+   mTriangles = RTTriangle::readFromFile(mMaterialIndex, string(buffer), mPos, mScale);
 
    assert(r == 8);
 
@@ -54,16 +54,19 @@ void RTMesh :: configure()
    if(!mCalculed)
    {
       calcVBO();
+      applyScaleTranslateToVertexes();
       mCalculed = true;
    }
 }
 
 void RTMesh :: render()
 {
-   glPushMatrix();
-      glTranslatef(mPos.x, mPos.y, mPos.z);
-      mVbo->render();
-   glPopMatrix();
+  glPushMatrix();
+    glTranslatef(mPos.x, mPos.y, mPos.z);   
+    //glScalef(mScale.x, mScale.y, mScale.z);
+
+    mVbo->render();
+  glPopMatrix();
 }
 
 
@@ -103,4 +106,34 @@ void RTMesh :: calcVBO()
    mVbo->setVBOBuffer( GL_VERTEX_ARRAY, GL_FLOAT, n, vertices);
    mVbo->setVBOBuffer( GL_NORMAL_ARRAY, GL_FLOAT, n, normals);
    mVbo->calcVBO();
+}
+
+void RTMesh::applyScaleTranslateToVertexes() 
+{
+  vector<RTTriangle> :: iterator tIt;
+  for(tIt = mTriangles.begin(); tIt != mTriangles.end(); ++tIt){
+    //tIt->v1.x *= mScale.x;
+    //tIt->v1.y *= mScale.y;
+    //tIt->v1.z *= mScale.z;
+
+    //tIt->v2.x *= mScale.x;
+    //tIt->v2.y *= mScale.y;
+    //tIt->v2.z *= mScale.z;
+
+    //tIt->v3.x *= mScale.x;
+    //tIt->v3.y *= mScale.y;
+    //tIt->v3.z *= mScale.z;
+
+    tIt->v1.x += mPos.x;
+    tIt->v1.y += mPos.y;
+    tIt->v1.z += mPos.z;
+
+    tIt->v2.x += mPos.x;
+    tIt->v2.y += mPos.y;
+    tIt->v2.z += mPos.z;
+
+    tIt->v3.x += mPos.x;
+    tIt->v3.y += mPos.y;
+    tIt->v3.z += mPos.z;
+  }
 }

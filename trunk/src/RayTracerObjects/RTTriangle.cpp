@@ -31,16 +31,16 @@ RTTriangle :: RTTriangle(unsigned int materialIndex, Vector3 V1, Vector3 V2, Vec
   mMyTriangleNum = sTriangleNum++;
 }
 
-vector<RTTriangle> RTTriangle :: readFromFile(unsigned int materialIndex, string fileName)
+vector<RTTriangle> RTTriangle :: readFromFile(unsigned int materialIndex, string fileName, Vector3 pos, Vector3 scale)
 {
   int index = fileName.find_last_of(".");
   assert(index!=string::npos);
   string sub = fileName.substr(index, string::npos);
   
   if(sub.compare(".um")==0 || sub.compare(".Um")==0 || sub.compare(".uM")==0 || sub.compare(".UM")==0)
-    return readUmFile(materialIndex, fileName);
+    return readUmFile(materialIndex, fileName, pos, scale);
   else if(sub.compare(".msh")==0 || sub.compare(".MSH")==0)
-    return readMshFile(materialIndex, fileName);
+    return readMshFile(materialIndex, fileName,pos, scale);
   
   cout << "Unknown File Type:" << fileName << endl;
   assert(false);
@@ -64,7 +64,7 @@ unsigned int RTTriangle::getMaterialIndex()
   return mMaterialIndex;
 }
 
-vector<RTTriangle> RTTriangle::readUmFile(unsigned int materialIndex, string fileName )
+vector<RTTriangle> RTTriangle::readUmFile(unsigned int materialIndex, string fileName, Vector3 pos, Vector3 scale)
 {
   FILE *file;
   file = fopen(fileName.c_str(), "rt");
@@ -81,11 +81,15 @@ vector<RTTriangle> RTTriangle::readUmFile(unsigned int materialIndex, string fil
   for(int i = 0; i < numVertex; ++i)
   {
     nList[i] = Vector3(0,0,0);
-    //fscanf(file, "%f %f %f\n", &vList[i].z, &vList[i].y, &vList[i].x);
     fscanf(file, "%f %f %f\n", &vList[i].x, &vList[i].y, &vList[i].z); 
-	//vList[i] = vList[i] * 100.0f;
+    
+    vList[i].x*=scale.x;
+    vList[i].y*=scale.y;
+    vList[i].z*=scale.z;
 
-    //fscanf(file, "%f %f %f\n", &(vList[i].y), &(vList[i].x), &(vList[i].z)); 
+    //vList[i].x+=pos.x;
+    //vList[i].y+=pos.y;
+    //vList[i].z+=pos.z;
   }
 
   fscanf(file, "\n%d\n", &numRTTriangles);
@@ -130,7 +134,7 @@ vector<RTTriangle> RTTriangle::readUmFile(unsigned int materialIndex, string fil
   return tVector;
 }
 
-vector<RTTriangle> RTTriangle::readMshFile(unsigned int materialIndex, string fileName )
+vector<RTTriangle> RTTriangle::readMshFile(unsigned int materialIndex, string fileName, Vector3 pos, Vector3 scale )
 {
   FILE *file;
   file = fopen(fileName.c_str(), "rt");
@@ -149,11 +153,14 @@ vector<RTTriangle> RTTriangle::readMshFile(unsigned int materialIndex, string fi
   {
     nList[i] = Vector3(0,0,0);
 
-    //fscanf(file, "%f %f %f\n", &vList[i].z, &vList[i].y, &vList[i].x);
     fscanf(file, "%*d %f %f %f\n", &vList[i].x, &vList[i].y, &vList[i].z); 
+    //vList[i].x+=pos.x;
+    //vList[i].y+=pos.y;
+    //vList[i].z+=pos.z;
 
-    //fscanf(file, "%f %f %f\n", &(vList[i].y), &(vList[i].x), &(vList[i].z)); 
-    vList[i]*=200;
+    vList[i].x*=scale.x;
+    vList[i].y*=scale.y;
+    vList[i].z*=scale.z;
   }
 
   printf("Reading %d RTTriangles...\n", numRTTriangles);
