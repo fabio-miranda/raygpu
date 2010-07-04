@@ -2,7 +2,7 @@ uniform sampler2D rayPos;
 uniform sampler2D rayDir;
 uniform sampler2D triangleInfoTex;
 
-uniform sampler1D grid;
+uniform sampler2D grid;
 uniform sampler2D vertexes;
 uniform sampler2D triangleList;
 
@@ -54,10 +54,19 @@ void main()
 
   if(floor(triangleFlag+0.5) == ACTIVE_INTERSECT)
   {
-//    float triangleIndex = floor(texture1D(grid, (gridIndex + .5)/gridSize).a + .5);
-    vec4 triangleIndexV = texture1D(grid, (gridIndex + .5)/gridSize); //Debug
+    vec2 coord2D = index1Dto2D(gridIndex, maxTextureSize, gridSize);
+
+//    float triangleIndex = floor(texture2D(grid, coord2D).a + .5);
+    vec4 triangleIndexV = texture2D(grid, coord2D); //Debug
     float triangleIndex = floor(triangleIndexV.a+.5); //Debug
-    vec2 coord2D = index1Dto2D(triangleIndex, maxTextureSize, triangleListSize);
+
+
+//    //    float triangleIndex = floor(texture1D(grid, (gridIndex + .5)/gridSize).a + .5);
+//    vec4 triangleIndexV = texture1D(grid, (gridIndex + .5)/gridSize); //Debug
+//    float triangleIndex = floor(triangleIndexV.a+.5); //Debug
+
+
+    coord2D = index1Dto2D(triangleIndex, maxTextureSize, triangleListSize);
     float vertexIndex = floor(texture2D(triangleList, coord2D).a + .5);
 
 
@@ -92,15 +101,16 @@ void main()
 /**/
   }
   else if(triangleFlag == ACTIVE_TRAVERSE_SEC){
-    vec4 triangleIndexV = texture1D(grid, (gridIndex + .5)/gridSize); //Debug
+    vec2 coord2D = index1Dto2D(gridIndex, maxTextureSize, gridSize);
+    vec4 triangleIndexV = texture2D(grid, coord2D); //Debug
     gl_FragData[3] = vec4(triangleIndexV.xyz, 0.5);//DEBUG
 //    gl_FragData[3] = vec4(0.5, 1.0, 1.0, .8);
   }
   else if(triangleFlag == ACTIVE_TRAVERSE){
-    vec4 triangleIndexV = texture1D(grid, (gridIndex + .5)/gridSize); //Debug
+    vec2 coord2D = index1Dto2D(gridIndex, maxTextureSize, gridSize);
+    vec4 triangleIndexV = texture2D(grid, coord2D); //Debug
     gl_FragData[3] = vec4(triangleIndexV.xyz, 0.5);//DEBUG
 //	gl_FragData[3] = vec4(0.3, 0.0, 0.5, .8);
-
   }
 
   ///Discard Pixel

@@ -2,13 +2,15 @@ uniform sampler2D samplerRayPos;
 uniform sampler2D samplerRayDir;
 uniform sampler2D samplerGridIntersectionMax;
 uniform sampler2D samplerGridIntersectionMin;
-uniform sampler1D samplerGrid;
+uniform sampler2D samplerGrid;
 
 uniform vec3 gridSize;
 uniform vec3 gridVoxelSize;
 uniform float gridArraySize;
 uniform vec3 bbMin;
 uniform vec3 bbMax;
+
+uniform float maxTextureSize;
 
 //Ray states (stored on rayDir.a)
 #define INACTIVE 0.0
@@ -19,6 +21,16 @@ uniform vec3 bbMax;
 #define OVERFLOW 5.0
 #define DONE 6.0
 
+
+vec2 index1Dto2D(float index, float width, float size)
+{
+  float height = float(trunc(size/width))+1.0;
+  vec2 r = vec2(float(mod(index,width)), float(trunc(index/width)));
+  r.x = (r.x+.5)/width;
+  r.y = (r.y+.5)/height;
+
+  return r;
+}
 
 //Voxel index (stored on rayPos.a)
 
@@ -48,8 +60,10 @@ void main(){
 
 	vec4 rayDir = texture2D(samplerRayDir, gl_TexCoord[0].st);
 	vec4 rayPos = texture2D(samplerRayPos, gl_TexCoord[0].st);
-	float a = (floor(rayPos.a+0.5)+0.5)/(gridArraySize);
-	vec4 gridIndex = texture1D(samplerGrid, a);
+	//float a = (floor(rayPos.a+0.5)+0.5)/(gridArraySize);
+	vec2 coord2D = index1Dto2D(floor(rayPos.a+0.5), maxTextureSize, gridArraySize);
+	vec4 gridIndex = texture2D(samplerGrid, coord2D );
+//	vec4 gridIndex = texture1D(samplerGrid, a);
 	vec4 gridIntersectionMax = texture2D(samplerGridIntersectionMax, gl_TexCoord[0].st);
 	//vec4 gridIntersectionMax = vec4(findIntersectionOutVoxel(rayPos.xyz, rayDir.xyz, gridIndex.xyz), 1.0);
 
@@ -62,7 +76,7 @@ void main(){
 
 
 
-	
+
 
 
 	//gl_FragData[3] = vec4(normalize(gridIndex.xyz), 1.0);

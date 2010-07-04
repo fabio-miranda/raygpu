@@ -119,8 +119,9 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 
   
 	m_gridArraySize = (int)(p_numVoxels.x * p_numVoxels.y * p_numVoxels.z) * 4;
-	m_gridArray = new GLfloat[m_gridArraySize];
-	for(int i = 0; i < m_gridArraySize; ++i) m_gridArray[i] = -1.0f;
+  texture2DnumLines = (int)((m_gridArraySize/4)/max_tex_size) + (int)(m_gridArraySize%max_tex_size != 0);
+	m_gridArray = new GLfloat[texture2DnumLines*max_tex_size*4];
+	for(int i = 0; i < texture2DnumLines*max_tex_size*4; ++i) m_gridArray[i] = -1.0f;
 	//memset(m_gridArray, -1.0f, sizeof(GLfloat) * m_gridArraySize);//Do not work for floats different then 0 
 
 	size += p_numVoxels.x * p_numVoxels.y * p_numVoxels.z;
@@ -553,10 +554,11 @@ void UniformGrid::writeRTBFile( string fileName )
 
   fwrite(&writeFileBuffer, sizeof(fileBuffer),1,fp);
 
-  fwrite(m_gridArray, sizeof(GLfloat),m_gridArraySize,fp);
+  int texture2DnumLines = (int)((m_gridArraySize/4)/max_tex_size) + (int)(m_gridArraySize%max_tex_size != 0);
+  fwrite(m_gridArray, sizeof(GLfloat),texture2DnumLines*max_tex_size*4,fp);
   fwrite(m_lightsArray, sizeof(GLfloat),m_lightsArraySize,fp);
   
-  int texture2DnumLines = (int)((m_triangleVertexArraySize/3)/max_tex_size) + (int)(m_triangleVertexArraySize%max_tex_size != 0);
+  texture2DnumLines = (int)((m_triangleVertexArraySize/3)/max_tex_size) + (int)(m_triangleVertexArraySize%max_tex_size != 0);
   fwrite(m_triangleVertexArray, sizeof(GLfloat),texture2DnumLines*max_tex_size*3,fp);
 
   texture2DnumLines = (int)((m_triangleListArraySize)/max_tex_size) + (int)(m_triangleListArraySize%max_tex_size != 0);
@@ -619,12 +621,14 @@ void UniformGrid::readRTBFile( string fileName )
   m_triangleDiffuseArraySize = readFileBuffer.triangleDiffuseArraySize;
   m_triangleSpecularArraySize = readFileBuffer.triangleSpecularArraySize;
 
-  m_gridArray = new GLfloat[m_gridArraySize];
-  fread(m_gridArray, sizeof(GLfloat),m_gridArraySize,fp);
+  int texture2DnumLines = (int)((m_gridArraySize/4)/max_tex_size) + (int)(m_gridArraySize%max_tex_size != 0);
+  m_gridArray = new GLfloat[texture2DnumLines*max_tex_size*4];
+  fread(m_gridArray, sizeof(GLfloat),texture2DnumLines*max_tex_size*4,fp);
+
   m_lightsArray = new GLfloat[m_lightsArraySize];
   fread(m_lightsArray, sizeof(GLfloat),m_lightsArraySize,fp);
 
-  int texture2DnumLines = (int)((m_triangleVertexArraySize/3)/max_tex_size) + (int)(m_triangleVertexArraySize%max_tex_size != 0);
+  texture2DnumLines = (int)((m_triangleVertexArraySize/3)/max_tex_size) + (int)(m_triangleVertexArraySize%max_tex_size != 0);
   m_triangleVertexArray = new GLfloat[texture2DnumLines*max_tex_size*3];
   fread(m_triangleVertexArray, sizeof(GLfloat),texture2DnumLines*max_tex_size*3,fp);
 
