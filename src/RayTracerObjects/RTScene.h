@@ -44,8 +44,8 @@ class RTScene
       GLuint mTrianglesTexId;
       GLuint mVertexesTexId;
       GLuint mMaterialTexId;
-      GLuint mDiffuseTexId;
-      GLuint mSpecularTexId;
+      //GLuint mDiffuseTexId;
+      //GLuint mSpecularTexId;
       GLuint mNormalsTexId;
       
       
@@ -68,8 +68,8 @@ class RTScene
       GLuint getTriangleListTexId();
       GLuint getVertexesTexId();
       GLuint getMaterialTexId();
-      GLuint getDiffuseTexId();
-      GLuint getSpecularTexId();
+      //GLuint getDiffuseTexId();
+      //GLuint getSpecularTexId();
       GLuint getNormalsTexId();
       GLuint getLightsTexId();
 
@@ -77,8 +77,8 @@ class RTScene
       GLfloat getTriangleListTexSize();
       GLfloat getVertexesTexSize();
       GLfloat getMaterialTexSize();
-      GLfloat getDiffuseTexSize();
-      GLfloat getSpecularTexSize();
+      //GLfloat getDiffuseTexSize();
+      //GLfloat getSpecularTexSize();
       GLfloat getNormalsTexSize();
       GLfloat getLightsTexSize();
 

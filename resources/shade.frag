@@ -4,8 +4,9 @@ uniform sampler2D triangleInfo;
 uniform sampler2D vertexes;
 uniform sampler2D normals;
 
-uniform sampler2D diffuseTex;
-uniform sampler2D especularTex;
+uniform sampler2D materialTex;
+//uniform sampler2D diffuseTex;
+//uniform sampler2D especularTex;
 
 uniform sampler1D lights;
 
@@ -13,8 +14,9 @@ uniform float maxTextureSize;
 
 uniform float vertexesSize;
 uniform float normalsSize;
-uniform float diffuseSize;
-uniform float especularSize;
+uniform float materialSize;
+//uniform float diffuseSize;
+//uniform float especularSize;
 uniform float lightsSize;
 
 uniform vec3 eyePos;
@@ -51,6 +53,14 @@ void calcSpotLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inou
 //2|   pos      //w == type :0 directional, 1 point, 2 = spot
 //3|   spot     //rgb == spotDir, a == spotAngle(rad)
 //}
+
+//materialStruct
+//{
+//0|   material //r = opacity, g = reflective, b = refractive, a = 1.0
+//1|   diffuse // rgb = diffuse, a = 1.0
+//2|   specular // rgb = specular, a = specularExp
+//}
+
 const vec3 defaultAmbientMaterial  = vec3(0.2, 0.2, 0.2);
 vec3 ambient, diffuse, specular;
 
@@ -66,6 +76,9 @@ struct material
   vec3 diffuse;
   vec3 specular;
   float shininess;
+  float opacity;
+  float reflective;
+  float refractive;
 }fragMaterial;
 
 
@@ -96,18 +109,22 @@ void main()
 
     ambient = defaultAmbientMaterial;
     diffuse = vec3(0, 0, 0);
-
-
-    coord2D = index1Dto2D(triangleIndex, maxTextureSize, especularSize);
-    vec4 matInfo = texture2D(especularTex, coord2D);
     specular = vec3(0, 0, 0);
     eyeDir = -(eyePos - fragPos);
 
-    coord2D = index1Dto2D(triangleIndex, maxTextureSize, diffuseSize);
-    fragMaterial.diffuse = texture2D(diffuseTex, coord2D).rgb;
+    coord2D = index1Dto2D(triangleIndex*3.0, maxTextureSize, materialSize);
+    vec4 matInfo = texture2D(materialTex, coord2D);
+    fragMaterial.opacity = matInfo.r;
+    fragMaterial.reflective = matInfo.g;
+    fragMaterial.refractive = matInfo.b;
+
+    coord2D = index1Dto2D(triangleIndex*3.0 + 1.0, maxTextureSize, materialSize);
+    fragMaterial.diffuse = texture2D(materialTex, coord2D).rgb;
+
+    coord2D = index1Dto2D(triangleIndex*3.0 + 2.0, maxTextureSize, materialSize);
+    matInfo = texture2D(materialTex, coord2D);
     fragMaterial.specular = matInfo.rgb;
     fragMaterial.shininess = matInfo.a;
-
 
     float numLights = floor(lightsSize/4.0+.5);
     for(float i = 0.0; i<numLights; i += 1.0)
