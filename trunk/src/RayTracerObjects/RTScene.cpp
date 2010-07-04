@@ -47,9 +47,7 @@ RTScene :: ~RTScene()
     mGridTexId,
     mVertexesTexId,
     mMaterialTexId,
-    mDiffuseTexId,
-    mSpecularTexId,
-    mNormalsTexId,
+     mNormalsTexId,
     mTrianglesTexId,
     mLightsTexId
   };
@@ -182,7 +180,7 @@ void RTScene :: configure()
       mGrid = new UniformGrid(mRTBFileName);
     else 
     {
-      mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, &mLights, mGridSize);
+      mGrid = new UniformGrid(getSceneNumTriangles(), &mMeshes, &mMaterials, &mLights, mGridSize, mClear);
     }
 
     calcTextures();
@@ -259,14 +257,6 @@ void RTScene::calcTextures()
   
   int numTextures = sizeof(data)/sizeof(GLfloat*);
   GLuint *id = new GLuint[numTextures];
-  //// //DEBUG
-  //char sizeTypeStr [5][10] = {"NOT","GL_ALPHA", "2" ,"GL_RGB", "GL_RGBA"};
-  //for(int i=0;i<numTextures;++i)
-  //{
-  //  printf("%d %d\n",i, size[i]);
-  //}
-
-
   glGenTextures(numTextures, id);
   for(int i=0; i<numTextures; ++i)
   {
@@ -296,8 +286,6 @@ void RTScene::calcTextures()
                          mGrid->getTriangleVertexArray()/*RGB*/,
 							           mGrid->getTriangleListArray()/*A*/,
                          mGrid->getTriangleMaterialArray()/*RGB*/,
-                         mGrid->getTriangleDiffuseArray()/*RGB*/,
-                         mGrid->getTriangleSpecularArray()/*RGBA*/,
                          mGrid->getTriangleNormalsArray()/*RGB*/
                         };
 
@@ -305,8 +293,6 @@ void RTScene::calcTextures()
                             mGrid->getTriangleVertexArraySize(),
 							              mGrid->getTriangleListArraySize(),
                             mGrid->getTriangleMaterialArraySize(),
-                            mGrid->getTriangleDiffuseArraySize(), 
-                            mGrid->getTriangleSpecularArraySize(),
                             mGrid->getTriangleNormalsArraySize()
                           };
 
@@ -314,18 +300,11 @@ void RTScene::calcTextures()
                         mGrid->getTriangleVertexArrayAbsoluteSize()/mGrid->getTriangleVertexArraySize(),
 						            mGrid->getTriangleListArrayAbsoluteSize()/mGrid->getTriangleListArraySize(),
                         mGrid->getTriangleMaterialArrayAbsoluteSize()/mGrid->getTriangleMaterialArraySize(),
-                        mGrid->getTriangleDiffuseArrayAbsoluteSize()/mGrid->getTriangleDiffuseArraySize(), 
-                        mGrid->getTriangleSpecularArrayAbsoluteSize()/mGrid->getTriangleSpecularArraySize(), 
                         mGrid->getTriangleNormalsArrayAbsoluteSize()/mGrid->getTriangleNormalsArraySize()
                     };
 
   int numTextures2D = sizeof(data2D)/sizeof(GLfloat*);
   GLuint *id2D = new GLuint[numTextures2D];
-
-  //for(int i=0;i<numTextures2D;++i)
-  //{
-  //  printf("%d %d\n",i, size2D[i]);
-  //}
 
   glGenTextures(numTextures2D, id2D);
   for(int i=0; i<numTextures2D; ++i)
@@ -356,17 +335,11 @@ void RTScene::calcTextures()
   mVertexesTexId = id2D[i++];
   mTrianglesTexId = id2D[i++];
   mMaterialTexId = id2D[i++];
-  mDiffuseTexId = id2D[i++];
-  mSpecularTexId = id2D[i++];
+
   mNormalsTexId = id2D[i++];
   
   delete[] id;
   delete[] id2D;
-	/*
-	int texture2DnumLines = (int)((mGrid->getTriangleListArraySize())/max_tex_size) + (int)(mGrid->getTriangleListArraySize()%max_tex_size != 0);
-	for(int i = 0; i < texture2DnumLines*max_tex_size; ++i)
-		std::cout << mGrid->getTriangleListArray()[i] << " ";
-	*/
 }
 
 GLuint RTScene::getGridTexId()
@@ -389,15 +362,6 @@ GLuint RTScene::getMaterialTexId()
   return mMaterialTexId;
 }
 
-GLuint RTScene::getDiffuseTexId()
-{
-  return mDiffuseTexId;
-}
-
-GLuint RTScene::getSpecularTexId()
-{
-  return mSpecularTexId;
-}
 
 GLuint RTScene::getNormalsTexId()
 {
@@ -435,15 +399,6 @@ GLfloat RTScene::getMaterialTexSize()
   return  mGrid->getTriangleMaterialArraySize();
 }
 
-GLfloat RTScene::getDiffuseTexSize()
-{
-  return mGrid->getTriangleDiffuseArraySize();
-}
-
-GLfloat RTScene::getSpecularTexSize()
-{
-return mGrid->getTriangleSpecularArraySize();
-}
 
 GLfloat RTScene::getNormalsTexSize()
 {
@@ -452,7 +407,7 @@ GLfloat RTScene::getNormalsTexSize()
 
 Color RTScene::getClearColor() const
 {
-  return mClear;
+  return mGrid->getClearColor();
 }
 
 

@@ -16,7 +16,7 @@
 class UniformGrid {
 
 public:
-  UniformGrid(unsigned int p_numTriangles, std::vector<RTMesh>* p_triangles, std::vector<RTMaterial>* p_material, std::vector<RTLight>* p_lightl, Vector3 p_sizeVoxel);
+  UniformGrid(unsigned int p_numTriangles, std::vector<RTMesh>* p_triangles, std::vector<RTMaterial>* p_material, std::vector<RTLight>* p_lightl, Vector3 p_sizeVoxel, Color clearColor);
   UniformGrid(string rtbFileName);
 	~UniformGrid();
 
@@ -28,8 +28,6 @@ public:
   GLfloat* getTriangleVertexArray();
   GLfloat* getTriangleNormalsArray();
   GLfloat* getTriangleMaterialArray();
-  GLfloat* getTriangleDiffuseArray();
-  GLfloat* getTriangleSpecularArray();
   GLfloat* getLightsArray();
 
   Vector3 getBBMin();
@@ -40,8 +38,6 @@ public:
   int getTriangleVertexArrayAbsoluteSize();
   int getTriangleNormalsArrayAbsoluteSize();
   int getTriangleMaterialArrayAbsoluteSize();
-  int getTriangleDiffuseArrayAbsoluteSize();
-  int getTriangleSpecularArrayAbsoluteSize();
   int getLightsArrayAbsoluteSize();
 
 
@@ -50,11 +46,12 @@ public:
   int getTriangleVertexArraySize();
   int getTriangleNormalsArraySize();
   int getTriangleMaterialArraySize();
-  int getTriangleDiffuseArraySize();
-  int getTriangleSpecularArraySize();
   int getLightsArraySize();
 
   GLuint getGridTextureId();
+  
+  Color getClearColor() const;
+  
   Vector3 getVoxelSize();
   Vector3 getNumVoxels();
 
@@ -63,15 +60,22 @@ public:
 private:
 	void calculateBB(std::vector<RTMesh>* p_triangles, Vector3 p_numVoxels);
 	void calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>* p_triangles, std::vector<RTMaterial>* p_material, std::vector<RTLight>* p_light, Vector3 p_numVoxels);
-	Vector3 getVertexGridIndex(Vector3 vertex);
+	
+  Vector3 getVertexGridIndex(Vector3 vertex);
+
 	unsigned int getNumTriangles();
 	unsigned int getVoxelAt(Vector3 index);
+
 	void setMinMax(Vector3 vertex);
+
 	void initialize(void** vector, int size);
 
   void readRTBFile(string fileName);
 
-	Vector3 m_min;
+	Color m_clearColor;
+
+  
+  Vector3 m_min;
 	Vector3 m_max;
 	Vector3 m_gridSize;
 	Vector3 m_numVoxels;
@@ -81,8 +85,6 @@ private:
 	GLfloat* m_triangleVertexArray;
 	GLfloat* m_triangleNormalsArray;
 	GLfloat* m_triangleMaterialArray;
-	GLfloat* m_triangleDiffuseArray;
-	GLfloat* m_triangleSpecularArray;
   GLfloat* m_lightsArray;
 
 	int m_gridArraySize;
@@ -90,8 +92,6 @@ private:
 	int m_triangleListArraySize;
 	int m_triangleNormalsArraySize;
 	int m_triangleMaterialArraySize;
-	int m_triangleDiffuseArraySize;
-	int m_triangleSpecularArraySize;
   int m_lightsArraySize;
 };
 

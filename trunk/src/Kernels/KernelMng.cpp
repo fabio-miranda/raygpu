@@ -28,9 +28,9 @@ KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth,
 
 
 	m_kernelShade = new KernelShade(width, height, m_kernelGenerateRay->getTexIdRayDir(), m_kernelIntersect->getTexIdTriangleHitInfo(), 
-									scene->getVertexesTexId(), scene->getNormalsTexId(), scene->getDiffuseTexId(),
-									scene->getSpecularTexId(), scene->getLightsTexId(), scene->getNormalsTexSize(),
-									scene->getVertexesTexSize(), scene->getDiffuseTexSize(), scene->getSpecularTexSize(),
+									scene->getVertexesTexId(), scene->getNormalsTexId(), scene->getMaterialTexId(),
+                  scene->getLightsTexId(), scene->getNormalsTexSize(),
+									scene->getVertexesTexSize(), scene->getMaterialTexSize(),
 									scene->getLightsTexSize(), scene->getClearColor());
 	
 	m_currentState = GENERATERAY;

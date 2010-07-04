@@ -5,10 +5,10 @@ KernelShade::KernelShade()
 
 }
 
-KernelShade::KernelShade(int width, int height, GLuint texIdRayDir, GLuint texIdTriangleHitInfo, GLuint texIdvertexes, GLuint texIdNormals, 
-                          GLuint texIdDiffuseTex, GLuint texIdSpecularTex, GLuint texIdLights, 
-                          GLfloat normalsTexSize, GLfloat vertexesTexSize, GLfloat diffuseTexSize, GLfloat specularTexSize,
-                          GLfloat lightsTexSize, Color clearColor)
+KernelShade::KernelShade(int width, int height,  GLuint texIdRayDir, GLuint texIdTriangleHitInfo, GLuint texIdvertexes, GLuint texIdNormals, 
+                         GLuint texIdMaterialTex, GLuint texIdLights, 
+                         GLfloat normalsTexSize, GLfloat vertexesTexSize, GLfloat materialTexSize,
+                         GLfloat lightsTexSize, Color clearColor)
 : KernelBase("./resources/vertice.vert", "./resources/shade.frag", width, height){
       //Output
       addOutput(0, texIdRayDir);    
@@ -25,15 +25,13 @@ KernelShade::KernelShade(int width, int height, GLuint texIdRayDir, GLuint texId
         addInputTexture(GL_TEXTURE_2D, "triangleInfo", texIdTriangleHitInfo);
         addInputTexture(GL_TEXTURE_2D, "vertexes", texIdvertexes);
         addInputTexture(GL_TEXTURE_2D, "normals", texIdNormals);
-        addInputTexture(GL_TEXTURE_2D, "diffuseTex", texIdDiffuseTex);
-        addInputTexture(GL_TEXTURE_2D, "especularTex", texIdSpecularTex);
+        addInputTexture(GL_TEXTURE_2D, "materialTex", texIdMaterialTex);
         addInputTexture(GL_TEXTURE_1D, "lights", texIdLights);
 
         addInputFloat("vertexesSize", vertexesTexSize);
         addInputFloat("maxTextureSize", max_tex_size);
         addInputFloat("normalsSize", normalsTexSize);
-        addInputFloat("diffuseSize", diffuseTexSize);
-        addInputFloat("especularSize", specularTexSize);
+        addInputFloat("materialSize", materialTexSize);
         addInputFloat("lightsSize", lightsTexSize);
         m_locEyePos = addInputVec3("eyePos", Vector3(0, 0, 0));
         addInputVec3("clearColor", clearColor);
