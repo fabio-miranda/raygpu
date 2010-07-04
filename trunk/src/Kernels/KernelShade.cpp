@@ -5,16 +5,19 @@ KernelShade::KernelShade()
 
 }
 
-KernelShade::KernelShade(int width, int height,  GLuint texIdRayDir, GLuint texIdTriangleHitInfo, GLuint texIdvertexes, GLuint texIdNormals, 
+KernelShade::KernelShade(int width, int height,  GLuint texIdRayDir, GLuint texIdRayPos, 
+                         GLuint texIdTriangleHitInfo, GLuint texIdvertexes, GLuint texIdNormals, 
                          GLuint texIdMaterialTex, GLuint texIdLights, 
                          GLfloat normalsTexSize, GLfloat vertexesTexSize, GLfloat materialTexSize,
-                         GLfloat lightsTexSize, Color clearColor)
+                         GLfloat lightsTexSize, Color clearColor
+                         )
 : KernelBase("./resources/vertice.vert", "./resources/shade.frag", width, height){
       //Output
       addOutput(0, texIdRayDir);    
-      m_texIdColor = addOutput(1);
-      GLuint aux = addOutput(2);
-      GLuint aux2 = addOutput(3);
+      addOutput(1, texIdRayPos);    
+      addOutput(2, texIdTriangleHitInfo);
+      m_texIdColor = addOutput(3);
+      //GLuint aux = addOutput(3);
 
       GLint max_tex_size = 0;
       glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
@@ -22,6 +25,7 @@ KernelShade::KernelShade(int width, int height,  GLuint texIdRayDir, GLuint texI
       //Input
       m_shader->setActive(true);
         addInputTexture(GL_TEXTURE_2D, "rayDir", texIdRayDir);  
+        addInputTexture(GL_TEXTURE_2D, "rayPos", texIdRayPos);  
         addInputTexture(GL_TEXTURE_2D, "triangleInfo", texIdTriangleHitInfo);
         addInputTexture(GL_TEXTURE_2D, "vertexes", texIdvertexes);
         addInputTexture(GL_TEXTURE_2D, "normals", texIdNormals);
@@ -35,6 +39,7 @@ KernelShade::KernelShade(int width, int height,  GLuint texIdRayDir, GLuint texI
         addInputFloat("lightsSize", lightsTexSize);
         m_locEyePos = addInputVec3("eyePos", Vector3(0, 0, 0));
         addInputVec3("clearColor", clearColor);
+
       m_shader->setActive(false);
 }
 

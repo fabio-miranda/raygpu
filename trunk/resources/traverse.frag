@@ -40,17 +40,6 @@ float findVoxelLinearArray(vec3 voxelIndex){
 
 }
 
-vec3 findVoxel(vec3 rayPos){
-
-	vec3 index = vec3(-1.0, -1.0, -1.0);
-
-	index = (floor(rayPos-0.5) - bbMin) / gridVoxelSize;
-	index = trunc(index);
-
-	return index;
-
-}
-
 vec3 findVoxelPosition(vec3 voxelIndex){
 	return voxelIndex * gridVoxelSize + bbMin;
 }
