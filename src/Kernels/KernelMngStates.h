@@ -1,6 +1,6 @@
 #ifndef KernelMngStates_H
 #define KernelMngStates_H
 
-enum KernelMngState { GENERATERAY, TRAVERSE, INTERSECT, SHADE };
+enum KernelMngState { GENERATERAY, CALCULATEVOXEL, TRAVERSE, INTERSECT, SHADE };
 
 #endif

@@ -85,7 +85,7 @@ void init(int argc, char *argv[]){
 	glEnable(GL_BLEND);
 	glEnable(GL_TEXTURE);
 	glEnable(GL_TEXTURE_2D);
-  glEnable(GL_TEXTURE_1D);
+	glEnable(GL_TEXTURE_1D);
 	glewInit();	
 
 
@@ -136,11 +136,12 @@ void keyboard(unsigned char key, int x, int y){
   if( key == 32)
     kernelMng->generateRay();
   else if(key == '1')
-    kernelMng->setCurrentState(TRAVERSE);
+    kernelMng->m_currentState = CALCULATEVOXEL;
   else if(key == '2')
-    kernelMng->setCurrentState(INTERSECT);
+	kernelMng->m_currentState = TRAVERSE;
   else if(key == '3')
-    kernelMng->setCurrentState(SHADE);
+    kernelMng->m_currentState = INTERSECT;
+  else if(key == '4')
 }
 
 void mouseButtons(int button, int state, int x, int y){
@@ -160,13 +161,19 @@ void mouseActive(int x, int y){
 
     camAlpha = ((int)(camAlpha + angleY))%360;
     camBeta = ((int)(camBeta + angleX))%360;
+	kernelMng->generateRay();
   }
   else if(mouseButton == GLUT_RIGHT_BUTTON && mouseState == GLUT_DOWN){
     camR += (y - lastMousePosY)/2.0;
+	kernelMng->generateRay();
   }
+
+  if(RAYTRACE_WHILE_MOVING && lastMousePosX != x || lastMousePosY != y)
+	  kernelMng->generateRay();
+
   lastMousePosX = x;
   lastMousePosY = y;
-
+	
 }
 
 
@@ -199,7 +206,7 @@ void createScenes(int argc, char *argv[])
 
 void render(){
 
-	//if(step == false) return;
+	if(step == false) return;
 
 	//std::cout << camBeta << ", " << camAlpha << ", " << camInc << "\n";
 
@@ -236,28 +243,11 @@ void render(){
 	if(rObj!=GL_OBJECT)
     rtScene->render();
   
-  if(rObj!=RT_OBJECT)
-  {
-	  //kernelMng->step(GENERATERAY,
-    //kernelMng->step(TRAVERSE,
-	  //kernelMng->step(INTERSECT,
-	  //kernelMng->step(SHADE,
-	  //kernelMng->step(GENERATERAY,
-	  //kernelMng->step(TRAVERSE,
-	  //kernelMng->step(INTERSECT,
-	  kernelMng->step(SHADE,
-					  Vector3(x, y, z),
-						  f,
-						  u,
-						  r,
-						  nearPlane);
-	  //kernelMng->renderKernelOutput(GENERATERAY, 3);
-	  //kernelMng->renderKernelOutput(TRAVERSE, 3);
-	  //kernelMng->renderKernelOutput(INTERSECT, 2);
-	  kernelMng->renderKernelOutput(kernelMng->getCurrentState(), 3);
-    //kernelMng->renderKernelOutput(INTERSECT, 3);
-	  //kernelMng->renderKernelOutput(SHADE, 3);
-  }
+	if(rObj!=1)
+	{
+		kernelMng->step(AUTO_STATE_CHANGE, TRAVERSE_PER_INTERSECT, SHADE, Vector3(x, y, z), f, u, r, nearPlane);
+		kernelMng->renderKernelOutput(true, SHADE, 3);
+	}
  
 	glutSwapBuffers();
 

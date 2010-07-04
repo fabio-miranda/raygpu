@@ -6,7 +6,7 @@ KernelTraverse::KernelTraverse(){
 
 }
 
-KernelTraverse::KernelTraverse(int width, int height, Vector3 voxelSize, Vector3 bbMin, Vector3 bbMax, GLuint texIdGrid, int gridArraySize, Vector3 gridSize, GLuint texIdRayPos, GLuint texIdRayDir, GLuint texIdGridIntersectionMax, GLuint texIdGridIntersectionMin)
+KernelTraverse::KernelTraverse(int width, int height, Vector3 voxelSize, Vector3 bbMin, Vector3 bbMax, GLuint texIdGrid, int gridArraySize, Vector3 gridSize, GLuint texIdRayPos, GLuint texIdRayDir, GLuint texIdGridIntersectionMax)
 : KernelBase("./resources/vertice.vert", "./resources/traverse.frag", width, height){
 
 	//Output
@@ -23,7 +23,6 @@ KernelTraverse::KernelTraverse(int width, int height, Vector3 voxelSize, Vector3
 		addInputTexture(GL_TEXTURE_2D, "samplerRayPos", texIdRayPos);
 		addInputTexture(GL_TEXTURE_2D, "samplerRayDir", texIdRayDir);
 		addInputTexture(GL_TEXTURE_2D, "samplerGridIntersectionMax", texIdGridIntersectionMax);
-		addInputTexture(GL_TEXTURE_2D, "samplerGridIntersectionMin", texIdGridIntersectionMin);
 		addInputTexture(GL_TEXTURE_2D, "samplerGrid", texIdGrid);
 		
     addInputFloat("maxTextureSize", max_tex_size);

@@ -3,6 +3,7 @@
 
 #include "Kernels/KernelBase.h"
 #include "Kernels/KernelGenerateRay.h"
+#include "Kernels/KernelCalculateVoxel.h"
 #include "Kernels/KernelTraverse.h"
 #include "Kernels/KernelIntersect.h"
 #include "Kernels/KernelShade.h"
@@ -18,21 +19,22 @@ public:
 	KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth, float nearPlaneHeight);
 	~KernelMng();
 
-	void step(KernelMngState stateToStop, Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane);
+	void step(bool updateStates, int traversePerIntersection, KernelMngState stateToStop, Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane);
 	GLuint getTextureColorId();
-	void renderKernelOutput(KernelMngState stateToRender, int outputNum);
+	void renderKernelOutput(bool renderCurrentState, KernelMngState stateToRender, int outputNum);
 	void generateRay();
 	
   void setCurrentState(KernelMngState val);
   KernelMngState getCurrentState() const;
   
 private:
-	KernelMngState oracle();
-	void update(KernelMngState stateToStop);
+	KernelMngState oracle(int traversePerIntersection);
+	void update(int traversePerIntersection, KernelMngState stateToStop);
 	void render(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane);
 	int countActiveRays();
 
 	KernelGenerateRay* m_kernelGenerateRay;
+	KernelCalculateVoxel* m_kernelCalculateVoxel;
 	KernelTraverse* m_kernelTraverse;
 	KernelIntersect* m_kernelIntersect;
 	KernelShade* m_kernelShade;
@@ -41,6 +43,8 @@ private:
 	GLuint m_textureRayPosition;
 	GLuint m_textureRayDirection;
 	FrameBufferObject m_fbo;
+	int m_numTraverses;
+	GLuint m_occlusionQueryId;
 
   KernelMngState m_currentState;
   

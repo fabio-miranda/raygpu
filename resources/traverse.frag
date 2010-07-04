@@ -1,7 +1,6 @@
 uniform sampler2D samplerRayPos;
 uniform sampler2D samplerRayDir;
 uniform sampler2D samplerGridIntersectionMax;
-uniform sampler2D samplerGridIntersectionMin;
 uniform sampler2D samplerGrid;
 
 uniform vec3 gridSize;
@@ -14,12 +13,13 @@ uniform float maxTextureSize;
 
 //Ray states (stored on rayDir.a)
 #define INACTIVE 0.0
-#define ACTIVE_TRAVERSE 1.0
-#define ACTIVE_INTERSECT 2.0
-#define ACTIVE_TRAVERSE_SEC 3.0
-#define ACTIVE_SHADING 4.0
-#define OVERFLOW 5.0
-#define DONE 6.0
+#define ACTIVE_CALCULATEOUTVOXEL 1.0
+#define ACTIVE_TRAVERSE 2.0
+#define ACTIVE_INTERSECT 3.0
+#define ACTIVE_TRAVERSE_SEC 4.0
+#define ACTIVE_SHADING 5.0
+#define OVERFLOW 6.0
+#define DONE 7.0
 
 
 vec2 index1Dto2D(float index, float width, float size)
