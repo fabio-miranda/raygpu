@@ -1,15 +1,11 @@
 #include "main.h"
-
-#define ANGLE_STEP 1.0
-#define APP_WIDTH 800
-#define APP_HEIGHT 600
-#define DEG_TO_RAD(a) ((float)(a)*PI/180.0)
+#include "Config.h"
 
 int lastMousePosX;
 int lastMousePosY;
 int mouseState;
 int mouseButton;
-bool step;
+
 float camAlpha;
 float camBeta;
 float camR;
@@ -17,18 +13,19 @@ float camInc;
 
 float nearPlane;
 float fov;
+bool step;
+
+int rObj;
+
+string sceneFileName;
+
 RTScene* rtScene;
 KernelMng* kernelMng;
-
-int rObj = 0;
 
 GLenum e;
 
 int main(int argc, char *argv[]){
-	
 	init(argc, argv);
-  cout << argv[1] <<endl;
-
 	glutMainLoop();
 }
 
@@ -44,17 +41,24 @@ void renderAxis(){
 }
 
 void init(int argc, char *argv[]){
-	camAlpha = 270.0;
-	camBeta = 0.0;
-	camR = 150;
-	camInc = 5;
-	lastMousePosX = 0;
-	lastMousePosY = 0;
+	camAlpha = INIT_CAM_ALPHA;
+	camBeta = INIT_CAM_BETA;
+	camR = INIT_CAM_R;
+	camInc = INIT_CAM_INC;
+
+	lastMousePosX = INIT_LAST_MOUSE_POS_X;
+	lastMousePosY = INIT_LAST_MOUSE_POS_Y;
 	mouseState = GLUT_UP;
 	mouseButton = GLUT_RIGHT_BUTTON;
-	nearPlane = 0.1f;
-	fov = 60.0f;
-	step = false;
+
+	nearPlane = INIT_RT_NEAR_PLANE;
+	fov = INIT_RT_FOV;
+	
+  step = INIT_RT_STEP;
+
+  sceneFileName = INIT_SCENE_FILE_NAME;
+  
+  rObj = INIT_RENDER_OBJ;
 
 
 	glutInit(&argc, argv);
@@ -86,17 +90,7 @@ void init(int argc, char *argv[]){
 
 
   //glPolygonMode(GL_FRONT, GL_LINE);
-  
-  
-
-	//rtScene = new RTScene("./resources/scenes/cavalo.rt4");
-  rtScene = new RTScene("./resources/scenes/cavalo.rtb");
-	rtScene->configure();
-  //rtScene->writeRTBFile("./resources/scenes/cavalo.rtb");
-  
-	float nearPlaneHeight = 2.0f * tanf(DEG_TO_RAD(fov/2.0f)) * nearPlane;
-	float nearPlaneWidth = nearPlaneHeight * ((GLfloat)APP_WIDTH/(GLfloat)APP_HEIGHT);
-	kernelMng = new KernelMng(APP_WIDTH, APP_HEIGHT, rtScene, nearPlaneWidth, nearPlaneHeight);
+  createScenes(argc, argv);
 }
 
 
@@ -132,7 +126,7 @@ void keyboard(unsigned char key, int x, int y){
       break;
     case 'w':
     case 'W':
-      rObj = 2;
+      rObj = GL_RT_OBJECT;
     break;
   }
   //cout << (int)key<<endl;
@@ -142,11 +136,11 @@ void keyboard(unsigned char key, int x, int y){
   if( key == 32)
     kernelMng->generateRay();
   else if(key == '1')
-    kernelMng->m_currentState = TRAVERSE;
+    kernelMng->setCurrentState(TRAVERSE);
   else if(key == '2')
-    kernelMng->m_currentState = INTERSECT;
+    kernelMng->setCurrentState(INTERSECT);
   else if(key == '3')
-    kernelMng->m_currentState = SHADE;
+    kernelMng->setCurrentState(SHADE);
 }
 
 void mouseButtons(int button, int state, int x, int y){
@@ -178,6 +172,30 @@ void mouseActive(int x, int y){
 
 
 
+
+void createScenes(int argc, char *argv[]) 
+{
+  if(argc > 1)
+    sceneFileName = argv[1];
+
+  int index = sceneFileName.find_last_of(".");
+  assert(index != string::npos);
+  string sub = sceneFileName.substr(index, string::npos);
+
+  rtScene = new RTScene(sceneFileName, RT_GRID_SIZE);
+  rtScene->configure();
+  if(sub.compare(".rt4")==0 || sub.compare(".RT4")==0)
+  {
+    sub = sceneFileName.substr(0, index) + ".rtb";
+    rtScene->writeRTBFile(sub);
+    cout << "Gerado Arquivo "<< sub << " com cena"<<endl;
+  }
+
+
+  float nearPlaneHeight = 2.0f * tanf(DEG_TO_RAD(fov/2.0f)) * nearPlane;
+  float nearPlaneWidth = nearPlaneHeight * ((GLfloat)APP_WIDTH/(GLfloat)APP_HEIGHT);
+  kernelMng = new KernelMng(APP_WIDTH, APP_HEIGHT, rtScene, nearPlaneWidth, nearPlaneHeight);
+}
 
 void render(){
 
@@ -215,10 +233,10 @@ void render(){
     //cout << camR << endl;
 	renderAxis();
 
-	if(rObj!=0)
+	if(rObj!=GL_OBJECT)
     rtScene->render();
   
-  if(rObj!=1)
+  if(rObj!=RT_OBJECT)
   {
 	  //kernelMng->step(GENERATERAY,
     //kernelMng->step(TRAVERSE,
@@ -236,7 +254,7 @@ void render(){
 	  //kernelMng->renderKernelOutput(GENERATERAY, 3);
 	  //kernelMng->renderKernelOutput(TRAVERSE, 3);
 	  //kernelMng->renderKernelOutput(INTERSECT, 2);
-	  kernelMng->renderKernelOutput(kernelMng->m_currentState, 3);
+	  kernelMng->renderKernelOutput(kernelMng->getCurrentState(), 3);
     //kernelMng->renderKernelOutput(INTERSECT, 3);
 	  //kernelMng->renderKernelOutput(SHADE, 3);
   }
@@ -244,5 +262,4 @@ void render(){
 	glutSwapBuffers();
 
 	step = false;
-
 }

@@ -33,6 +33,14 @@ GLuint KernelBase::addInputVec3(char* name, Vector3 value){
 	return loc;
 }
 
+GLuint KernelBase::addInputVec3(char* name, Color value){
+
+  GLuint loc = m_shader->getUniformLocation(name);
+  glUniform3fARB(loc, value.r, value.g, value.b);
+
+  return loc;
+}
+
 GLuint KernelBase::addInputFloat( char* name, GLfloat value )
 {
   GLuint loc = m_shader->getUniformLocation(name);

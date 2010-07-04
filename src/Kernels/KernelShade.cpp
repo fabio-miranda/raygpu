@@ -8,7 +8,7 @@ KernelShade::KernelShade()
 KernelShade::KernelShade(int width, int height, GLuint texIdRayDir, GLuint texIdTriangleHitInfo, GLuint texIdvertexes, GLuint texIdNormals, 
                           GLuint texIdDiffuseTex, GLuint texIdSpecularTex, GLuint texIdLights, 
                           GLfloat normalsTexSize, GLfloat vertexesTexSize, GLfloat diffuseTexSize, GLfloat specularTexSize,
-                          GLfloat lightsTexSize)
+                          GLfloat lightsTexSize, Color clearColor)
 : KernelBase("./resources/vertice.vert", "./resources/shade.frag", width, height){
       //Output
       addOutput(0, texIdRayDir);    
@@ -36,6 +36,7 @@ KernelShade::KernelShade(int width, int height, GLuint texIdRayDir, GLuint texId
         addInputFloat("especularSize", specularTexSize);
         addInputFloat("lightsSize", lightsTexSize);
         m_locEyePos = addInputVec3("eyePos", Vector3(0, 0, 0));
+        addInputVec3("clearColor", clearColor);
       m_shader->setActive(false);
 }
 

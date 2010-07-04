@@ -3,8 +3,10 @@ uniform sampler2D triangleInfo;
 
 uniform sampler2D vertexes;
 uniform sampler2D normals;
+
 uniform sampler2D diffuseTex;
 uniform sampler2D especularTex;
+
 uniform sampler1D lights;
 
 uniform float maxTextureSize;
@@ -16,6 +18,7 @@ uniform float especularSize;
 uniform float lightsSize;
 
 uniform vec3 eyePos;
+uniform vec3 clearColor;
 
 vec3 getInterpolatedNormal(float triangleIndex);
 
@@ -73,6 +76,8 @@ void main()
 
   gl_FragData[0] = rDir; //DEBUG
   gl_FragData[1] = texture2D(triangleInfo, gl_TexCoord[0].st);//DEBUG
+  gl_FragData[2] = vec4(clearColor,1.0);
+  gl_FragData[3] = vec4(clearColor,1.0);
 
 //  gl_FragData[2] = vec4(0,0,1, 0.8);
 //  gl_FragData[3] = vec4(0,0,1, 0.8);

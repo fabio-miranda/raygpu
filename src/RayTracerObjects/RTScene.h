@@ -26,6 +26,7 @@ class RTScene
   protected:
       bool mCalculed;
       Color mClear;
+
       Color mAmbient;
 
       bool mBinFile;
@@ -36,12 +37,13 @@ class RTScene
       vector<RTMesh> mMeshes;
       RTCamera mCamera;
 
+      Vector3 mGridSize;
       UniformGrid* mGrid;
 
       GLuint mGridTexId;
       GLuint mTrianglesTexId;
       GLuint mVertexesTexId;
-      GLuint mAmbientTexId;
+      GLuint mMaterialTexId;
       GLuint mDiffuseTexId;
       GLuint mSpecularTexId;
       GLuint mNormalsTexId;
@@ -52,7 +54,7 @@ class RTScene
 
    public:
 	   RTScene(){};
-      RTScene(string fileName);
+      RTScene(string fileName, Vector3 gridSize = Vector3(1,1,1));
       ~RTScene();
 
       void configure();
@@ -65,7 +67,7 @@ class RTScene
       GLuint getGridTexId();
       GLuint getTriangleListTexId();
       GLuint getVertexesTexId();
-      GLuint getAmbientTexId();
+      GLuint getMaterialTexId();
       GLuint getDiffuseTexId();
       GLuint getSpecularTexId();
       GLuint getNormalsTexId();
@@ -74,11 +76,13 @@ class RTScene
       GLfloat getGridTexSize();
       GLfloat getTriangleListTexSize();
       GLfloat getVertexesTexSize();
-      GLfloat getAmbientTexSize();
+      GLfloat getMaterialTexSize();
       GLfloat getDiffuseTexSize();
       GLfloat getSpecularTexSize();
       GLfloat getNormalsTexSize();
       GLfloat getLightsTexSize();
+
+      Color getClearColor() const;
 
    protected:
       void readFromStr(char buffer[]);

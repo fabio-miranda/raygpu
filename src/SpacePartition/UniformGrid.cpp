@@ -26,7 +26,7 @@ UniformGrid::~UniformGrid(){
 	delete [] m_triangleListArray;
 	delete [] m_triangleVertexArray;
 	delete [] m_triangleNormalsArray;
-	delete [] m_triangleAmbientArray;
+	delete [] m_triangleMaterialArray;
 	delete [] m_triangleDiffuseArray;
 	delete [] m_triangleSpecularArray;
 
@@ -140,10 +140,10 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 	m_triangleNormalsArray = new GLfloat[texture2DnumLines*max_tex_size*3];
 	memset(m_triangleNormalsArray, 0, sizeof(GLfloat) * texture2DnumLines*max_tex_size*3);
 
-	m_triangleAmbientArraySize = p_numTriangles * 3;
-  texture2DnumLines = (int)((m_triangleAmbientArraySize/3)/max_tex_size) + (int)(m_triangleAmbientArraySize%max_tex_size != 0);
-	m_triangleAmbientArray = new GLfloat[texture2DnumLines*max_tex_size*3];
-	memset(m_triangleAmbientArray, 0, sizeof(GLfloat) * texture2DnumLines*max_tex_size*3);
+	m_triangleMaterialArraySize = p_numTriangles * 3;
+  texture2DnumLines = (int)((m_triangleMaterialArraySize/3)/max_tex_size) + (int)(m_triangleMaterialArraySize%max_tex_size != 0);
+	m_triangleMaterialArray = new GLfloat[texture2DnumLines*max_tex_size*3];
+	memset(m_triangleMaterialArray, 0, sizeof(GLfloat) * texture2DnumLines*max_tex_size*3);
 
 	m_triangleDiffuseArraySize = p_numTriangles * 3;
   texture2DnumLines = (int)((m_triangleDiffuseArraySize/3)/max_tex_size) + (int)(m_triangleDiffuseArraySize%max_tex_size != 0);
@@ -206,15 +206,18 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
           m_triangleNormalsArray[triangleIndex*3*3+3+3+1] = aux_grid[cont].at(j)->n3.y;
           m_triangleNormalsArray[triangleIndex*3*3+3+3+2] = aux_grid[cont].at(j)->n3.z;
 
+          m_triangleMaterialArray[triangleIndex*3] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).opacity;
+          m_triangleMaterialArray[triangleIndex*3+1] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).reflective;
+          m_triangleMaterialArray[triangleIndex*3+2] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).refractive;
 
-					m_triangleSpecularArray[triangleIndex*4] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mSpecular.r;
-					m_triangleSpecularArray[triangleIndex*4+1] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mSpecular.g;
-					m_triangleSpecularArray[triangleIndex*4+2] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mSpecular.b;
-					m_triangleSpecularArray[triangleIndex*4+3] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mSpecularExp;
+					m_triangleSpecularArray[triangleIndex*4] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).specular.r;
+					m_triangleSpecularArray[triangleIndex*4+1] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).specular.g;
+					m_triangleSpecularArray[triangleIndex*4+2] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).specular.b;
+					m_triangleSpecularArray[triangleIndex*4+3] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).specularExp;
 
-					m_triangleDiffuseArray[triangleIndex*3] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mDiffuse.r;
-					m_triangleDiffuseArray[triangleIndex*3+1] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mDiffuse.g;
-					m_triangleDiffuseArray[triangleIndex*3+2] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).mDiffuse.b;
+					m_triangleDiffuseArray[triangleIndex*3] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).diffuse.r;
+					m_triangleDiffuseArray[triangleIndex*3+1] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).diffuse.g;
+					m_triangleDiffuseArray[triangleIndex*3+2] = p_material->at(aux_grid[cont].at(j)->getMaterialIndex()).diffuse.b;
           /**/
 				}
 				m_gridArray[gridIndexCont++] = x;
@@ -230,56 +233,6 @@ void UniformGrid::calculateGrid(unsigned int p_numTriangles, std::vector<RTMesh>
 			}
 		}
 	}
-
-  //for(int i=0; i<m_gridArraySize; i+=4)
-  //{
-  //  //printf("%f %f %f %f\n",m_gridArray[i],m_gridArray[i+1],m_gridArray[i+2],m_gridArray[i+3]);
-  //  //if(m_gridArray[i+3]>0 && m_gridArray[i+3] < 30 )
-  //  //if(m_gridArray[i+3]>0)
-  //    //printf("%d \n",(int)m_triangleListArray[(int)m_gridArray[i+3]]);
-  //  //printf("%f\n",m_gridArray[i+3]);
-
-  //  if(m_gridArray[i+3]>0)
-  //  {
-  //    //printf("%f %f\n",m_gridArray[i+3], m_triangleListArray[(int)m_gridArray[i+3]]);
-  //    //printf("%f\n",m_gridArray[i+3]);
-  //    int j=0;
-  //    for(j = 0 ; m_triangleListArray[(int)m_gridArray[i+3] + j] >=0;++j)
-  //    {
-  //      //printf("  %d -> %f\n",j, m_triangleListArray[(int)m_gridArray[i+3] + j]);
-  //    }
-  //    //printf("\n\n");
-  //    printf("%f, %d\n",m_gridArray[i+3], j);
-  //  }//else printf("%f\n",m_gridArray[i+3]);
-  //  /**/
-  //}
-
-  //for(int i=0; i<m_triangleListArraySize; i++)
-  //{
-  //  printf("%f\n",m_triangleListArray[i]);
-  //}
-
-  //for(int i=0; i<m_triangleVertexArraySize; i+=9)
-  //{
-  //  int j=0;
-  //  printf("%f %f %f   %f %f %f    %f %f %f\n",
-  //    m_triangleVertexArray[i+j++],
-  //    m_triangleVertexArray[i+j++],
-  //    m_triangleVertexArray[i+j++],
-
-  //    m_triangleVertexArray[i+j++],
-  //    m_triangleVertexArray[i+j++],
-  //    m_triangleVertexArray[i+j++],
-
-  //    m_triangleVertexArray[i+j++],
-  //    m_triangleVertexArray[i+j++],
-  //    m_triangleVertexArray[i+j++]
-  //  );
-  //}
-
-	//for(int i=0; i<m_gridArraySize; i++)
-	//	std::cout << m_gridArray[i] << " ";
-
 	delete [] aux_grid;
 }
 
@@ -392,9 +345,9 @@ GLfloat* UniformGrid::getTriangleNormalsArray()
   return m_triangleNormalsArray;
 }
 
-GLfloat* UniformGrid::getTriangleAmbientArray()
+GLfloat* UniformGrid::getTriangleMaterialArray()
 {
-  return m_triangleAmbientArray;
+  return m_triangleMaterialArray;
 }
 
 GLfloat* UniformGrid::getTriangleDiffuseArray()
@@ -424,8 +377,8 @@ int UniformGrid::getTriangleVertexArraySize(){
   return (int)((float)(m_triangleVertexArraySize)/3.0);
 }
 
-int UniformGrid::getTriangleAmbientArraySize(){
-  return (int)((float)(m_triangleAmbientArraySize)/3.0);
+int UniformGrid::getTriangleMaterialArraySize(){
+  return (int)((float)(m_triangleMaterialArraySize)/3.0);
 }
 
 
@@ -472,9 +425,9 @@ int UniformGrid::getTriangleNormalsArrayAbsoluteSize()
   return m_triangleNormalsArraySize;
 }
 
-int UniformGrid::getTriangleAmbientArrayAbsoluteSize()
+int UniformGrid::getTriangleMaterialArrayAbsoluteSize()
 {
-  return m_triangleAmbientArraySize;
+  return m_triangleMaterialArraySize;
 }
 
 int UniformGrid::getTriangleDiffuseArrayAbsoluteSize()
@@ -507,7 +460,7 @@ struct fileBuffer
   int triangleVertexArraySize;
   int triangleListArraySize;
   int triangleNormalsArraySize;
-  int triangleAmbientArraySize;
+  int triangleMaterialArraySize;
   int triangleDiffuseArraySize;
   int triangleSpecularArraySize;
 };
@@ -548,7 +501,7 @@ void UniformGrid::writeRTBFile( string fileName )
   writeFileBuffer.triangleVertexArraySize = m_triangleVertexArraySize;
   writeFileBuffer.triangleListArraySize = m_triangleListArraySize;
   writeFileBuffer.triangleNormalsArraySize = m_triangleNormalsArraySize;
-  writeFileBuffer.triangleAmbientArraySize = m_triangleAmbientArraySize;
+  writeFileBuffer.triangleMaterialArraySize = m_triangleMaterialArraySize;
   writeFileBuffer.triangleDiffuseArraySize = m_triangleDiffuseArraySize;
   writeFileBuffer.triangleSpecularArraySize = m_triangleSpecularArraySize;
 
@@ -567,8 +520,8 @@ void UniformGrid::writeRTBFile( string fileName )
   texture2DnumLines = (int)((m_triangleNormalsArraySize/3)/max_tex_size) + (int)(m_triangleNormalsArraySize%max_tex_size != 0);
   fwrite(m_triangleNormalsArray, sizeof(GLfloat),texture2DnumLines*max_tex_size*3,fp);
 
-  texture2DnumLines = (int)((m_triangleAmbientArraySize/3)/max_tex_size) + (int)(m_triangleAmbientArraySize%max_tex_size != 0);
-  fwrite(m_triangleAmbientArray, sizeof(GLfloat),texture2DnumLines*max_tex_size*3,fp);
+  texture2DnumLines = (int)((m_triangleMaterialArraySize/3)/max_tex_size) + (int)(m_triangleMaterialArraySize%max_tex_size != 0);
+  fwrite(m_triangleMaterialArray, sizeof(GLfloat),texture2DnumLines*max_tex_size*3,fp);
 
   texture2DnumLines = (int)((m_triangleDiffuseArraySize/3)/max_tex_size) + (int)(m_triangleDiffuseArraySize%max_tex_size != 0);
   fwrite(m_triangleDiffuseArray, sizeof(GLfloat),texture2DnumLines*max_tex_size*3,fp);
@@ -617,7 +570,7 @@ void UniformGrid::readRTBFile( string fileName )
   m_triangleVertexArraySize = readFileBuffer.triangleVertexArraySize;
   m_triangleListArraySize = readFileBuffer.triangleListArraySize;
   m_triangleNormalsArraySize = readFileBuffer.triangleNormalsArraySize;
-  m_triangleAmbientArraySize = readFileBuffer.triangleAmbientArraySize;
+  m_triangleMaterialArraySize = readFileBuffer.triangleMaterialArraySize;
   m_triangleDiffuseArraySize = readFileBuffer.triangleDiffuseArraySize;
   m_triangleSpecularArraySize = readFileBuffer.triangleSpecularArraySize;
 
@@ -640,9 +593,9 @@ void UniformGrid::readRTBFile( string fileName )
   m_triangleNormalsArray = new GLfloat[texture2DnumLines*max_tex_size*3];
   fread(m_triangleNormalsArray, sizeof(GLfloat),texture2DnumLines*max_tex_size*3,fp);
 
-  texture2DnumLines = (int)((m_triangleAmbientArraySize/3)/max_tex_size) + (int)(m_triangleAmbientArraySize%max_tex_size != 0);
-  m_triangleAmbientArray = new GLfloat[texture2DnumLines*max_tex_size*3];
-  fread(m_triangleAmbientArray, sizeof(GLfloat),texture2DnumLines*max_tex_size*3,fp);
+  texture2DnumLines = (int)((m_triangleMaterialArraySize/3)/max_tex_size) + (int)(m_triangleMaterialArraySize%max_tex_size != 0);
+  m_triangleMaterialArray = new GLfloat[texture2DnumLines*max_tex_size*3];
+  fread(m_triangleMaterialArray, sizeof(GLfloat),texture2DnumLines*max_tex_size*3,fp);
 
   texture2DnumLines = (int)((m_triangleDiffuseArraySize/3)/max_tex_size) + (int)(m_triangleDiffuseArraySize%max_tex_size != 0);
   m_triangleDiffuseArray = new GLfloat[texture2DnumLines*max_tex_size*3];
