@@ -136,12 +136,13 @@ void keyboard(unsigned char key, int x, int y){
   if( key == 32)
     kernelMng->generateRay();
   else if(key == '1')
-    kernelMng->m_currentState = CALCULATEVOXEL;
+    kernelMng->setCurrentState(CALCULATEVOXEL);
   else if(key == '2')
-	kernelMng->m_currentState = TRAVERSE;
+	kernelMng->setCurrentState(TRAVERSE);
   else if(key == '3')
-    kernelMng->m_currentState = INTERSECT;
+    kernelMng->setCurrentState(INTERSECT);
   else if(key == '4')
+    kernelMng->setCurrentState(SHADE);
 }
 
 void mouseButtons(int button, int state, int x, int y){
@@ -206,7 +207,7 @@ void createScenes(int argc, char *argv[])
 
 void render(){
 
-	if(step == false) return;
+	//if(step == false) return;
 
 	//std::cout << camBeta << ", " << camAlpha << ", " << camInc << "\n";
 

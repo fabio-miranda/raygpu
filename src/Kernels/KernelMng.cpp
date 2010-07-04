@@ -36,11 +36,13 @@ KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth,
 											scene->getVertexesTexSize());
 
 
-	m_kernelShade = new KernelShade(width, height, m_kernelGenerateRay->getTexIdRayDir(), m_kernelIntersect->getTexIdTriangleHitInfo(), 
+	m_kernelShade = new KernelShade(width, height, m_kernelGenerateRay->getTexIdRayDir(),m_kernelGenerateRay->getTexIdRayPos(),
+                  m_kernelIntersect->getTexIdTriangleHitInfo(), 
 									scene->getVertexesTexId(), scene->getNormalsTexId(), scene->getMaterialTexId(),
                   scene->getLightsTexId(), scene->getNormalsTexSize(),
 									scene->getVertexesTexSize(), scene->getMaterialTexSize(),
-									scene->getLightsTexSize(), scene->getClearColor());
+									scene->getLightsTexSize(), scene->getClearColor()
+                  );
 	
 	m_currentState = GENERATERAY;
 	m_numTraverses = 0;
