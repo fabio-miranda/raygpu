@@ -22,7 +22,10 @@ public:
 	GLuint getTextureColorId();
 	void renderKernelOutput(KernelMngState stateToRender, int outputNum);
 	void generateRay();
-	KernelMngState m_currentState;
+	
+  void setCurrentState(KernelMngState val);
+  KernelMngState getCurrentState() const;
+  
 private:
 	KernelMngState oracle();
 	void update(KernelMngState stateToStop);
@@ -39,6 +42,8 @@ private:
 	GLuint m_textureRayDirection;
 	FrameBufferObject m_fbo;
 
+  KernelMngState m_currentState;
+  
 };
 
 

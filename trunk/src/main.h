@@ -18,5 +18,6 @@ void keyboard(unsigned char key, int x, int y);
 void keyboardSpecial(int key, int x, int y);
 void mouseButtons(int button, int state, int x, int y);
 void mouseActive(int x, int y);
+void createScenes(int argc, char *argv[]);
 
 #endif

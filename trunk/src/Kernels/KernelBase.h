@@ -6,6 +6,7 @@
 
 #include <GraphBasis/FrameBufferObject.h>
 #include <GraphBasis/Vector3.h>
+#include <GraphBasis/Color.h>
 #include <GraphBasis/Shader.h>
 
 class KernelBase {
@@ -24,6 +25,7 @@ protected:
 	void activateTextures();
 	GLuint addInputTexture(GLenum textureDimension, char* name, GLuint id);
 	GLuint addInputVec3(char* name, Vector3 value);
+  GLuint addInputVec3(char* name, Color value);
 	GLuint addInputFloat(char* name, GLfloat value);
 	GLuint addOutput(int index, GLuint textureId = -1);
 	

@@ -10,7 +10,7 @@ public:
   KernelShade(int width, int height,  GLuint texIdRayDir, GLuint texIdTriangleHitInfo, GLuint texIdvertexes, GLuint texIdNormals, 
     GLuint texIdDiffuseTex, GLuint texIdSpecularTex, GLuint texIdLights, 
     GLfloat normalsTexSize, GLfloat vertexesTexSize, GLfloat diffuseTexSize, GLfloat specularTexSize,
-    GLfloat lightsTexSize);
+    GLfloat lightsTexSize, Color clearColor);
 	~KernelShade();
 
 	void step(Vector3 eyePos);

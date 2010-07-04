@@ -27,7 +27,7 @@ public:
   GLfloat* getTriangleListArray();
   GLfloat* getTriangleVertexArray();
   GLfloat* getTriangleNormalsArray();
-  GLfloat* getTriangleAmbientArray();
+  GLfloat* getTriangleMaterialArray();
   GLfloat* getTriangleDiffuseArray();
   GLfloat* getTriangleSpecularArray();
   GLfloat* getLightsArray();
@@ -39,7 +39,7 @@ public:
   int getTriangleListArrayAbsoluteSize();
   int getTriangleVertexArrayAbsoluteSize();
   int getTriangleNormalsArrayAbsoluteSize();
-  int getTriangleAmbientArrayAbsoluteSize();
+  int getTriangleMaterialArrayAbsoluteSize();
   int getTriangleDiffuseArrayAbsoluteSize();
   int getTriangleSpecularArrayAbsoluteSize();
   int getLightsArrayAbsoluteSize();
@@ -49,7 +49,7 @@ public:
   int getTriangleListArraySize();
   int getTriangleVertexArraySize();
   int getTriangleNormalsArraySize();
-  int getTriangleAmbientArraySize();
+  int getTriangleMaterialArraySize();
   int getTriangleDiffuseArraySize();
   int getTriangleSpecularArraySize();
   int getLightsArraySize();
@@ -80,7 +80,7 @@ private:
 	GLfloat* m_triangleListArray;
 	GLfloat* m_triangleVertexArray;
 	GLfloat* m_triangleNormalsArray;
-	GLfloat* m_triangleAmbientArray;
+	GLfloat* m_triangleMaterialArray;
 	GLfloat* m_triangleDiffuseArray;
 	GLfloat* m_triangleSpecularArray;
   GLfloat* m_lightsArray;
@@ -89,7 +89,7 @@ private:
 	int m_triangleVertexArraySize;
 	int m_triangleListArraySize;
 	int m_triangleNormalsArraySize;
-	int m_triangleAmbientArraySize;
+	int m_triangleMaterialArraySize;
 	int m_triangleDiffuseArraySize;
 	int m_triangleSpecularArraySize;
   int m_lightsArraySize;

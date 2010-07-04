@@ -31,7 +31,7 @@ KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth,
 									scene->getVertexesTexId(), scene->getNormalsTexId(), scene->getDiffuseTexId(),
 									scene->getSpecularTexId(), scene->getLightsTexId(), scene->getNormalsTexSize(),
 									scene->getVertexesTexSize(), scene->getDiffuseTexSize(), scene->getSpecularTexSize(),
-									scene->getLightsTexSize());
+									scene->getLightsTexSize(), scene->getClearColor());
 	
 	m_currentState = GENERATERAY;
 	//m_uniformGrid = uniformGrid;
@@ -229,4 +229,14 @@ KernelMngState KernelMng::oracle(){
 
 int KernelMng::countActiveRays(){
 	return 0;
+}
+
+KernelMngState KernelMng::getCurrentState() const
+{
+ return m_currentState; 
+}
+
+void KernelMng::setCurrentState( KernelMngState val )
+{
+  m_currentState = val;
 }

@@ -24,12 +24,6 @@ class RTMaterial
       GLfloat mGDiffuse[4];
       GLfloat mGShi;
 
-      
-      
-      float mReflective;
-      float mRefractive;
-      float mOpacity;
-
       int myRTMaterialNum;
    public:
       RTMaterial();
@@ -40,9 +34,13 @@ class RTMaterial
       void configure();
       void render();
 
-	  Color mSpecular;
-      Color mDiffuse;
-	  float mSpecularExp;
+      Color specular;
+      Color diffuse;
+      float specularExp;
+
+      float reflective;
+      float refractive;
+      float opacity;
 
 };
 
