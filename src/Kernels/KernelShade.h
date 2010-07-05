@@ -7,7 +7,8 @@ class KernelShade : public KernelBase {
 
 public:
 	KernelShade();
-  KernelShade(int width, int height,  GLuint texIdRayDir, GLuint texIdRayPos,GLuint texIdTriangleHitInfo,
+  KernelShade(int width, int height,  GLuint texIdRayDir, GLuint texIdRayPos, GLuint texIdColor, 
+    GLuint texIdTriangleHitInfo,
     GLuint texIdvertexes, GLuint texIdNormals, GLuint texIdMaterialTex, GLuint texIdLights, 
     GLfloat normalsTexSize, GLfloat vertexesTexSize, GLfloat materialTexSize,
     GLfloat lightsTexSize, Color clearColor
@@ -15,11 +16,9 @@ public:
 	~KernelShade();
 
 	void step(Vector3 eyePos);
-	GLuint getTextureColorId();
 
 private:
   GLuint m_locEyePos;
-  GLuint m_texIdColor;
 };
 
 

@@ -6,6 +6,7 @@ KernelShade::KernelShade()
 }
 
 KernelShade::KernelShade(int width, int height,  GLuint texIdRayDir, GLuint texIdRayPos, 
+                         GLuint texIdColor,
                          GLuint texIdTriangleHitInfo, GLuint texIdvertexes, GLuint texIdNormals, 
                          GLuint texIdMaterialTex, GLuint texIdLights, 
                          GLfloat normalsTexSize, GLfloat vertexesTexSize, GLfloat materialTexSize,
@@ -16,8 +17,8 @@ KernelShade::KernelShade(int width, int height,  GLuint texIdRayDir, GLuint texI
       addOutput(0, texIdRayDir);    
       addOutput(1, texIdRayPos);    
       addOutput(2, texIdTriangleHitInfo);
-      m_texIdColor = addOutput(3);
-      //GLuint aux = addOutput(3);
+      addOutput(3, texIdColor);
+
 
       GLint max_tex_size = 0;
       glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
@@ -30,6 +31,7 @@ KernelShade::KernelShade(int width, int height,  GLuint texIdRayDir, GLuint texI
         addInputTexture(GL_TEXTURE_2D, "vertexes", texIdvertexes);
         addInputTexture(GL_TEXTURE_2D, "normals", texIdNormals);
         addInputTexture(GL_TEXTURE_2D, "materialTex", texIdMaterialTex);
+        addInputTexture(GL_TEXTURE_2D, "colorTex", texIdColor);
         addInputTexture(GL_TEXTURE_1D, "lights", texIdLights);
 
         addInputFloat("vertexesSize", vertexesTexSize);
@@ -58,6 +60,3 @@ void KernelShade::step(Vector3 eyePos){
   m_fbo->setActive(false);
 }
 
-GLuint KernelShade::getTextureColorId(){
-	return m_texIdColor;
-}

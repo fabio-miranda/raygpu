@@ -14,6 +14,7 @@ float camInc;
 float nearPlane;
 float fov;
 bool step;
+bool sstep = false;
 
 int rObj;
 
@@ -130,19 +131,33 @@ void keyboard(unsigned char key, int x, int y){
     break;
   }
   //cout << (int)key<<endl;
-  if( key == 32)
-		kernelMng->generateRay();
-
-  if( key == 32)
+   if( key == 32)
+  {
     kernelMng->generateRay();
+    step = sstep = true;
+  }
   else if(key == '1')
+  {
     kernelMng->setCurrentState(CALCULATEVOXEL);
+    step = true;
+    sstep = false;
+  }
   else if(key == '2')
-	kernelMng->setCurrentState(TRAVERSE);
+  {
+	  kernelMng->setCurrentState(TRAVERSE);
+    step = sstep = true;
+  }
   else if(key == '3')
+  {
     kernelMng->setCurrentState(INTERSECT);
+    step = sstep = true;
+  }
   else if(key == '4')
+  {
     kernelMng->setCurrentState(SHADE);
+    step = true;
+    sstep = false;
+  }
 }
 
 void mouseButtons(int button, int state, int x, int y){
@@ -252,5 +267,5 @@ void render(){
  
 	glutSwapBuffers();
 
-	step = false;
+	step = sstep ;
 }

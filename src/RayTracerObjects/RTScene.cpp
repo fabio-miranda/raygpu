@@ -72,7 +72,12 @@ void RTScene :: readFromRT4File(string rt4FileName)
 	{
 	   fscanf(file, "%s", buffer);
 //	   cout << buffer <<endl;
-	   if(!strcmp(buffer, "RT"))
+     if(buffer[0]=='!' || buffer[0]=='#')
+     {
+       // Ignore Comment 
+       fscanf(file, "%*[^\n]s");
+     }
+     else if(!strcmp(buffer, "RT"))
 	   {
 			// Ignore File Version Information 
          fscanf(file, "%*[^\n]s");

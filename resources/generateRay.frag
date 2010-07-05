@@ -23,6 +23,15 @@ uniform float gridArraySize;
 
 //Ray voxel (stored on rayPos.a)
 
+
+#define COLOR_NULL -1.0
+#define COLOR_DONE 1.0
+#define COLOR_MUL_LIGHT 2.0
+
+
+#define SHADOW_INACTIVE -1.0
+#define SHADOW_ACTIVE 1.0
+
 vec3 getRay(vec2 screenPos){
 
 	vec3 u = ((screenPos.x)) * normalize(eyeRight) * (nearPlaneSize.x);
@@ -202,8 +211,10 @@ void main(){
 			breakpoint = -1.0;
 		}
 	}
-
-
+  gl_FragData[0] = vec4(-1.0, -1.0, -1.0, COLOR_NULL);
+  gl_FragData[1] = vec4(-1.0, -1.0, -1.0, SHADOW_INACTIVE);
+  gl_FragData[2] = rayPos;
+	gl_FragData[3] = rayDir;
 
 //	gl_FragData[0] = vec4(normalize(rayPos.xyz), 0.5);
 //	gl_FragData[0] = vec4((vec3(length(rayPos.xyz-eyePos.xyz)/25.)), 1.5);
@@ -215,9 +226,9 @@ void main(){
 	//gl_FragData[0] = vec4((normalize(rayDir.xyz) + 1.0)/2.0, 0.5);
 	/**/
 	//gl_FragData[0] = vec4(normalize(rayPos.xyz), 1.0);
-	gl_FragData[0] = rayPos;
+
 	//gl_FragData[1] = vec4(normalize(rayDir.xyz), 1.0);
-	gl_FragData[1] = rayDir;
+
 	//gl_FragData[2] = vec4(vec3(intersectionMin),1.0);
 	//gl_FragData[2] = vec4(intersectionMin);
 	//gl_FragData[3] = vec4(normalize(intersectionOut), 1.0);
