@@ -207,7 +207,7 @@ void createScenes(int argc, char *argv[])
 
 void render(){
 
-	//if(step == false) return;
+	if(step == false) return;
 
 	//std::cout << camBeta << ", " << camAlpha << ", " << camInc << "\n";
 
