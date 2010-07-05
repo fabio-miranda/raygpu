@@ -30,7 +30,7 @@ MESH 0  -50. 1. 50.     400. 400. 400.  resources/Models/bunny.msh
 # MESH 0  -50. 1. 50.     1. 1. 1.  resources/Models/cavalo.um
 
 MESH 0  50. 1. 0.     1. 1. 1.  resources/Models/floor.um
-MESH 0  50. 1. 0.     1. 1. 1.  resources/Models/wall.um
+MESH 1  50. 1. 0.     1. 1. 1.  resources/Models/wall.um
 
 
 

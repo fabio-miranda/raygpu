@@ -22,6 +22,8 @@ uniform float maxTextureSize;
 #define DONE 7.0
 
 
+
+
 vec2 index1Dto2D(float index, float width, float size)
 {
   float height = float(trunc(size/width))+1.0;

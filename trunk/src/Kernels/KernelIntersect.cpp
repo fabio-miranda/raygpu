@@ -5,7 +5,8 @@ KernelIntersect::KernelIntersect()
 
 }
 
-KernelIntersect::KernelIntersect(int width, int height, GLuint texIdRayPos, GLuint texIdRayDir, GLuint texIdGrid,
+KernelIntersect::KernelIntersect(int width, int height, GLuint texIdRayPos, GLuint texIdRayDir,
+                                 GLuint texIdShadowInfo, GLuint texIdGrid,
                                  GLuint texIdTriangleList, GLuint texIdvertexes, GLfloat gridTexSize, 
                                  GLfloat triangleListTexSize, GLfloat vertexesTexSize)
 : KernelBase("./resources/vertice.vert", "./resources/intersector.frag", width, height){
@@ -25,6 +26,7 @@ KernelIntersect::KernelIntersect(int width, int height, GLuint texIdRayPos, GLui
     addInputTexture(GL_TEXTURE_2D, "rayPos", texIdRayPos);
     addInputTexture(GL_TEXTURE_2D, "rayDir", texIdRayDir);
     addInputTexture(GL_TEXTURE_2D, "triangleInfoTex", m_texIdTriangleHitInfo);
+    addInputTexture(GL_TEXTURE_2D, "shadowInfoTex", texIdShadowInfo);
     addInputTexture(GL_TEXTURE_2D, "grid", texIdGrid);
     addInputTexture(GL_TEXTURE_2D, "vertexes", texIdvertexes);
     //addInputTexture(GL_TEXTURE_1D, "vertexes", texIdvertexes);

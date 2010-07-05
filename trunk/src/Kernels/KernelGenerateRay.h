@@ -19,6 +19,8 @@ public:
 	GLuint getTexIdRayPos();
 	GLuint getTexIdRayDir();
   GLuint getTexIdColor();
+  GLuint getTexIdShadow();
+  
   
 
 	GLuint m_locEyePos;
@@ -28,9 +30,11 @@ public:
 	GLuint m_locNearPlaneSize;
 	GLuint m_locNearPlanePos;
 	GLuint m_locScreenSize;
-	GLuint m_texIdRayPos;
+	
+  GLuint m_texIdRayPos;
 	GLuint m_texIdRayDir;
   GLuint m_texIdColor;
+  GLuint m_texIdShadow;
 
 
 

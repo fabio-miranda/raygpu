@@ -6,8 +6,8 @@ KernelShade::KernelShade()
 }
 
 KernelShade::KernelShade(int width, int height,  GLuint texIdRayDir, GLuint texIdRayPos, 
-                         GLuint texIdColor,
-                         GLuint texIdTriangleHitInfo, GLuint texIdvertexes, GLuint texIdNormals, 
+                         GLuint texIdColor, GLuint texIdTriangleHitInfo, GLuint texIdShadowInfo,
+                         GLuint texIdvertexes, GLuint texIdNormals, 
                          GLuint texIdMaterialTex, GLuint texIdLights, 
                          GLfloat normalsTexSize, GLfloat vertexesTexSize, GLfloat materialTexSize,
                          GLfloat lightsTexSize, Color clearColor
@@ -18,6 +18,7 @@ KernelShade::KernelShade(int width, int height,  GLuint texIdRayDir, GLuint texI
       addOutput(1, texIdRayPos);    
       addOutput(2, texIdTriangleHitInfo);
       addOutput(3, texIdColor);
+      addOutput(4, texIdShadowInfo);
 
 
       GLint max_tex_size = 0;

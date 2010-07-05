@@ -10,9 +10,10 @@ class KernelIntersect : public KernelBase {
 public:
   KernelIntersect();
 
-  KernelIntersect(int width, int height, GLuint texIdRayPos, GLuint texIdRayDir, GLuint texIdGrid,
-    GLuint texIdTriangleList, GLuint texIdvertexes, GLfloat gridTexSize, 
-    GLfloat triangleListTexSize, GLfloat vertexesTexSize);
+  KernelIntersect(int width, int height, GLuint texIdRayPos, GLuint texIdRayDir,
+                  GLuint texIdShadowInfo, GLuint texIdGrid,
+                  GLuint texIdTriangleList, GLuint texIdvertexes, GLfloat gridTexSize, 
+                  GLfloat triangleListTexSize, GLfloat vertexesTexSize);
 	~KernelIntersect();
 
    
