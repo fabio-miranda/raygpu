@@ -150,7 +150,8 @@ void keyboard(unsigned char key, int x, int y){
   else if(key == '3')
   {
     kernelMng->setCurrentState(INTERSECT);
-    step = sstep = true;
+    step = true;
+    sstep = false;
   }
   else if(key == '4')
   {

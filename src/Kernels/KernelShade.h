@@ -8,7 +8,7 @@ class KernelShade : public KernelBase {
 public:
 	KernelShade();
   KernelShade(int width, int height,  GLuint texIdRayDir, GLuint texIdRayPos, GLuint texIdColor, 
-    GLuint texIdTriangleHitInfo,
+    GLuint texIdTriangleHitInfo, GLuint texIdShadowInfo,
     GLuint texIdvertexes, GLuint texIdNormals, GLuint texIdMaterialTex, GLuint texIdLights, 
     GLfloat normalsTexSize, GLfloat vertexesTexSize, GLfloat materialTexSize,
     GLfloat lightsTexSize, Color clearColor

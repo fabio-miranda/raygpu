@@ -31,7 +31,9 @@ KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth,
 
 
 	m_kernelIntersect = new KernelIntersect(width, height, m_kernelGenerateRay->getTexIdRayPos(),
-											m_kernelGenerateRay->getTexIdRayDir(), scene->getGridTexId(), scene->getTriangleListTexId(),
+											m_kernelGenerateRay->getTexIdRayDir(),
+                      m_kernelGenerateRay->getTexIdShadow(),
+                      scene->getGridTexId(), scene->getTriangleListTexId(),
 											scene->getVertexesTexId(), scene->getGridTexSize(), scene->getTriangleListTexSize(),
 											scene->getVertexesTexSize());
 
@@ -39,6 +41,7 @@ KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth,
 	m_kernelShade = new KernelShade(width, height, m_kernelGenerateRay->getTexIdRayDir(),
                   m_kernelGenerateRay->getTexIdRayPos(), m_kernelGenerateRay->getTexIdColor(),
                   m_kernelIntersect->getTexIdTriangleHitInfo(), 
+                  m_kernelGenerateRay->getTexIdShadow(),
 									scene->getVertexesTexId(), scene->getNormalsTexId(), 
                   scene->getMaterialTexId(),
                   scene->getLightsTexId(), scene->getNormalsTexSize(),

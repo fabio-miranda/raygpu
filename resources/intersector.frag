@@ -1,7 +1,7 @@
 uniform sampler2D rayPos;
 uniform sampler2D rayDir;
 uniform sampler2D triangleInfoTex;
-//uniform sampler2D shadowInfo;
+uniform sampler2D shadowInfoTex;
 
 uniform sampler2D grid;
 uniform sampler2D vertexes;
@@ -26,6 +26,10 @@ uniform float vertexesSize;
 #define OVERFLOW 6.0
 #define DONE 7.0
 
+
+#define SHADOW_INACTIVE -1.0
+#define SHADOW_ACTIVE 1.0
+
 vec2 index1Dto2D(float index, float width, float size)
 {
   float height = float(trunc(size/width))+1.0;
@@ -38,13 +42,14 @@ vec2 index1Dto2D(float index, float width, float size)
 
 const float infinity = 9.99999999999999999999999999e37;
 
-vec3 intersect(float vertexIndex, vec4 rPos, vec4 rDir, vec3 lastHit, float triangleIndex);
+vec3 intersect(float vertexIndex, vec4 rPos, vec4 rDir, vec3 lastHit, float triangleIndex, float minDist);
 
 void main()
 {
   vec4 rDir = texture2D(rayDir, gl_TexCoord[0].st);
   vec4 rPos = texture2D(rayPos, gl_TexCoord[0].st);
   vec4 triangleInfo = texture2D(triangleInfoTex, gl_TexCoord[0].st);
+
 
   gl_FragData[0] = rDir; //debug
   gl_FragData[1] = rPos; //debug
@@ -58,11 +63,18 @@ void main()
 
   if(floor(triangleFlag+0.5) == ACTIVE_INTERSECT)
   {
+    vec4 shadowInfo = texture2D(shadowInfoTex, gl_TexCoord[0].st);
+    bool shadowActive = floor(shadowInfo.a+.5) == SHADOW_ACTIVE;
+    float shadowTriangleIndex = floor(shadowInfo.r+.5);
+    float shadowVertexIndex = floor(shadowInfo.g+.5);
+
     vec2 coord2D = index1Dto2D(gridIndex, maxTextureSize, gridSize);
 
 //    float triangleIndex = floor(texture2D(grid, coord2D).a + .5);
+
     vec4 triangleIndexV = texture2D(grid, coord2D); //Debug
     float triangleIndex = floor(triangleIndexV.a+.5); //Debug
+//    gl_FragData[3] = vec4(triangleIndexV.xyz, 1.5);//DEBUG
 
     coord2D = index1Dto2D(triangleIndex, maxTextureSize, triangleListSize);
     float vertexIndex = floor(texture2D(triangleList, coord2D).a + .5);
@@ -70,11 +82,24 @@ void main()
 
     vec3 lastHit = vec3(infinity, vertexIndex, triangleIndex);
 
-    gl_FragData[3] = vec4(triangleIndexV.xyz, 1.5);//DEBUG
+    float minDist = 0.0;
+    gl_FragData[3] = vec4(1,0,0, 1.5);//DEBUG
+    if(shadowActive)
+    {
+      minDist = intersect(shadowVertexIndex, rPos, rDir, lastHit, shadowTriangleIndex, 0.0).r;
+      if(minDist < infinity)
+        gl_FragData[3] = vec4(0,0,1, 1.5);//DEBUG
+      else
+      {
+        minDist = 0.0;
+        gl_FragData[3] = vec4(0,1,0, 1.5);//DEBUG
+      }
+    }
+
 
     while(floor(vertexIndex+0.5) != -1.0)
     {
-      lastHit = intersect(vertexIndex, rPos, rDir, lastHit, triangleIndex);
+      lastHit = intersect(vertexIndex, rPos, rDir, lastHit, triangleIndex, minDist);
       triangleIndex = floor(triangleIndex+0.5) + 1.0;
       vec2 coord2D = index1Dto2D(triangleIndex, maxTextureSize, triangleListSize);
       vertexIndex = floor(texture2D(triangleList, coord2D).a + .5);
@@ -86,13 +111,14 @@ void main()
       rDir.w = float(ACTIVE_SHADING);
       gl_FragData[0] = rDir;
       gl_FragData[1] = rPos;
-      gl_FragData[3] = vec4(0.5, 0., 0.0, .8);//DEBUG
+//      gl_FragData[3] = vec4(0.5, 0., 0.0, .8);//DEBUG
 
-      vec3 fragPos = rPos.xyz + rDir.xyz*lastHit.r;
-      triangleInfo = vec4(fragPos, lastHit.g);
+//      vec3 fragPos = rPos.xyz + rDir.xyz*lastHit.r;
+//      triangleInfo = vec4(fragPos, lastHit.g);
+      triangleInfo = vec4(lastHit, 1.0);
       gl_FragData[2] = triangleInfo;
       return;
-    }else gl_FragData[3] = vec4(1., 0.5, 0, .8);//DEBUG
+    }//else gl_FragData[3] = vec4(1., 0.5, 0, .8);//DEBUG
 
     rDir.w = float(ACTIVE_TRAVERSE_SEC);
 /**/
@@ -100,14 +126,14 @@ void main()
   else if(triangleFlag == ACTIVE_TRAVERSE_SEC){
     vec2 coord2D = index1Dto2D(gridIndex, maxTextureSize, gridSize);
     vec4 triangleIndexV = texture2D(grid, coord2D); //Debug
-    gl_FragData[3] = vec4(triangleIndexV.xyz, 0.5);//DEBUG
-//    gl_FragData[3] = vec4(0.5, 1.0, 1.0, .8);
+//    gl_FragData[3] = vec4(triangleIndexV.xyz, 0.5);//DEBUG
+    gl_FragData[3] = vec4(0.5, 1.0, 1.0, .8);
   }
   else if(triangleFlag == ACTIVE_TRAVERSE){
     vec2 coord2D = index1Dto2D(gridIndex, maxTextureSize, gridSize);
     vec4 triangleIndexV = texture2D(grid, coord2D); //Debug
-    gl_FragData[3] = vec4(triangleIndexV.xyz, 0.5);//DEBUG
-//	gl_FragData[3] = vec4(0.3, 0.0, 0.5, .8);
+//    gl_FragData[3] = vec4(triangleIndexV.xyz, 0.5);//DEBUG
+	gl_FragData[3] = vec4(0.3, 0.0, 0.5, .8);
   }
 
   ///Discard Pixel
@@ -118,7 +144,7 @@ void main()
 }
 
 
-vec3 intersect(float vertexIndex, vec4 rPos, vec4 rDir, vec3 lastHit, float triangleIndex)
+vec3 intersect(float vertexIndex, vec4 rPos, vec4 rDir, vec3 lastHit, float triangleIndex, float minDist)
 {
   vec2 coord2D;
 
@@ -171,7 +197,7 @@ vec3 intersect(float vertexIndex, vec4 rPos, vec4 rDir, vec3 lastHit, float tria
   //u*=inv_det;
   //v*=inv_det;
 
-  if(t < lastHit.r)
+  if(t < lastHit.r && t > minDist)
     return vec3(t, vertexIndex, triangleIndex);
   else
     return lastHit;

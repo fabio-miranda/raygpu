@@ -24,7 +24,7 @@ uniform float lightsSize;
 uniform vec3 eyePos;
 uniform vec3 clearColor;
 
-vec3 getInterpolatedNormal(float triangleIndex);
+vec3 getInterpolatedNormal(float vertexIndex);
 vec2 index1Dto2D(float index, float width, float size);
 
 
@@ -96,10 +96,11 @@ void main()
   if(colorTest == COLOR_MUL_LIGHT)
   {
     if(triangleFlag == ACTIVE_SHADING)
-      color.rgb *= .5;
+      color.rgb *= .8;
     rDir.w = float(DONE);
     gl_FragData[0] = rDir;
     gl_FragData[3] = vec4(color.rgb, COLOR_NULL);
+    gl_FragData[4] = vec4(SHADOW_INACTIVE);
     return;
   }
 
@@ -107,10 +108,12 @@ void main()
   if(triangleFlag == ACTIVE_SHADING)
   {
     vec4 triangleInfos = texture2D(triangleInfo, gl_TexCoord[0].st);
-    fragPos = triangleInfos.rgb;
-    float triangleIndex = floor(triangleInfos.a + .5);
 
-    vec3 normal = (getInterpolatedNormal(triangleIndex));
+    fragPos =  rPos.xyz + rDir.xyz*triangleInfos.r;
+    float triangleIndex = floor(triangleInfos.b + .5);
+    float vertexIndex = floor(triangleInfos.g + .5);
+
+    vec3 normal = (getInterpolatedNormal(vertexIndex));
     vec2 coord2D;
 
     vec3 ambient, diffuse, specular;
@@ -119,7 +122,7 @@ void main()
     specular = vec3(0, 0, 0);
     eyeDir = -(eyePos - fragPos);
 
-    coord2D = index1Dto2D(triangleIndex*3.0, maxTextureSize, materialSize);
+    coord2D = index1Dto2D(vertexIndex*3.0, maxTextureSize, materialSize);
     vec4 matInfo = texture2D(materialTex, coord2D);
     fragMaterial.opacity = matInfo.r;
     fragMaterial.reflective = floor(matInfo.g+.5);
@@ -135,6 +138,7 @@ void main()
       gl_FragData[1] = rPos;
       gl_FragData[2] = texture2D(triangleInfo, gl_TexCoord[0].st);
       gl_FragData[3] = vec4(0,1,0,1);
+      gl_FragData[4] = vec4(SHADOW_INACTIVE);
       return;
 //    }else if(fragMaterial.opacity < 1.0)
 //    {
@@ -146,13 +150,14 @@ void main()
 //      gl_FragData[1] = rPos;
 //      gl_FragData[2] = texture2D(triangleInfo, gl_TexCoord[0].st);
 //      gl_FragData[3] = vec4(0,0,1,1);
+//        gl_FragData[4] = vec4(SHADOW_INACTIVE);
 //      return;
     }
 
-    coord2D = index1Dto2D(triangleIndex*3.0 + 1.0, maxTextureSize, materialSize);
+    coord2D = index1Dto2D(vertexIndex*3.0 + 1.0, maxTextureSize, materialSize);
     fragMaterial.diffuse = texture2D(materialTex, coord2D).rgb;
 
-    coord2D = index1Dto2D(triangleIndex*3.0 + 2.0, maxTextureSize, materialSize);
+    coord2D = index1Dto2D(vertexIndex*3.0 + 2.0, maxTextureSize, materialSize);
     matInfo = texture2D(materialTex, coord2D);
     fragMaterial.specular = matInfo.rgb;
     fragMaterial.shininess = matInfo.a;
@@ -184,15 +189,17 @@ void main()
     }
 
     ///Set Ray State to LIGHT
+    float lightIndex = 1.0;
     rDir.xyz = normalize(-lightDir);
 //    rDir.xyz = normalize(vec3(0,1,0));
-    rPos.xyz = fragPos + rDir.xyz;
+    rPos.xyz = fragPos;
     rDir.w = float(ACTIVE_CALCULATEOUTVOXEL);
 
     gl_FragData[0] = rDir;
     gl_FragData[1] = rPos;
     gl_FragData[2] = texture2D(triangleInfo, gl_TexCoord[0].st);
     gl_FragData[3] = vec4(ambient + diffuse + specular, COLOR_MUL_LIGHT);
+    gl_FragData[4] = vec4(triangleIndex, vertexIndex, lightIndex, SHADOW_ACTIVE);
 
 
     ///Set Ray State to Done
@@ -208,6 +215,7 @@ void main()
 //    gl_FragData[1] = rPos;
 //    gl_FragData[2] = texture2D(triangleInfo, gl_TexCoord[0].st);
     gl_FragData[3] = vec4(color.rgb, COLOR_DONE) ;
+    gl_FragData[4] = vec4(SHADOW_INACTIVE);
 
   }else
   {
@@ -216,6 +224,7 @@ void main()
     gl_FragData[1] = rPos;
     gl_FragData[2] = texture2D(triangleInfo, gl_TexCoord[0].st);
     gl_FragData[3] = vec4(clearColor, COLOR_DONE);
+    gl_FragData[4] = vec4(SHADOW_INACTIVE);
   }
   /**/
 }
@@ -243,6 +252,7 @@ void calcPointLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, ino
 {
   vec3 L = normalize(lightDir);
   vec3 H = normalize(L + normalize(eyeDir));
+
 
   float NdotL = max(0.0, dot(N, L));
   if ( NdotL > 0.0 )
@@ -284,20 +294,20 @@ void calcSpotLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inou
   }
 }
 
-vec3 getInterpolatedNormal(float triangleIndex)
+vec3 getInterpolatedNormal(float vertexIndex)
 {
-  vec2 coord2D = index1Dto2D(triangleIndex*3.0, maxTextureSize, normalsSize);
+  vec2 coord2D = index1Dto2D(vertexIndex*3.0, maxTextureSize, normalsSize);
   vec3 normal1 = texture2D(normals, coord2D).xyz;
-  coord2D = index1Dto2D(triangleIndex*3.0+1.0, maxTextureSize, normalsSize);
+  coord2D = index1Dto2D(vertexIndex*3.0+1.0, maxTextureSize, normalsSize);
   vec3 normal2 = texture2D(normals, coord2D).xyz;
-  coord2D = index1Dto2D(triangleIndex*3.0+2.0, maxTextureSize, normalsSize);
+  coord2D = index1Dto2D(vertexIndex*3.0+2.0, maxTextureSize, normalsSize);
   vec3 normal3 = texture2D(normals, coord2D).xyz;
 
-  coord2D = index1Dto2D(triangleIndex*3., maxTextureSize, vertexesSize);
+  coord2D = index1Dto2D(vertexIndex*3., maxTextureSize, vertexesSize);
   vec3 v1 = texture2D(vertexes, coord2D).xyz;
-  coord2D = index1Dto2D(triangleIndex*3. + 1.0, maxTextureSize, vertexesSize);
+  coord2D = index1Dto2D(vertexIndex*3. + 1.0, maxTextureSize, vertexesSize);
   vec3 v2 = texture2D(vertexes, coord2D).xyz;
-  coord2D = index1Dto2D(triangleIndex*3. + 2.0, maxTextureSize, vertexesSize);
+  coord2D = index1Dto2D(vertexIndex*3. + 2.0, maxTextureSize, vertexesSize);
   vec3 v3 = texture2D(vertexes, coord2D).xyz;
 
   vec3 U =  v1-v2;

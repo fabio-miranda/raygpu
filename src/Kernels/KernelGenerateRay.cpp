@@ -10,8 +10,9 @@ KernelGenerateRay::KernelGenerateRay(int width, int height, int gridArraySize, V
 
 	//Output
 	m_texIdColor = addOutput(0);
-  m_texIdRayPos = addOutput(1);
-	m_texIdRayDir = addOutput(2);
+  m_texIdShadow = addOutput(1);
+  m_texIdRayPos = addOutput(2);
+	m_texIdRayDir = addOutput(3);
   
 
 	//Input
@@ -56,9 +57,7 @@ void KernelGenerateRay::step(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vect
 GLuint KernelGenerateRay::getTexIdRayPos(){return m_texIdRayPos;}
 GLuint KernelGenerateRay::getTexIdRayDir(){return m_texIdRayDir;}
 
-GLuint KernelGenerateRay::getTexIdColor()
-{
-  return m_texIdColor;
-}
+GLuint KernelGenerateRay::getTexIdShadow(){return m_texIdShadow;}
+GLuint KernelGenerateRay::getTexIdColor(){return m_texIdColor;}
 
 
