@@ -91,12 +91,10 @@ void main(){
 		rayPos.a = findVoxelLinearArray(voxelIndex.xyz);
 
 		intersectionOut = findIntersectionOutVoxel(rayPos.xyz, rayDir.xyz, voxelIndex.xyz);
-
 	}
 
 	gl_FragData[0] = rayPos;
 	gl_FragData[1] = rayDir;
 	gl_FragData[2] = vec4(intersectionOut, 1.0);
 	gl_FragData[3] = vec4(normalize(intersectionOut), 1.0);
-
 }

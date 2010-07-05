@@ -31,6 +31,6 @@
 #define INIT_SCENE_FILE_NAME "./resources/scenes/cavalo.rt4"
 #define INIT_RENDER_OBJ GL_OBJECT
 
-#define RT_GRID_SIZE Vector3(10,10,10)
+#define RT_GRID_SIZE Vector3(12,12,12)
 
 #endif 
