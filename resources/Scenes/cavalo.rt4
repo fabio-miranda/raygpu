@@ -1,37 +1,14 @@
-#Se Tratado como MAKEFILE pelo NOTEPAD++ ele colore os comentarios e permite atalhos ;)
 RT 4.0
 CAMERA 100. 100. 40.   0. 0. 0.    0. 1. 0. 90. 30. 230. 400 400
 SCENE 110.  110.  110.  90.  90.  130. null
-
-# 0 - Material De Cor solida 
-#             DIFFUSO           SPECULAR    SHININESS
-MATERIAL   200.  0. 200.    200. 200. 200.      50.      0.  0  1.0 null
-
-# 1 - Material Reflexivo                           bool Reflect
-MATERIAL   200.   0. 200.    200. 200. 200.   50.       1.        0.0  1.0 null
-
-# 2 - Material Refrativo.                               Refrativ    Opacidade
-MATERIAL   200.   0. 200.    200. 200. 200.   50.   0.    .5       0.0       null
-
-# Luz POINT
-#       Posicao       DIFFUSO        SPECULAR 
-# LIGHT 100. 0. 0.   204 204. 204.   255. 255. 255. 
-LIGHT 0. 1000. 0.   204 204. 204.   255. 255. 255. 
-LIGHT 0. 0. 1000.   204 204. 204.   255. 255. 255. 
-# Luz SPOT                                           TIPO   SPOT_EXPONENT  ANGLE     DIR
-LIGHT -50. 100. 0.   204 204. 204.   255. 255. 255.   2.       1.0          40.   0. -1. 0. 
-# Luz DIRECIONAL                                  TIPO
-LIGHT 0. 0. 1.   204 204. 204.   255. 255. 255.   0. 
+MATERIAL   200.   0. 200.    200. 200. 200.   50.   0.  0.8  0.4 null
+MATERIAL   200.   0. 200.    200. 200. 200.   50.   1.  0.8  0.4 null
+LIGHT 100. 0. 0.   204 204. 204.   255. 255. 255. 
+LIGHT -50. 100. 0.   204 204. 204.   255. 255. 255.  2. 1.0 40.   0. -1. 0. 
+LIGHT 0. 0. -1.   204 204. 204.   255. 255. 255.  0. 
 
 
-MESH 0  0. 1. 0.     400. 400. 400.  resources/Models/bunny.msh
-MESH 0  -50. 1. 50.     400. 400. 400.  resources/Models/bunny.msh
-
-# MESH 0  50. 1. 0.     1. 1. 1.  resources/Models/cavalo.um
-# MESH 0  -50. 1. 50.     1. 1. 1.  resources/Models/cavalo.um
-
-MESH 0  50. 1. 0.     1. 1. 1.  resources/Models/floor.um
-MESH 0  50. 1. 0.     1. 1. 1.  resources/Models/wall.um
+MESH 0  0. 0. 0.     400. 400. 400.  resources/Models/buddha_high.msh
 
 
 

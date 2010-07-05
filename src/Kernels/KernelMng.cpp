@@ -56,12 +56,19 @@ KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth,
 
 }
 
+void KernelMng::stepCurrentState(int traversePerIntersection, Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane){
 
-void KernelMng::step(bool updateStates, int traversePerIntersection, KernelMngState stateToStop, Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane){
-  cout << "IN:" << m_currentState ;
-  render(eyePos, eyeDir, eyeUp, eyeRight, nearPlane);
-  if(updateStates) update(traversePerIntersection, stateToStop);
-  cout << " OUT:" << m_currentState <<endl;
+	//cout << "IN:" << m_currentState ;
+	render(m_currentState, eyePos, eyeDir, eyeUp, eyeRight, nearPlane);
+	update(traversePerIntersection);
+	//cout << " OUT:" << m_currentState <<endl;
+
+}
+
+void KernelMng::stepState(KernelMngState stateToUpdate, Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane){
+	cout << "IN:" << stateToUpdate ;
+	render(stateToUpdate, eyePos, eyeDir, eyeUp, eyeRight, nearPlane);
+	cout << " OUT:" << stateToUpdate <<endl;
 
 }
 
@@ -69,12 +76,13 @@ GLuint KernelMng::getTextureColorId(){
 	return m_kernelGenerateRay->getTexIdColor();
 }
 
-void KernelMng::update(int traversePerIntersection, KernelMngState stateToStop){
-
+void KernelMng::update(int traversePerIntersection){
+	/*
 	if(m_currentState == stateToStop){
 		m_currentState = GENERATERAY;	
 		//return;
 	}
+	*/
 	if(m_currentState == GENERATERAY){
 		m_currentState = CALCULATEVOXEL;
 	}
@@ -88,18 +96,19 @@ void KernelMng::update(int traversePerIntersection, KernelMngState stateToStop){
 	else if(m_currentState == TRAVERSE){
 		m_numTraverses++;
 	}
-	//else if(m_currentState == SHADE){
-		//m_currentState = TRAVERSE;
-	//}
+	else if(m_currentState == SHADE){
+		m_currentState = TRAVERSE;
+	}
 	if(m_currentState == INTERSECT || m_currentState == TRAVERSE){
 		m_currentState = oracle(traversePerIntersection);
 	}
+	
 }
 void KernelMng::generateRay(){
 	m_currentState = GENERATERAY;
 }
 
-void KernelMng::render(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane){
+void KernelMng::render(KernelMngState state, Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane){
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -109,7 +118,7 @@ void KernelMng::render(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 ey
 	glPushMatrix();
 	glLoadIdentity();
 
-	switch(m_currentState){
+	switch(state){
 		case GENERATERAY:
 			m_kernelGenerateRay->step(eyePos, eyeDir, eyeUp, eyeRight, nearPlane);
 			break;
