@@ -6,6 +6,7 @@ uniform sampler2D vertexes;
 uniform sampler2D normals;
 
 uniform sampler2D materialTex;
+uniform sampler2D colorTex;
 
 uniform sampler1D lights;
 
@@ -39,6 +40,7 @@ void calcSpotLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inou
 #define ACTIVE_SHADING 5.0
 #define OVERFLOW 6.0
 #define DONE 7.0
+#define ACTIVE_CALCULATEOUTVOXEL_SEC 8.0
 
 //lightStruct
 //{
@@ -56,7 +58,7 @@ void calcSpotLight(float i, vec3 N, inout vec3 ambient, inout vec3 diffuse, inou
 //}
 
 const vec3 defaultAmbientMaterial  = vec3(0.2, 0.2, 0.2);
-vec3 ambient, diffuse, specular;
+
 
 vec4 lightSpecular;
 vec4 lightPosition;
@@ -75,70 +77,32 @@ struct material
   float refractive;
 }fragMaterial;
 
-/*
-vec3 findVoxelPosition(vec3 voxelIndex){
-	return voxelIndex * gridVoxelSize + bbMin;
-}
+#define COLOR_NULL -1.0
+#define COLOR_DONE 1.0
+#define COLOR_MUL_LIGHT 2.0
 
-float findVoxelLinearArray(vec3 voxelIndex){
-	return voxelIndex.x*gridSize.y*gridSize.z + voxelIndex.y*gridSize.z + voxelIndex.z;
-}
-
-vec3 findVoxel(vec3 rayPos){
-
-	vec3 index = vec3(-1.0, -1.0, -1.0);
-
-	//index = (floor(rayPos+0.5) - floor(bbMin+0.5)) / floor(gridVoxelSize+0.5);
-	//index = (rayPos - bbMin) / gridVoxelSize;
-//	index = (floor(rayPos+0.5) - bbMin) / gridVoxelSize;
-	index = (rayPos - bbMin) / gridVoxelSize;
-	index = trunc(index);
-
-	if(index.x >= gridSize.x)
-    index.x = gridSize.x - 1.0;
-  if(index.y >= gridSize.y)
-    index.y = gridSize.y - 1.0;
-  if(index.z >= gridSize.z)
-    index.z = gridSize.z - 1.0;
-
-	return index;
-
-}
-
-vec3 findIntersectionOutVoxel(vec3 rayPos, vec3 rayDir, vec3 voxelIndex){
-
-	vec3 intersectionOut = vec3(0.0, 0.0, 0.0);
-
-	if(rayDir.x < 0.0)
-		intersectionOut.x = (findVoxelPosition(voxelIndex).x - rayPos.x) / rayDir.x;
-	if(rayDir.x > 0.0)
-		intersectionOut.x = (findVoxelPosition(voxelIndex + vec3(1, 0, 0)).x - rayPos.x) / rayDir.x;
-
-	if(rayDir.y < 0.0)
-		intersectionOut.y = (findVoxelPosition(voxelIndex).y - rayPos.y) / rayDir.y;
-	if(rayDir.y > 0.0)
-		intersectionOut.y = (findVoxelPosition(voxelIndex + vec3(0, 1, 0)).y - rayPos.y) / rayDir.y;
-
-	if(rayDir.z < 0.0)
-		intersectionOut.z = (findVoxelPosition(voxelIndex).z - rayPos.z) / rayDir.z;
-	if(rayDir.z > 0.0)
-		intersectionOut.z = (findVoxelPosition(voxelIndex + vec3(0, 0, 1)).z - rayPos.z) / rayDir.z;
-
-	return intersectionOut;
-}
-
-
-*/
-
-
-
+#define SHADOW_INACTIVE -1.0
+#define SHADOW_ACTIVE 1.0
 
 void main()
 {
   vec4 rDir = texture2D(rayDir, gl_TexCoord[0].st);
   vec4 rPos = texture2D(rayPos, gl_TexCoord[0].st);
-
   float triangleFlag = floor(rDir.w+.5);
+
+  vec4 color = texture2D(colorTex, gl_TexCoord[0].st);
+  float colorTest = floor(color.a + .5);
+
+  if(colorTest == COLOR_MUL_LIGHT)
+  {
+    if(triangleFlag == ACTIVE_SHADING)
+      color.rgb *= .5;
+    rDir.w = float(DONE);
+    gl_FragData[0] = rDir;
+    gl_FragData[3] = vec4(color.rgb, COLOR_NULL);
+    return;
+  }
+
 
   if(triangleFlag == ACTIVE_SHADING)
   {
@@ -146,9 +110,10 @@ void main()
     fragPos = triangleInfos.rgb;
     float triangleIndex = floor(triangleInfos.a + .5);
 
-    vec3 normal = getInterpolatedNormal(triangleIndex);
+    vec3 normal = (getInterpolatedNormal(triangleIndex));
     vec2 coord2D;
 
+    vec3 ambient, diffuse, specular;
     ambient = defaultAmbientMaterial;
     diffuse = vec3(0, 0, 0);
     specular = vec3(0, 0, 0);
@@ -163,25 +128,25 @@ void main()
     if(fragMaterial.reflective == 1.0)
     {
       rDir.xyz = reflect(rDir.xyz,normal.xyz);
-//      rPos.xyz = fragPos + rDir*0.1;
       rPos.xyz = fragPos;
-//      vec3 voxelIndex = findVoxel(rPos.xyz);
-//
-//      vec3 intersectionOut = findIntersectionOutVoxel(rPos.xyz, rDir.xyz, voxelIndex.xyz);
       rDir.w = float(ACTIVE_CALCULATEOUTVOXEL);
-//      rPos.a = findVoxelLinearArray(voxelIndex.xyz);
 
       gl_FragData[0] = rDir;
       gl_FragData[1] = rPos;
-//      gl_FragData[0] = vec4(reflect(rDir.xyz,normal.xyz),rDir.w);
-//      gl_FragData[0] = vec4(normalize(vec3(1,1,1)),rDir.w);
-//      gl_FragData[1] = vec4(fragPos,findVoxelLinearArray(voxelIndex.xyz));
       gl_FragData[2] = texture2D(triangleInfo, gl_TexCoord[0].st);
-      vec3 intensity = ambient + diffuse;
-//      gl_FragData[3] = vec4(intensity + specular, 1.0);
       gl_FragData[3] = vec4(0,1,0,1);
-//      gl_FragData[4] = vec4(intersectionOut, 1.0);
       return;
+//    }else if(fragMaterial.opacity < 1.0)
+//    {
+//      rDir.xyz = normalize(refract(rDir.xyz, -(normal.xyz), fragMaterial.refractive));
+//      rPos.xyz = fragPos;
+//      rDir.w = float(ACTIVE_CALCULATEOUTVOXEL_SEC);
+//
+//      gl_FragData[0] = rDir;
+//      gl_FragData[1] = rPos;
+//      gl_FragData[2] = texture2D(triangleInfo, gl_TexCoord[0].st);
+//      gl_FragData[3] = vec4(0,0,1,1);
+//      return;
     }
 
     coord2D = index1Dto2D(triangleIndex*3.0 + 1.0, maxTextureSize, materialSize);
@@ -217,27 +182,40 @@ void main()
         }
       }
     }
-    /**/
 
-    ///Set Ray State to Done
-//    rDir.w = float(DONE);
+    ///Set Ray State to LIGHT
+    rDir.xyz = normalize(-lightDir);
+//    rDir.xyz = normalize(vec3(0,1,0));
+    rPos.xyz = fragPos + rDir.xyz;
+    rDir.w = float(ACTIVE_CALCULATEOUTVOXEL);
+
     gl_FragData[0] = rDir;
     gl_FragData[1] = rPos;
     gl_FragData[2] = texture2D(triangleInfo, gl_TexCoord[0].st);
-    vec3 intensity = ambient + diffuse;
-    gl_FragData[3] = vec4(intensity + specular, 1.0);
+    gl_FragData[3] = vec4(ambient + diffuse + specular, COLOR_MUL_LIGHT);
 
-//    gl_FragData[4] = texture2D(gridIntersectionMax, gl_TexCoord[0].st);
-    /**/
+
+    ///Set Ray State to Done
+//    rDir.w = float(DONE);
+//    gl_FragData[0] = rDir;
+//    gl_FragData[1] = rPos;
+//    gl_FragData[2] = texture2D(triangleInfo, gl_TexCoord[0].st);
+//    gl_FragData[3] = vec4(ambient + diffuse + specular, COLOR_MUL_LIGHT);
+  }
+  else if(triangleFlag == DONE)
+  {
+    gl_FragData[0] = rDir;
+//    gl_FragData[1] = rPos;
+//    gl_FragData[2] = texture2D(triangleInfo, gl_TexCoord[0].st);
+    gl_FragData[3] = vec4(color.rgb, COLOR_DONE) ;
+
   }else
   {
     ///Discard Pixel
     gl_FragData[0] = rDir;
     gl_FragData[1] = rPos;
     gl_FragData[2] = texture2D(triangleInfo, gl_TexCoord[0].st);
-    gl_FragData[3] = vec4(clearColor,1.0);
-
-//    gl_FragData[4] = texture2D(gridIntersectionMax, gl_TexCoord[0].st);
+    gl_FragData[3] = vec4(clearColor, COLOR_DONE);
   }
   /**/
 }

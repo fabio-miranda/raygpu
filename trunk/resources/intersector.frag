@@ -1,10 +1,13 @@
 uniform sampler2D rayPos;
 uniform sampler2D rayDir;
 uniform sampler2D triangleInfoTex;
+//uniform sampler2D shadowInfo;
 
 uniform sampler2D grid;
 uniform sampler2D vertexes;
 uniform sampler2D triangleList;
+
+
 
 
 
@@ -61,19 +64,12 @@ void main()
     vec4 triangleIndexV = texture2D(grid, coord2D); //Debug
     float triangleIndex = floor(triangleIndexV.a+.5); //Debug
 
-
-//    //    float triangleIndex = floor(texture1D(grid, (gridIndex + .5)/gridSize).a + .5);
-//    vec4 triangleIndexV = texture1D(grid, (gridIndex + .5)/gridSize); //Debug
-//    float triangleIndex = floor(triangleIndexV.a+.5); //Debug
-
-
     coord2D = index1Dto2D(triangleIndex, maxTextureSize, triangleListSize);
     float vertexIndex = floor(texture2D(triangleList, coord2D).a + .5);
 
 
     vec3 lastHit = vec3(infinity, vertexIndex, triangleIndex);
 
-    //gl_FragData[3] = vec4(1., 0., 0., .5);//DEBUG
     gl_FragData[3] = vec4(triangleIndexV.xyz, 1.5);//DEBUG
 
     while(floor(vertexIndex+0.5) != -1.0)

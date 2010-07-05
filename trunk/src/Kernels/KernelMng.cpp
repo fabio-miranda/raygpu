@@ -36,9 +36,11 @@ KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth,
 											scene->getVertexesTexSize());
 
 
-	m_kernelShade = new KernelShade(width, height, m_kernelGenerateRay->getTexIdRayDir(),m_kernelGenerateRay->getTexIdRayPos(),
+	m_kernelShade = new KernelShade(width, height, m_kernelGenerateRay->getTexIdRayDir(),
+                  m_kernelGenerateRay->getTexIdRayPos(), m_kernelGenerateRay->getTexIdColor(),
                   m_kernelIntersect->getTexIdTriangleHitInfo(), 
-									scene->getVertexesTexId(), scene->getNormalsTexId(), scene->getMaterialTexId(),
+									scene->getVertexesTexId(), scene->getNormalsTexId(), 
+                  scene->getMaterialTexId(),
                   scene->getLightsTexId(), scene->getNormalsTexSize(),
 									scene->getVertexesTexSize(), scene->getMaterialTexSize(),
 									scene->getLightsTexSize(), scene->getClearColor()
@@ -61,7 +63,7 @@ void KernelMng::step(bool updateStates, int traversePerIntersection, KernelMngSt
 }
 
 GLuint KernelMng::getTextureColorId(){
-	return m_kernelShade->getTextureColorId();
+	return m_kernelGenerateRay->getTexIdColor();
 }
 
 void KernelMng::update(int traversePerIntersection, KernelMngState stateToStop){
