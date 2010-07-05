@@ -19,18 +19,19 @@ public:
 	KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth, float nearPlaneHeight);
 	~KernelMng();
 
-	void step(bool updateStates, int traversePerIntersection, KernelMngState stateToStop, Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane);
+	void stepCurrentState(int traversePerIntersection, Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane);
+	void stepState(KernelMngState stateToUpdate, Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane);
 	GLuint getTextureColorId();
 	void renderKernelOutput(bool renderCurrentState, KernelMngState stateToRender, int outputNum);
 	void generateRay();
 	
-  void setCurrentState(KernelMngState val);
-  KernelMngState getCurrentState() const;
+	void setCurrentState(KernelMngState val);
+	KernelMngState getCurrentState() const;
   
 private:
 	KernelMngState oracle(int traversePerIntersection);
-	void update(int traversePerIntersection, KernelMngState stateToStop);
-	void render(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane);
+	void update(int traversePerIntersection);
+	void render(KernelMngState stateToUpdate, Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane);
 	int countActiveRays();
 
 	KernelGenerateRay* m_kernelGenerateRay;
@@ -45,8 +46,7 @@ private:
 	FrameBufferObject m_fbo;
 	int m_numTraverses;
 	GLuint m_occlusionQueryId;
-
-  KernelMngState m_currentState;
+	KernelMngState m_currentState;
   
 };
 
