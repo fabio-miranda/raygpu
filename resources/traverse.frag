@@ -78,7 +78,7 @@ void main(){
 		|| gridIndex.x < 0.0 || gridIndex.y < 0.0 || gridIndex.z < 0.0
 		|| rayDir.a == INACTIVE)
 	{
-		gl_FragData[0] = vec4(0,0,0,INACTIVE);
+		gl_FragData[0] = vec4(rayPos.xyz,INACTIVE);
 		gl_FragData[3] = vec4(0, 0, 1, .8);
 		return;
 		//discard;

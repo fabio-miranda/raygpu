@@ -80,6 +80,7 @@ struct material
 #define COLOR_NULL -1.0
 #define COLOR_DONE 1.0
 #define COLOR_MUL_LIGHT 2.0
+#define COLOR_MUL_MAX_LIGHT 30.0
 
 #define SHADOW_INACTIVE -1.0
 #define SHADOW_ACTIVE 1.0
@@ -93,14 +94,65 @@ void main()
   vec4 color = texture2D(colorTex, gl_TexCoord[0].st);
   float colorTest = floor(color.a + .5);
 
-  if(colorTest == COLOR_MUL_LIGHT)
+  float numLights = floor(lightsSize/4.0+.5);
+
+  if(colorTest >= COLOR_MUL_LIGHT && colorTest < COLOR_MUL_MAX_LIGHT)
   {
+    vec4 triangleInfos = texture2D(triangleInfo, gl_TexCoord[0].st);
+    float triangleIndex = floor(triangleInfos.b + .5);
+    float vertexIndex = floor(triangleInfos.g + .5);
+
+    fragPos = rPos.xyz;
     if(triangleFlag == ACTIVE_SHADING)
-      color.rgb *= .8;
-    rDir.w = float(DONE);
-    gl_FragData[0] = rDir;
-    gl_FragData[3] = vec4(color.rgb, COLOR_NULL);
-    gl_FragData[4] = vec4(SHADOW_INACTIVE);
+    {
+      color.rgb *= .20;
+      fragPos =  rPos.xyz + rDir.xyz*triangleInfos.r;
+    }
+
+    float i = colorTest - COLOR_MUL_LIGHT + 1;
+    if(i < numLights)
+    {
+      vec4 lightSpecular = texture1D(lights, (i*4.0 + 1.0 + .5)/lightsSize);
+      vec4 lightDirection = vec4(0,0,0,0);
+      if(floor(lightSpecular.a + .5) != 0.0) //Is Light Enabled?
+      {
+        vec4 lightPosition = texture1D(lights, (i*4.0 + 2.0 + .5)/lightsSize);
+        float lightType = floor(lightPosition.w+.5);
+        if(lightType == 0.0) //Directional Light
+        {
+          lightDirection.xyz =  -lightPosition.xyz;
+        }
+        else if(lightType == 2.0) //Spot Light
+        {
+          lightDirection.xyz = -(lightPosition.xyz - fragPos);
+        }
+        else //Point Light
+        {
+          lightDirection.xyz = -(lightPosition.xyz - fragPos);
+        }
+        lightDirection.a = 1.0;
+      }
+
+      float lightIndex = i;
+
+      rDir.xyz = normalize(-lightDirection.xyz);
+      rPos.xyz = fragPos;
+      rDir.w = float(ACTIVE_CALCULATEOUTVOXEL);
+
+      gl_FragData[0] = rDir;
+      gl_FragData[1] = rPos;
+      gl_FragData[2] = texture2D(triangleInfo, gl_TexCoord[0].st);
+      gl_FragData[3] = vec4(color.rgb, COLOR_MUL_LIGHT + lightIndex);
+      gl_FragData[4] = vec4(triangleIndex, vertexIndex, lightIndex, SHADOW_ACTIVE);
+    }else
+    {
+      rDir.w = float(DONE);
+      gl_FragData[0] = rDir;
+      gl_FragData[1] = rPos;
+      gl_FragData[2] = texture2D(triangleInfo, gl_TexCoord[0].st);
+      gl_FragData[3] = vec4(color.rgb, COLOR_DONE);
+      gl_FragData[4] = vec4(SHADOW_INACTIVE);
+    }
     return;
   }
 
@@ -114,7 +166,6 @@ void main()
     float vertexIndex = floor(triangleInfos.g + .5);
 
     vec3 normal = (getInterpolatedNormal(vertexIndex));
-    vec2 coord2D;
 
     vec3 ambient, diffuse, specular;
     ambient = defaultAmbientMaterial;
@@ -122,7 +173,7 @@ void main()
     specular = vec3(0, 0, 0);
     eyeDir = -(eyePos - fragPos);
 
-    coord2D = index1Dto2D(vertexIndex*3.0, maxTextureSize, materialSize);
+    vec2 coord2D = index1Dto2D(vertexIndex*3.0, maxTextureSize, materialSize);
     vec4 matInfo = texture2D(materialTex, coord2D);
     fragMaterial.opacity = matInfo.r;
     fragMaterial.reflective = floor(matInfo.g+.5);
@@ -162,7 +213,8 @@ void main()
     fragMaterial.specular = matInfo.rgb;
     fragMaterial.shininess = matInfo.a;
 
-    float numLights = floor(lightsSize/4.0+.5);
+    vec4 firstLightDir;
+    firstLightDir.a = -1.0;
     for(float i = 0.0; i<numLights; i += 1.0)
     {
       lightSpecular = texture1D(lights, (i*4.0 + 1.0 + .5)/lightsSize);
@@ -185,20 +237,26 @@ void main()
           lightDir = -(lightPosition.xyz - fragPos);
           calcPointLight(i, normal, ambient, diffuse, specular);
         }
+
+        if(firstLightDir.a == -1.0) //ONLY ONCE
+        {
+          firstLightDir.a = i;
+          firstLightDir.xyz = lightDir;
+        }
       }
     }
 
     ///Set Ray State to LIGHT
-    float lightIndex = 1.0;
-    rDir.xyz = normalize(-lightDir);
-//    rDir.xyz = normalize(vec3(0,1,0));
+    float lightIndex  = firstLightDir.a;
+
+    rDir.xyz = normalize(-firstLightDir.xyz);
     rPos.xyz = fragPos;
     rDir.w = float(ACTIVE_CALCULATEOUTVOXEL);
 
     gl_FragData[0] = rDir;
     gl_FragData[1] = rPos;
     gl_FragData[2] = texture2D(triangleInfo, gl_TexCoord[0].st);
-    gl_FragData[3] = vec4(ambient + diffuse + specular, COLOR_MUL_LIGHT);
+    gl_FragData[3] = vec4(ambient + diffuse + specular, COLOR_MUL_LIGHT + lightIndex);
     gl_FragData[4] = vec4(triangleIndex, vertexIndex, lightIndex, SHADOW_ACTIVE);
 
 
@@ -208,6 +266,7 @@ void main()
 //    gl_FragData[1] = rPos;
 //    gl_FragData[2] = texture2D(triangleInfo, gl_TexCoord[0].st);
 //    gl_FragData[3] = vec4(ambient + diffuse + specular, COLOR_MUL_LIGHT);
+//    gl_FragData[3] = vec4(vec3(0,1,1), COLOR_DONE);
   }
   else if(triangleFlag == DONE)
   {
@@ -215,15 +274,35 @@ void main()
 //    gl_FragData[1] = rPos;
 //    gl_FragData[2] = texture2D(triangleInfo, gl_TexCoord[0].st);
     gl_FragData[3] = vec4(color.rgb, COLOR_DONE) ;
+//    gl_FragData[3] = vec4(vec3(0,0,1), COLOR_DONE);
     gl_FragData[4] = vec4(SHADOW_INACTIVE);
 
-  }else
+  }
+//  else if(triangleFlag == ACTIVE_TRAVERSE ||
+//  triangleFlag == ACTIVE_CALCULATEOUTVOXEL ||
+//  triangleFlag == ACTIVE_TRAVERSE_SEC ||
+//  triangleFlag == ACTIVE_TRAVERSE_SEC ||
+//  triangleFlag == ACTIVE_INTERSECT  )
+//  {
+//
+//    gl_FragData[0] = rDir;
+//    gl_FragData[1] = rPos;
+//    gl_FragData[2] = texture2D(triangleInfo, gl_TexCoord[0].st);
+//    gl_FragData[3] = vec4(clearColor, COLOR_DONE);
+//  //  gl_FragData[3] = vec4(vec3(1,0,0), COLOR_DONE);
+//    gl_FragData[4] = vec4(SHADOW_INACTIVE);
+//  }
+  else
   {
     ///Discard Pixel
     gl_FragData[0] = rDir;
     gl_FragData[1] = rPos;
     gl_FragData[2] = texture2D(triangleInfo, gl_TexCoord[0].st);
-    gl_FragData[3] = vec4(clearColor, COLOR_DONE);
+//    if(colorTest >= COLOR_MUL_LIGHT && colorTest < COLOR_MUL_MAX_LIGHT)
+//      gl_FragData[3] = vec4(color.rgb, COLOR_DONE);
+//    else
+      gl_FragData[3] = vec4(clearColor, COLOR_DONE);
+//    gl_FragData[3] = vec4(vec3(0,1,0), COLOR_DONE);
     gl_FragData[4] = vec4(SHADOW_INACTIVE);
   }
   /**/

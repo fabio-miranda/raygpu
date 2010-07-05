@@ -17,10 +17,11 @@ MATERIAL   200.   0. 200.    200. 200. 200.   50.   0.    .5       0.0       nul
 #       Posicao       DIFFUSO        SPECULAR 
 # LIGHT 100. 0. 0.   204 204. 204.   255. 255. 255. 
 LIGHT 0. 1000. 0.   204 204. 204.   255. 255. 255. 
+LIGHT 0. 0. 1000.   204 204. 204.   255. 255. 255. 
 # Luz SPOT                                           TIPO   SPOT_EXPONENT  ANGLE     DIR
-# LIGHT -50. 100. 0.   204 204. 204.   255. 255. 255.   2.       1.0          40.   0. -1. 0. 
+LIGHT -50. 100. 0.   204 204. 204.   255. 255. 255.   2.       1.0          40.   0. -1. 0. 
 # Luz DIRECIONAL                                  TIPO
-# LIGHT 0. 0. -1.   204 204. 204.   255. 255. 255.   0. 
+LIGHT 0. 0. 1.   204 204. 204.   255. 255. 255.   0. 
 
 
 MESH 0  0. 1. 0.     400. 400. 400.  resources/Models/bunny.msh
@@ -30,7 +31,7 @@ MESH 0  -50. 1. 50.     400. 400. 400.  resources/Models/bunny.msh
 # MESH 0  -50. 1. 50.     1. 1. 1.  resources/Models/cavalo.um
 
 MESH 0  50. 1. 0.     1. 1. 1.  resources/Models/floor.um
-MESH 1  50. 1. 0.     1. 1. 1.  resources/Models/wall.um
+MESH 0  50. 1. 0.     1. 1. 1.  resources/Models/wall.um
 
 
 
