@@ -9,6 +9,7 @@ LIGHT 0. 0. -1.   204 204. 204.   255. 255. 255.  0.
 
 
 MESH 0  50. 1. 0.     400. 400. 400.  resources/Models/bunny.msh
+MESH 1  50. 1. 0.     1. 1. 1.  resources/Models/floor.um
 
 
 

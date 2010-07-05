@@ -162,15 +162,13 @@ void main()
 
     if(fragMaterial.reflective == 1.0)
     {
-
-
       rDir.xyz = reflect(rDir.xyz,normal.xyz);
-//      rDir.xyz = normal.xyz;
-      rPos.xyz = fragPos + rDir*0.1;
+//      rPos.xyz = fragPos + rDir*0.1;
+      rPos.xyz = fragPos;
 //      vec3 voxelIndex = findVoxel(rPos.xyz);
 //
 //      vec3 intersectionOut = findIntersectionOutVoxel(rPos.xyz, rDir.xyz, voxelIndex.xyz);
-      rDir.w = float(ACTIVE_TRAVERSE);
+      rDir.w = float(ACTIVE_CALCULATEOUTVOXEL);
 //      rPos.a = findVoxelLinearArray(voxelIndex.xyz);
 
       gl_FragData[0] = rDir;
