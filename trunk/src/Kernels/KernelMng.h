@@ -7,6 +7,7 @@
 #include "Kernels/KernelTraverse.h"
 #include "Kernels/KernelIntersect.h"
 #include "Kernels/KernelShade.h"
+#include "Kernels/KernelCounter.h"
 #include "Kernels/KernelMngStates.h"
 #include "SpacePartition/UniformGrid.h"
 #include "GraphBasis/FrameBufferObject.h"
@@ -39,12 +40,16 @@ private:
 	KernelTraverse* m_kernelTraverse;
 	KernelIntersect* m_kernelIntersect;
 	KernelShade* m_kernelShade;
+	KernelCounter* m_kernelCounter;
 
 	UniformGrid* m_uniformGrid;
 	GLuint m_textureRayPosition;
 	GLuint m_textureRayDirection;
 	FrameBufferObject m_fbo;
 	int m_numTraverses;
+	int m_numRays;
+	int m_countCalculateVoxel;
+	int m_recursionLevel;
 	GLuint m_occlusionQueryId;
 	KernelMngState m_currentState;
   

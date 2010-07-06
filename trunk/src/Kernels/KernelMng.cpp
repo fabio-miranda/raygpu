@@ -3,8 +3,11 @@
 
 KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth, float nearPlaneHeight){
 
+	m_numRays = width * height;
 
 	UniformGrid* uniformGrid = scene->getUniformGrid();
+
+	m_kernelCounter = new KernelCounter(width, height);
 
 	m_kernelGenerateRay = new KernelGenerateRay(width, height, scene->getGridTexSize(), uniformGrid->getNumVoxels(), uniformGrid->getVoxelSize(), uniformGrid->getBBMin(), uniformGrid->getBBMax(), nearPlaneWidth, nearPlaneHeight);
 
@@ -51,24 +54,33 @@ KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth,
 	
 	m_currentState = GENERATERAY;
 	m_numTraverses = 0;
-	glGenQueries(1, &m_occlusionQueryId);
+	m_countCalculateVoxel = 0;
+	m_recursionLevel = 0;
+	
 	//m_uniformGrid = uniformGrid;
 
 }
 
 void KernelMng::stepCurrentState(int traversePerIntersection, Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane){
 
-	//cout << "IN:" << m_currentState ;
+	cout << "IN:" << m_currentState ;
 	render(m_currentState, eyePos, eyeDir, eyeUp, eyeRight, nearPlane);
 	update(traversePerIntersection);
-	//cout << " OUT:" << m_currentState <<endl;
+	cout << " OUT:" << m_currentState <<endl;
 
 }
 
 void KernelMng::stepState(KernelMngState stateToUpdate, Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane){
+	
+	std::cout << "==========\n";
+
 	cout << "IN:" << stateToUpdate ;
 	render(stateToUpdate, eyePos, eyeDir, eyeUp, eyeRight, nearPlane);
 	cout << " OUT:" << stateToUpdate <<endl;
+
+	countActiveRays();
+
+	std::cout << "==========\n";
 
 }
 
@@ -88,18 +100,8 @@ void KernelMng::update(int traversePerIntersection){
 	}
 	else if(m_currentState == CALCULATEVOXEL){
 		m_currentState = TRAVERSE;
-		m_numTraverses++;
 	}
-	else if(m_currentState == INTERSECT){
-		m_currentState = SHADE;
-	}
-	else if(m_currentState == TRAVERSE){
-		m_numTraverses++;
-	}
-	else if(m_currentState == SHADE){
-		m_currentState = TRAVERSE;
-	}
-	if(m_currentState == INTERSECT || m_currentState == TRAVERSE){
+	else{
 		m_currentState = oracle(traversePerIntersection);
 	}
 	
@@ -130,6 +132,9 @@ void KernelMng::render(KernelMngState state, Vector3 eyePos, Vector3 eyeDir, Vec
 			break;
 		case INTERSECT:
 			m_kernelIntersect->step();
+			break;
+		case SHADE:
+			m_kernelShade->step(eyePos);
 			break;
 		default:
 			m_kernelShade->step(eyePos);
@@ -187,39 +192,58 @@ void KernelMng::renderKernelOutput(bool renderCurrentState, KernelMngState state
 
 KernelMngState KernelMng::oracle(int traversePerIntersection){
 	
+
 	KernelMngState newState = m_currentState;
 
-	if(m_currentState == INTERSECT){
+	int countInactive = m_kernelCounter->count(m_kernelGenerateRay->getTexIdRayDir(), 0);
+	int countTraverse = m_kernelCounter->count(m_kernelGenerateRay->getTexIdRayDir(), 2);
+	int countTraverseSec = m_kernelCounter->count(m_kernelGenerateRay->getTexIdRayDir(), 4);
+	int countIntersect = m_kernelCounter->count(m_kernelGenerateRay->getTexIdRayDir(), 3);
+	int countCalculateVoxel = m_kernelCounter->count(m_kernelGenerateRay->getTexIdRayDir(), 1);
+	int countShading = m_kernelCounter->count(m_kernelGenerateRay->getTexIdRayDir(), 5);
+
+
+	if(countIntersect > 0.2 * countTraverse){
+		newState = INTERSECT;
+	}
+	else if(countTraverse > 0 || countTraverseSec > 0){
 		newState = TRAVERSE;
 	}
-	else{
-		if(m_numTraverses > traversePerIntersection){
-			newState = INTERSECT;
-			m_numTraverses = 0;
-		}
+	else if(countCalculateVoxel > 0){
+		if(m_currentState == SHADE)
+			newState = CALCULATEVOXEL;
+		else
+			newState = SHADE;
 	}
+	else if(countShading > 0)
+		newState = SHADE;
 
+	
 
-	//std::cout << countActiveRays() << "\n";
+	m_countCalculateVoxel = countCalculateVoxel;
+
+	//countActiveRays();
+	
 
 	return newState;
 
 }
 
 int KernelMng::countActiveRays(){
-	
-	glEnable(GL_STENCIL_TEST);
-    glDisable(GL_DEPTH_TEST);
 
-	glStencilFunc(GL_EQUAL, 1, 1);
-	glStencilOp(GL_ZERO, GL_KEEP, GL_KEEP);
-	glBeginQuery(GL_SAMPLES_PASSED_ARB, m_occlusionQueryId);
-	m_kernelShade->step(Vector3(0, -150, 0));
-	glEndQuery(GL_SAMPLES_PASSED_ARB);
-	GLuint occ = 0;
-	glGetQueryObjectuivARB(m_occlusionQueryId, GL_QUERY_RESULT_ARB, &occ);
+	std::cout << "Inactive: " << m_kernelCounter->count(m_kernelGenerateRay->getTexIdRayDir(), 0) << "\n";
+	std::cout << "Active calculate voxel: " << m_kernelCounter->count(m_kernelGenerateRay->getTexIdRayDir(), 1) << "\n";
+	std::cout << "Active traverse: " << m_kernelCounter->count(m_kernelGenerateRay->getTexIdRayDir(), 2) << "\n";
+	std::cout << "Active intersect: " << m_kernelCounter->count(m_kernelGenerateRay->getTexIdRayDir(), 3) << "\n";
+	std::cout << "Active traverse sec: " << m_kernelCounter->count(m_kernelGenerateRay->getTexIdRayDir(), 4) << "\n";
+	std::cout << "Active shading: " << m_kernelCounter->count(m_kernelGenerateRay->getTexIdRayDir(), 5) << "\n";
+	std::cout << "Overflow: " << m_kernelCounter->count(m_kernelGenerateRay->getTexIdRayDir(), 6) << "\n";
+	std::cout << "Done: " << m_kernelCounter->count(m_kernelGenerateRay->getTexIdRayDir(), 7) << "\n";
 
-	return occ;
+	return 0;
+
+	//return 0;
+	//m_kernelCounter->step();
 
 }
 

@@ -7,8 +7,8 @@ int main(int argc, char *argv[]){
 	init(argc, argv);
 	initGL(argc, argv);
 
-	openFile(NULL);
-	//createScenes(INIT_SCENE_FILE_NAME);
+	//openFile(NULL);
+	createScenes(INIT_SCENE_FILE_NAME);
 	
 
 	IupShowXY(iupDialog, IUP_CENTER, IUP_CENTER);
@@ -271,7 +271,15 @@ void initIup(int argc, char *argv[]){
 									buttonSingleStep, toggleContinuousStep, NULL);
 	Ihandle* frameStates = IupFrame(vboxStates);
 	IupSetAttribute(frameStates, "TITLE", "States");
+	/*
+	//Ray states
+	Ihandle* labelInactive = IupLabel();
 
+	Ihandle* vboxNumStates = IupVbox(toggleGenerateRay, toggleCalculateVoxel, toggleTraverse, toggleIntersect, toggleShade,
+									buttonSingleStep, toggleContinuousStep, NULL);
+	Ihandle* frameNumStates = IupFrame(vboxNumStates);
+	IupSetAttribute(frameNumStates, "TITLE", "Number of rays on state:");
+	*/
 
 
 	//Boxes
@@ -428,8 +436,6 @@ int render(Ihandle* handle){
 					kernelMng->stepState(SHADE, Vector3(x, y, z), f, u, r, nearPlane);
 			}
 		}
-		
-		
 	}
 
 	if(rObj!=1)
