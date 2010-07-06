@@ -28,7 +28,7 @@ KernelCounter::~KernelCounter(){
 
 void KernelCounter::step(GLuint texId, int state){
 
-	m_fbo->setActive(true);
+	//m_fbo->setActive(true);
 	m_shader->setActive(true);
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -54,7 +54,7 @@ void KernelCounter::step(GLuint texId, int state){
 
 	
 	m_shader->setActive(false);
-	m_fbo->setActive(false);
+	//m_fbo->setActive(false);
 
 }
 
@@ -62,6 +62,7 @@ int KernelCounter::count(GLuint texId, int state){
 
 	//glEnable(GL_STENCIL_TEST);
     glDisable(GL_DEPTH_TEST);
+	//glBlendFunc(GL_ONE, GL_SRC_COLOR);
 	//glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	//glDisable(GL_BLEND);
 

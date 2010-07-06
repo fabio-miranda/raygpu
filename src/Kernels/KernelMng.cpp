@@ -104,7 +104,6 @@ void KernelMng::update(int traversePerIntersection){
 	else{
 		m_currentState = oracle(traversePerIntersection);
 	}
-	
 }
 void KernelMng::generateRay(){
 	m_currentState = GENERATERAY;
