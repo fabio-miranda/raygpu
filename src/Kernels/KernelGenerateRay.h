@@ -18,8 +18,8 @@ public:
 	void step(Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane);
 	GLuint getTexIdRayPos();
 	GLuint getTexIdRayDir();
-  GLuint getTexIdColor();
-  GLuint getTexIdShadow();
+	GLuint getTexIdColor();
+	GLuint getTexIdShadow();
   
   
 

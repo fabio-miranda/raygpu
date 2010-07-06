@@ -295,6 +295,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\Kernels\KernelCounter.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\Kernels\KernelGenerateRay.cpp"
 					>
 				</File>
@@ -449,6 +453,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\Kernels\KernelCounter.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\Kernels\KernelGenerateRay.h"
 					>
 				</File>
@@ -481,6 +489,10 @@
 			>
 			<File
 				RelativePath="..\..\resources\calculateVoxel.frag"
+				>
+			</File>
+			<File
+				RelativePath="..\..\resources\counter.frag"
 				>
 			</File>
 			<File
