@@ -63,10 +63,10 @@ KernelMng::KernelMng(int width, int height,RTScene* scene, float nearPlaneWidth,
 
 void KernelMng::stepCurrentState(int traversePerIntersection, Vector3 eyePos, Vector3 eyeDir, Vector3 eyeUp, Vector3 eyeRight, float nearPlane){
 
-	cout << "IN:" << m_currentState ;
+	//cout << "IN:" << m_currentState ;
 	render(m_currentState, eyePos, eyeDir, eyeUp, eyeRight, nearPlane);
 	update(traversePerIntersection);
-	cout << " OUT:" << m_currentState <<endl;
+	//cout << " OUT:" << m_currentState <<endl;
 
 }
 
