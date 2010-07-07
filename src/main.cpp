@@ -304,7 +304,7 @@ void initIup(int argc, char *argv[]){
 	IupSetHandle("menu", menu);
 
 	iupDialog = IupDialog(hBox);
-	IupSetAttribute(iupDialog, "TITLE", "Volume Renderer");
+	IupSetAttribute(iupDialog, "TITLE", "GPU Ray tracer");
 	IupSetAttribute(iupDialog, "COMPOSITED", "NO");
 	IupSetAttribute(iupDialog, "MENU", "menu");
 	//IupSetAttribute(m_dialog, "FULLSCREEN", "YES");
