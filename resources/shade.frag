@@ -105,7 +105,7 @@ void main()
     fragPos = rPos.xyz;
     if(triangleFlag == ACTIVE_SHADING)
     {
-      color.rgb *= .20;
+      color.rgb *= .80;
       fragPos =  rPos.xyz + rDir.xyz*triangleInfos.r;
     }
 
