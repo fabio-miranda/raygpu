@@ -74,9 +74,9 @@ void KernelMng::stepState(KernelMngState stateToUpdate, Vector3 eyePos, Vector3 
 	
 	std::cout << "==========\n";
 
-	cout << "IN:" << stateToUpdate ;
+	//cout << "IN:" << stateToUpdate ;
 	render(stateToUpdate, eyePos, eyeDir, eyeUp, eyeRight, nearPlane);
-	cout << " OUT:" << stateToUpdate <<endl;
+	//cout << " OUT:" << stateToUpdate <<endl;
 
 	countActiveRays();
 

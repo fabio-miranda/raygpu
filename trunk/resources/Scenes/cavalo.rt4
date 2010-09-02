@@ -1,14 +1,25 @@
 RT 4.0
 CAMERA 100. 100. 40.   0. 0. 0.    0. 1. 0. 90. 30. 230. 400 400
-SCENE 110.  110.  110.  90.  90.  130. null
-MATERIAL   200.   0. 200.    200. 200. 200.   50.   0.  0.8  0.4 null
-MATERIAL   200.   0. 200.    200. 200. 200.   50.   1.  0.8  0.4 null
-LIGHT 100. 0. 0.   204 204. 204.   255. 255. 255. 
-LIGHT -50. 100. 0.   204 204. 204.   255. 255. 255.  2. 1.0 40.   0. -1. 0. 
-LIGHT 0. 0. -1.   204 204. 204.   255. 255. 255.  0. 
+SCENE 180.  180.  255.  90.  90.  130. null
+
+MATERIAL   200.   0. 0.    200. 200. 200.   50.   0.  0.8  0.4 null
+# MATERIAL   200.   0. 200.    200. 200. 200.   50.   0.  0.8  0.4 null
+# MATERIAL   200.   0. 200.    200. 200. 200.   50.   1.  0.8  0.4 null
+
+# LIGHT 0. 200. 0.   204 204. 204.   255. 255. 255.  2. 1.0 25.   0. -1. 0. 
+# LIGHT 0. 0. 1.   204 204. 204.   255. 255. 255.  0. 
+LIGHT 0. 1. 1.   204 204. 204.   255. 255. 255.  0. 
 
 
-MESH 0  0. 0. 0.     400. 400. 400.  resources/Models/buddha_high.msh
+# MESH 2  0. 100. 0.     1. 1. 1.  resources/Models/sphere.msh
+MESH 0  0. 0. 0.     600. 600. 600.  resources/Models/bunny.msh
+# MESH 0  30. 0. -30.     600. 600. 600.  resources/Models/buddha_low.msh
+# MESH 0  -30. 0. 30.     600. 600. 600.  resources/Models/buddha_low.msh
+# MESH 0  30. 0. 30.     600. 600. 600.  resources/Models/buddha_low.msh
+# MESH 2  0. 0. -100.     1. 1. 1.  resources/Models/wall_back.um
+# MESH 2  100. 0. 0.     1. 1. 1.  resources/Models/wall_right.um
+# MESH 2  -100. 0. 0.     1. 1. 1.  resources/Models/wall_left.um
+# MESH 1  0. 0. 0.     1. 1. 1.  resources/Models/floor.um
 
 
 
