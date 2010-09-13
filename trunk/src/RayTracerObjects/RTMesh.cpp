@@ -79,28 +79,25 @@ void RTMesh :: calcVBO()
 
    for(int i = 0; i < n/3; ++i)
    {
-      Vector3 n = (mTriangles[i].v2 - mTriangles[i].v1) ^ (mTriangles[i].v3 - mTriangles[i].v2);
-      n = n.unitary();
-
       int index = i*9;
-      normals[index] = n.x;
+      normals[index] = mTriangles[i].n1.x;
       vertices[index++] = mTriangles[i].v1.x;
-      normals[index] = n.y;
+      normals[index] = mTriangles[i].n1.y;
       vertices[index++] = mTriangles[i].v1.y;
-      normals[index] = n.z;
+      normals[index] = mTriangles[i].n1.z;
       vertices[index++] = mTriangles[i].v1.z;
-      normals[index] = n.x;
+      normals[index] = mTriangles[i].n2.x;
       vertices[index++] = mTriangles[i].v2.x;
-      normals[index] = n.y;
+      normals[index] = mTriangles[i].n2.y;
       vertices[index++] = mTriangles[i].v2.y;
-      normals[index] = n.z;
+      normals[index] = mTriangles[i].n2.z;
       vertices[index++] = mTriangles[i].v2.z;
-      normals[index] = n.x;
+      normals[index] = mTriangles[i].n3.x;
       vertices[index++] = mTriangles[i].v3.x;
-      normals[index] = n.y;
+      normals[index] = mTriangles[i].n3.y;
       vertices[index++] = mTriangles[i].v3.y;
-      normals[index] = n.z;
-      vertices[index++] = mTriangles[i].v3.z;
+      normals[index] = mTriangles[i].n3.z;
+      vertices[index++] = mTriangles[i].v3.z; 
    }
 
    mVbo->setVBOBuffer( GL_VERTEX_ARRAY, GL_FLOAT, n, vertices);
